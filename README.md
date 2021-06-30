@@ -8,4 +8,4 @@ Mattia Zorzan - VR464472
 All info about building and commands can be found in the original repository's README.md
 
 ## DISCLAIMER
-This project is born as my final for the **Modern C++** class I attended at University of Verona - CS Dep.
+This project is born as my final for the **Modern C++ Programming** class that I attended at University of Verona - CS Dep.
