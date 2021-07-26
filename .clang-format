@@ -1,28 +1,76 @@
-BasedOnStyle: Mozilla
+BasedOnStyle: LLVM
 IndentWidth: 4
+UseTab: Never
 ---
 Language: Cpp
 
+DisableFormat: false
+Standard: c++17
+
 AccessModifierOffset: -4
-AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: None
-AlignConsecutiveDeclarations: None
-AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 AlignOperands: AlignAfterOperator
-AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Always
-AllowShortFunctionsOnASingleLine: Inline
-BreakBeforeBraces: Attach
-BreakConstructorInitializers: AfterColon
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Always
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: TopLevel
+BreakConstructorInitializersBeforeComma: true
+BreakBeforeBinaryOperators: All
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterCaseLabel: false
+    AfterClass: false
+    AfterControlStatement: Never
+    AfterEnum: false
+    AfterFunction: false
+    AfterNamespace: false
+    AfterStruct: false
+    AfterUnion: false
+    BeforeCatch: false
+    BeforeElse: false
+    BeforeWhile: false
+    SplitEmptyFunction: false
+    SplitEmptyRecord: false
+    SplitEmptyNamespace: false
+BreakConstructorInitializers: BeforeColon
 ColumnLimit: 80
-CompactNamespaces: false
-DerivePointerAlignment: true
 IncludeBlocks: Regroup
+IncludeCategories:
+  # Headers in <> without extension.
+  - Regex:    '<([A-Za-z0-9\/-_])+>'
+    Priority: 4
+  # Headers in <> from specific external libraries.
+  - Regex:    '<((catch2))\/([A-Za-z0-9.\/-_])+>'
+    Priority: 3
+  # Headers in <> with extension.
+  - Regex:    '<([A-Za-z0-9.\/-_])+>'
+    Priority: 2
+  # Headers in "" with extension.
+  - Regex:    '"([A-Za-z0-9.\/-_])+"'
+    Priority: 1
+IndentCaseLabels: true
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PointerAlignment: Right
 SortIncludes: CaseSensitive
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeParens: Never
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
-Standard: c++17
-UseTab: Never
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
