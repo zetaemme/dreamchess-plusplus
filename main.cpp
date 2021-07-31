@@ -11,5 +11,9 @@
 int main() {
     DreamChess::Game game {};
 
+    while(game.is_in_game()) {
+        // Make moves
+    }
+
     return 0;
 }

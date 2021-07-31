@@ -55,95 +55,6 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Used to init the board with the neutral FEN configuration"
-     * @details "Parses the FEN string and inits the `Board`"
-     */
-    void Board::init_board() {
-        uint16_t file = 0;
-        uint16_t rank = 7;
-
-        std::array<std::string, 6> splitted_fen;
-        std::stringstream stream {
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
-
-        std::string tmp;
-
-        for(uint64_t i = 0; i < 6; i++) {
-            std::getline(stream, tmp, ' ');
-            splitted_fen[i] = tmp;
-        }
-
-        for(auto &sym : splitted_fen[0]) {
-            if(sym == '/') {
-                file = 0;
-                rank--;
-            } else {
-                if(isdigit(sym)) {
-                    file += sym - '0';
-                } else {
-                    Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
-                    Piece type = Board::m_fen_to_piece.at(
-                        static_cast<uint8_t>(std::tolower(sym)));
-
-                    m_squares[rank * 8 + file] = color | type;
-                    file++;
-                }
-            }
-        }
-    }
-
-    /**
-     * @brief "Makes a move in the current `Board`"
-     * @details "Checks if the `Move` is a "special move", makes a "normal move"
-     * otherwise"
-     * @param move The `Move` to make
-     */
-    void Board::make_move(const Move &move) {
-        if(move.is_valid()) {
-            // En-passant
-            if(move.m_piece == Piece::PAWN
-               && m_squares[move.m_destination] == 0) {
-                uint16_t en_passant
-                    = move.m_destination
-                    - 8 * (move.m_destination > move.m_source ? 1 : -1);
-                m_captured[m_squares[en_passant]]++;
-                m_squares[en_passant] = 0;
-            }
-
-            // Updating captured pieces
-            if(move.m_destination != 0) {
-                m_captured[m_squares[move.m_destination]]++;
-            }
-
-            // kingside castle
-            if(move.m_piece == Piece::KING
-               && move.m_destination - move.m_source == 2) {
-                m_squares[move.m_destination - 1]
-                    = m_squares[move.m_destination + 1];
-                m_squares[move.m_destination + 1] = 0;
-            }
-
-            // Queenside castle
-            if(move.m_piece == Piece::KING
-               && move.m_source - move.m_destination == 2) {
-                m_squares[move.m_destination + 1]
-                    = m_squares[move.m_destination - 2];
-                m_squares[move.m_destination - 2] = 0;
-            }
-
-            if(move.is_promotion()) {
-                // Promotion
-                m_squares[move.m_destination] = move.m_promotion_piece;
-            } else {
-                // The actual "common" move
-                m_squares[move.m_destination] = m_squares[move.m_source];
-            }
-        } else {
-            throw std::logic_error("Invalid move!");
-        }
-    }
-
-    /**
      * @brief "Converts the board to FEN notation"
      * @details "First the method constructs the actual state of the Board, then
      *          replaces consecutive whitespaces with the number of ' ' chars.
@@ -151,7 +62,7 @@ namespace DreamChess {
      *          of Moves since the beginning"
      * @return The FEN representation of the Board
      */
-    std::string Board::to_fen() const {
+    [[nodiscard]] std::string Board::to_fen() const {
         std::string fen;
 
         // Board representation
@@ -308,11 +219,113 @@ namespace DreamChess {
     }
 
     /**
+     * @brief "Checks if the game is in progress"
+     * @return true if the game is in progress, false otherwise
+     */
+    [[nodiscard]] bool Board::is_in_game() const { return m_in_game; }
+
+    /**
+     * @brief "Used to init the board with the neutral FEN configuration"
+     * @details "Parses the FEN string and inits the `Board`"
+     */
+    void Board::init_board() {
+        uint16_t file = 0;
+        uint16_t rank = 7;
+
+        std::array<std::string, 6> splitted_fen;
+        std::stringstream stream {
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
+
+        std::string tmp;
+
+        for(uint64_t i = 0; i < 6; i++) {
+            std::getline(stream, tmp, ' ');
+            splitted_fen[i] = tmp;
+        }
+
+        for(auto &sym : splitted_fen[0]) {
+            if(sym == '/') {
+                file = 0;
+                rank--;
+            } else {
+                if(isdigit(sym)) {
+                    file += sym - '0';
+                } else {
+                    Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
+                    Piece type = Board::m_fen_to_piece.at(
+                        static_cast<uint8_t>(std::tolower(sym)));
+
+                    m_squares[rank * 8 + file] = color | type;
+                    file++;
+                }
+            }
+        }
+    }
+
+    /**
+     * @brief Inits the std::vector containing all the available moves
+     */
+    void Board::init_move_list() {
+        // TODO Generate all legal moves
+    }
+
+    /**
+     * @brief "Makes a move in the current `Board`"
+     * @details "Checks if the `Move` is a "special move", makes a "normal move"
+     * otherwise"
+     * @param move The `Move` to make
+     */
+    void Board::make_move(const Move &move) {
+        if(move.is_valid()) {
+            // En-passant
+            if(move.m_piece == Piece::PAWN
+               && m_squares[move.m_destination] == 0) {
+                uint16_t en_passant
+                    = move.m_destination
+                    - 8 * (move.m_destination > move.m_source ? 1 : -1);
+                m_captured[m_squares[en_passant]]++;
+                m_squares[en_passant] = 0;
+            }
+
+            // Updating captured pieces
+            if(move.m_destination != 0) {
+                m_captured[m_squares[move.m_destination]]++;
+            }
+
+            // kingside castle
+            if(move.m_piece == Piece::KING
+               && move.m_destination - move.m_source == 2) {
+                m_squares[move.m_destination - 1]
+                    = m_squares[move.m_destination + 1];
+                m_squares[move.m_destination + 1] = 0;
+            }
+
+            // Queenside castle
+            if(move.m_piece == Piece::KING
+               && move.m_source - move.m_destination == 2) {
+                m_squares[move.m_destination + 1]
+                    = m_squares[move.m_destination - 2];
+                m_squares[move.m_destination - 2] = 0;
+            }
+
+            if(move.is_promotion()) {
+                // Promotion
+                m_squares[move.m_destination] = move.m_promotion_piece;
+            } else {
+                // The actual "common" move
+                m_squares[move.m_destination] = m_squares[move.m_source];
+            }
+        } else {
+            throw std::logic_error("Invalid move!");
+        }
+    }
+
+    /**
      * @brief "Checks if the move is valid"
      * @details "A `Move` is valid if it's in the `Board` and actually moves the
      * `Piece`"
      */
-    bool Board::Move::is_valid() const {
+    [[nodiscard]] bool Board::Move::is_valid() const {
         return m_source >= 0 && m_source < 64 && m_destination >= 0
             && m_destination < 64 && m_source != m_destination;
     }
@@ -322,7 +335,7 @@ namespace DreamChess {
      * @details "A `Move` is promotion if it's made by a pawn and the
      * destination it's in the opposite player first file"
      */
-    bool Board::Move::is_promotion() const {
+    [[nodiscard]] bool Board::Move::is_promotion() const {
         return m_piece == Piece::PAWN
             && (m_destination < 8 || m_destination > 55);
     }

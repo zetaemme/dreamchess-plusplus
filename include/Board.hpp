@@ -25,8 +25,6 @@ namespace DreamChess {
         Board(Board &&) noexcept;
         ~Board() = default;
 
-        // TODO: Aggiungere operator= per move e copy
-
         friend std::ostream &operator<<(std::ostream &, const Board &);
 
         /**
@@ -51,15 +49,14 @@ namespace DreamChess {
              */
             Piece m_promotion_piece;
 
-            bool is_valid() const;
+            [[nodiscard]] bool is_valid() const;
 
-            /**
-             * @brief "Checks if the move is a promotion move"
-             */
-            bool is_promotion() const;
+            [[nodiscard]] bool is_promotion() const;
         };
 
-        std::string to_fen() const;
+        [[nodiscard]] std::string to_fen() const;
+
+        [[nodiscard]] bool is_in_game() const;
 
     private:
         /**
@@ -71,6 +68,11 @@ namespace DreamChess {
          * @brief "Counts the number of turns since the game started"
          */
         uint64_t m_turn_counter = 1;
+
+        /**
+         * @brief "Checks if the game is still going on"
+         */
+        bool m_in_game = true;
 
         /**
          * @brief "Array describing the board's state"
@@ -104,6 +106,7 @@ namespace DreamChess {
             {20, 'r'}, {21, 'q'}, {22, 'k'}};
 
         void init_board();
+        void init_move_list();
         void make_move(const Move &);
     };
 } // namespace DreamChess

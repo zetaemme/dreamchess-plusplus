@@ -16,6 +16,14 @@ namespace DreamChess {
         , m_history(History {}) {}
 
     /**
+     * @brief "Checks if the game is still going on"
+     * @return true if a game is being played, false otherwise
+     */
+    bool Game::is_in_game() const {
+        return m_board.is_in_game();
+    }
+
+    /**
      * @brief "Updates the `Game`'s history"
      */
     void Game::update_history(const Board &board, const Board::Move &move) {
