@@ -6,10 +6,37 @@
  */
 #pragma once
 
+#include "Piece.hpp"
+
+#include <string_view>
+
 namespace DreamChess {
+    class Board;
+
+    /**
+     * @brief A single move in the Game
+     */
     class Move final {
+    public:
+        Move(const Board &, uint64_t, uint64_t);
         Move(const Board &, std::string_view);
 
+        [[nodiscard]] uint16_t get_source() const;
+
+        [[nodiscard]] uint16_t get_destination() const;
+
+        [[nodiscard]] Piece::Enum get_piece() const;
+
+        [[nodiscard]] Piece::Enum get_promotion_piece() const;
+
+        [[nodiscard]] bool is_valid() const;
+
+        [[nodiscard]] bool is_promotion() const;
+
+        [[nodiscard]] int64_t horizontal_check() const;
+        [[nodiscard]] int64_t vertical_check() const;
+
+    private:
         /**
          * @brief "The move's source square"
          */
@@ -22,14 +49,11 @@ namespace DreamChess {
         /**
          * @brief "The piece which is making the move"
          */
-        Piece m_piece;
+        Piece::Enum m_piece;
+
         /**
          * @brief "The declared promotion present, if promotion"
          */
-        Piece m_promotion_piece = NONE;
-
-        [[nodiscard]] bool is_valid() const;
-
-        [[nodiscard]] bool is_promotion() const;
+        Piece::Enum m_promotion_piece = Piece::NONE;
     };
 }

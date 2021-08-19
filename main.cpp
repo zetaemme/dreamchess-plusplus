@@ -18,8 +18,15 @@ int main() {
         std::cout << game;
         std::cout << "---------------------------------------" << std::endl;
 
-        std::cout << "Input move:";
-        std::cin >> input_move;
+        bool valid_move;
+
+        do {
+            std::cout << "Input move: ";
+            std::cin >> input_move;
+
+            valid_move = game.make_move(input_move);
+        } while(!valid_move
+                && (std::cout << "Invalid move! Retry!" << std::endl));
     }
 
     return 0;

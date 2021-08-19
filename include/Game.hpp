@@ -10,13 +10,14 @@
 #include "History.hpp"
 
 namespace DreamChess {
+    class Move;
+
     class Game final {
     public:
-        explicit Game();
-        ~Game() = default;
+        Game();
 
         [[nodiscard]] bool is_in_game() const;
-        void make_move()
+        [[nodiscard]] bool make_move(std::string_view);
 
         friend std::ostream &operator<<(std::ostream &, const Game &);
 
@@ -31,6 +32,6 @@ namespace DreamChess {
          */
         History m_history;
 
-        void update_history(const Board &, const Board::Move &);
+        void update_history(const Move &);
     };
 } // namespace DreamChess

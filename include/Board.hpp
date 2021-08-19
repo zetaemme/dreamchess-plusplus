@@ -9,17 +9,18 @@
 #include "Piece.hpp"
 
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <vector>
 
 namespace DreamChess {
+    class Move;
+
     /**
      * @brief "Define Board, Pieces and moves for the game"
      */
     class Board final {
     public:
-        explicit Board();
+        Board();
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
 
@@ -27,9 +28,13 @@ namespace DreamChess {
 
         [[nodiscard]] bool is_in_game() const;
 
-        [[nodiscard]] Piece get_piece_at(uint16_t) const;
+        [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
 
         [[nodiscard]] bool get_turn() const;
+
+        [[nodiscard]] Piece::Enum is_in_check() const;
+
+        bool make_move(const Move &);
 
     private:
         /**
@@ -50,12 +55,12 @@ namespace DreamChess {
         /**
          * @brief "Array describing the board's state"
          */
-        std::array<Piece, 64> m_squares {};
+        std::array<Piece::Enum, 64> m_squares {};
 
         /**
          * @brief "Keeps track of captured pieces"
          */
-        std::map<Piece, uint16_t> m_captured {};
+        std::map<Piece::Enum, uint16_t> m_captured {};
 
         /**
          * @brief "Vector with all the possible moves for the current board
@@ -65,6 +70,9 @@ namespace DreamChess {
 
         void init_board();
         void init_move_list();
-        void make_move(const Move &);
+
+        [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
+        [[nodiscard]] bool is_diagonals_ok(const Move &, int64_t) const;
+        [[nodiscard]] bool is_semi_valid_move(const Move &) const;
     };
 } // namespace DreamChess

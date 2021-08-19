@@ -5,7 +5,7 @@
  * @date July-August, 2021
  */
 
-#include "../include/History.hpp"
+#include "History.hpp"
 
 namespace DreamChess {
     /**
@@ -13,19 +13,7 @@ namespace DreamChess {
      * @details "`History` can be seen as a list of `Step`s"
      */
     History::History()
-        : m_game_history {new std::list<Step>} {}
-
-    /**
-     * @brief "Copy constructor of `History`"
-     */
-    History::History(const History &history)
-        : m_game_history(history.m_game_history.get()) {}
-
-    /**
-     * @brief "Move constructor of `History`"
-     */
-    History::History(History &&history) noexcept
-        : m_game_history(std::move(history.m_game_history)) {}
+        : m_game_history {std::make_unique<std::list<Step>>()} {}
 
     /**
      * @brief "Returns the first move of the game"
@@ -42,8 +30,7 @@ namespace DreamChess {
      * @params board_view "The `Step`'s view of the board"
      * @params move "The last move made in the referenced board"
      */
-    void History::add_step(const std::string &board_fen,
-                           const Board::Move &move) {
+    void History::add_step(std::string_view board_fen, const Move &move) {
         m_game_history->push_back(Step {board_fen, move});
     }
 
@@ -52,7 +39,7 @@ namespace DreamChess {
      * @details "Each `Step` is a view of the board and the move which brought
      * us here"
      */
-    History::Step::Step(const std::string &board_fen, const Board::Move &move)
+    History::Step::Step(const std::string_view board_fen, const Move &move)
         : m_board_fen {board_fen}
         , m_move {move} {}
 } // namespace DreamChess

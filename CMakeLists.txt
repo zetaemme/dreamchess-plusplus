@@ -15,6 +15,8 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/Game.cpp
 	${PROJECT_SOURCE_DIR}/src/History.cpp
 	${PROJECT_SOURCE_DIR}/src/Board.cpp
+	${PROJECT_SOURCE_DIR}/src/Piece.cpp
+	${PROJECT_SOURCE_DIR}/src/Move.cpp
 )
 
 set(INC
@@ -22,7 +24,8 @@ set(INC
 	${PROJECT_SOURCE_DIR}/include/Game.hpp
 	${PROJECT_SOURCE_DIR}/include/History.hpp
 	${PROJECT_SOURCE_DIR}/include/Piece.hpp
-	include/Move.hpp src/Move.cpp)
+	${PROJECT_SOURCE_DIR}/include/Move.hpp
+)
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 

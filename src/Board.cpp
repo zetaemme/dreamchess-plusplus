@@ -4,12 +4,15 @@
  * @version v1.0
  * @date July-August, 2021
  */
-#include "../include/Board.hpp"
+
+#include "Board.hpp"
+
+#include "Move.hpp"
 
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 
 namespace DreamChess {
     /**
@@ -28,7 +31,7 @@ namespace DreamChess {
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
         for(uint64_t i = 0; i < 64; i++) {
-            stream << g_piece_repr.at(board.m_squares[i]);
+            stream << Piece::g_piece_repr.at(board.m_squares[i]);
 
             if((i + 1) % 8 == 0) { stream << std::endl; }
         }
@@ -49,7 +52,8 @@ namespace DreamChess {
 
         // Board representation
         for(uint64_t i = 0; i < 64; i++) {
-            fen.push_back(static_cast<char>(g_piece_repr.at(m_squares[i])));
+            fen.push_back(
+                static_cast<char>(Piece::g_piece_repr.at(m_squares[i])));
 
             if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
         }
@@ -79,29 +83,21 @@ namespace DreamChess {
 
         // TODO: Manca controllo se re è sotto scacco
         // White can castle
-        if(m_squares[4] == (Piece::WHITE | Piece::KING)) {
+        if(m_squares[4] == Piece::WHITE_KING) {
             // Kingside
-            if(m_squares[7] == (Piece::WHITE | Piece::ROOK)) {
-                castle.append("K");
-            }
+            if(m_squares[7] == Piece::WHITE_ROOK) { castle.append("K"); }
 
             // Queenside
-            if(m_squares[0] == (Piece::WHITE | Piece::ROOK)) {
-                castle.append("Q");
-            }
+            if(m_squares[0] == Piece::WHITE_ROOK) { castle.append("Q"); }
         }
 
         // Black can castle
-        if(m_squares[60] == (Piece::BLACK | Piece::KING)) {
+        if(m_squares[60] == Piece::BLACK_KING) {
             // Kingside
-            if(m_squares[63] == (Piece::BLACK | Piece::ROOK)) {
-                castle.append("k");
-            }
+            if(m_squares[63] == Piece::BLACK_ROOK) { castle.append("k"); }
 
             // Queenside
-            if(m_squares[56] == (Piece::BLACK | Piece::ROOK)) {
-                castle.append("q");
-            }
+            if(m_squares[56] == Piece::BLACK_ROOK) { castle.append("q"); }
         }
 
         if(!castle.empty()) {
@@ -211,7 +207,7 @@ namespace DreamChess {
      * @param index The index of the returned piece
      * @return The corresponding piece
      */
-    [[nodiscard]] Piece Board::get_piece_at(uint16_t index) const {
+    [[nodiscard]] Piece::Enum Board::get_piece_at(uint16_t index) const {
         return m_squares[index];
     }
 
@@ -219,8 +215,21 @@ namespace DreamChess {
      * @brief "Returns who plays in current turn"
      * @return True if it's WHITE, false otherwise
      */
-    [[nodiscard]] bool Board::get_turn() const {
-        return m_turn;
+    [[nodiscard]] bool Board::get_turn() const { return m_turn; }
+
+    /**
+     * @brief "Checks if one of the two sides is under check"
+     * @return The side who's in check
+     */
+    [[nodiscard]] Piece::Enum Board::is_in_check() const {
+        auto playing_side = m_turn ? Piece::BLACK : Piece::WHITE;
+        auto opponent_king = (Piece::KING | playing_side);
+
+        for(uint64_t i = 0; i < 64; i++) {
+            if(m_squares[i] == opponent_king) { return square_attacked(i); }
+        }
+
+        return Piece::NONE;
     }
 
     /**
@@ -250,7 +259,7 @@ namespace DreamChess {
                 if(isdigit(sym)) {
                     file += sym - '0';
                 } else {
-                    m_squares[rank * 8 + file] = g_fen_to_piece.at(sym);
+                    m_squares[rank * 8 + file] = Piece::g_fen_to_piece.at(sym);
                     file++;
                 }
             }
@@ -265,53 +274,176 @@ namespace DreamChess {
     }
 
     /**
+     * @breif "Checks if a given square is attached by another piece"
+     * @param index The index of the square
+     * @return The color of the piece which is attacked
+     */
+    [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
+        auto attacking_side_color = m_turn ? Piece::WHITE : Piece::BLACK;
+
+        for(uint64_t i = 0; i < 64; i++) {
+            if(Piece::get_color(m_squares[i]) == attacking_side_color) {
+                Move move {*this, i, index};
+
+                if(is_semi_valid_move(move)) { return Piece::WHITE; }
+            }
+        }
+
+        return Piece::BLACK;
+    }
+
+    /**
+     * @brief "Checks if the diagonals of the given move are free"
+     * @param move The move to check
+     * @param ver The possible vertical values from the move source square
+     * @return True if the diagonals are free, False otherwise
+     */
+    [[nodiscard]] bool Board::is_diagonals_ok(const Move &move,
+                                              int64_t ver) const {
+        uint16_t step;
+        if(ver != 0) {
+            step = (move.get_destination() - move.get_source()) / ver;
+        } else {
+            step = move.get_destination() > move.get_source() ? 1 : -1;
+        }
+
+        uint16_t i = move.get_source() + step;
+
+        while(i != move.get_destination()) {
+            if(m_squares[i] != Piece::NONE) { return false; }
+
+            i += step;
+        }
+
+        if(m_squares[i] != Piece::NONE) { return false; }
+
+        if(Piece::get_color(m_squares[i])
+           != Piece::get_color(m_squares[move.get_source()])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief "Checks if a move is semi_valid"
+     * @param move The move to check
+     * @return True if the move is semi_valid, False otherwise
+     */
+    [[nodiscard]] bool Board::is_semi_valid_move(const Move &move) const {
+        // FIXME Modifica in Board.hpp m_turn per usare Enum
+        auto turn_color = m_turn ? Piece::WHITE : Piece::BLACK;
+
+        if(!move.is_valid()
+           || Piece::get_color(m_squares[move.get_source()]) != turn_color) {
+            return false;
+        }
+
+        int64_t hor = move.horizontal_check();
+        int64_t ver = move.vertical_check();
+
+        bool diag = is_diagonals_ok(move, ver);
+
+        switch(Piece::get_type(move.get_piece())) {
+            case Piece::KNIGHT:
+                if(hor != 1 && hor != 2) { return false; }
+
+                if(hor == 1 && ver != 2) { return false; }
+
+                if(hor == 2 && ver != 1) { return false; }
+
+                if(m_squares[move.get_destination()] == Piece::NONE) { break; }
+
+                if(Piece::get_color(m_squares[move.get_destination()])
+                   == Piece::get_color(m_squares[move.get_source()])) {
+                    return false;
+                }
+                break;
+
+            case Piece::BISHOP:
+                if(hor != ver) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            case Piece::ROOK:
+                if(hor != 0 && ver != 0) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            case Piece::QUEEN:
+                if(hor != 0 && ver != 0 && hor != ver) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            // TODO Finire cases 279 board.c dreamchess/dreamchess
+            case Piece::PAWN:
+                break;
+            case Piece::KING:
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @brief "Makes a move in the current `Board`"
      * @details "Checks if the `Move` is a "special move", makes a "normal move"
      * otherwise"
      * @param move The `Move` to make
      */
-    void Board::make_move(const Move &move) {
+    bool Board::make_move(const Move &move) {
         if(move.is_valid()) {
             // En-passant
-            if(move.m_piece == Piece::PAWN
-               && m_squares[move.m_destination] == 0) {
+            if(Piece::get_type(move.get_piece()) == Piece::PAWN
+               && m_squares[move.get_destination()] == 0) {
                 uint16_t en_passant
-                    = move.m_destination
-                    - 8 * (move.m_destination > move.m_source ? 1 : -1);
+                    = move.get_destination()
+                    - 8 * (move.get_destination() > move.get_source() ? 1 : -1);
                 m_captured[m_squares[en_passant]]++;
                 m_squares[en_passant] = Piece::NONE;
             }
 
             // Updating captured pieces
-            if(move.m_destination != 0) {
-                m_captured[m_squares[move.m_destination]]++;
+            if(move.get_destination() != 0) {
+                m_captured[m_squares[move.get_destination()]]++;
             }
 
             // kingside castle
-            if(move.m_piece == Piece::KING
-               && move.m_destination - move.m_source == 2) {
-                m_squares[move.m_destination - 1]
-                    = m_squares[move.m_destination + 1];
-                m_squares[move.m_destination + 1] = Piece::NONE;
+            if(Piece::get_type(move.get_piece()) == Piece::KING
+               && move.get_destination() - move.get_source() == 2) {
+                m_squares[move.get_destination() - 1]
+                    = m_squares[move.get_destination() + 1];
+                m_squares[move.get_destination() + 1] = Piece::NONE;
             }
 
             // Queenside castle
-            if(move.m_piece == Piece::KING
-               && move.m_source - move.m_destination == 2) {
-                m_squares[move.m_destination + 1]
-                    = m_squares[move.m_destination - 2];
-                m_squares[move.m_destination - 2] = Piece::NONE;
+            if(Piece::get_type(move.get_piece()) == Piece::KING
+               && move.get_source() - move.get_destination() == 2) {
+                m_squares[move.get_destination() + 1]
+                    = m_squares[move.get_destination() - 2];
+                m_squares[move.get_destination() - 2] = Piece::NONE;
             }
 
             if(move.is_promotion()) {
                 // Promotion
-                m_squares[move.m_destination] = move.m_promotion_piece;
+                m_squares[move.get_destination()] = move.get_promotion_piece();
             } else {
                 // The actual "common" move
-                m_squares[move.m_destination] = m_squares[move.m_source];
+                m_squares[move.get_destination()]
+                    = m_squares[move.get_source()];
             }
         } else {
-            throw std::logic_error("Invalid move!");
+            return false;
         }
+
+        return true;
     }
 } // namespace DreamChess
