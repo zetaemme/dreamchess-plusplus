@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July, 2021
+ * @date July-August, 2021
  */
 #pragma once
 
@@ -15,7 +15,10 @@ namespace DreamChess {
         explicit Game();
         ~Game() = default;
 
-        bool is_in_game() const;
+        [[nodiscard]] bool is_in_game() const;
+        void make_move()
+
+        friend std::ostream &operator<<(std::ostream &, const Game &);
 
     private:
         /**

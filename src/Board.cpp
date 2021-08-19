@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July, 2021
+ * @date July-August, 2021
  */
 #include "../include/Board.hpp"
 
@@ -16,25 +16,7 @@ namespace DreamChess {
      * @brief "Constructs a `Board`"
      * @details "Starts with the neutral FEN string, using `init_board()`"
      */
-    Board::Board()
-        : m_squares {new uint16_t[64]}
-        , m_captured {new uint16_t[10]} {
-        init_board();
-    }
-
-    /**
-     * @brief "Copy constructor of `Board`"
-     */
-    Board::Board(const Board &board)
-        : m_squares(board.m_squares.get())
-        , m_captured(board.m_captured.get()) {}
-
-    /**
-     * @brief "Move constructor of `Board`"
-     */
-    Board::Board(Board &&board) noexcept
-        : m_squares(std::move(board.m_squares))
-        , m_captured(std::move(board.m_captured)) {}
+    Board::Board() { init_board(); }
 
     // TODO Aggiungere linee per scacchiera
     /**
@@ -46,7 +28,7 @@ namespace DreamChess {
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
         for(uint64_t i = 0; i < 64; i++) {
-            stream << board.m_piece_repr.at(board.m_squares[i]);
+            stream << g_piece_repr.at(board.m_squares[i]);
 
             if((i + 1) % 8 == 0) { stream << std::endl; }
         }
@@ -67,7 +49,7 @@ namespace DreamChess {
 
         // Board representation
         for(uint64_t i = 0; i < 64; i++) {
-            fen.push_back(static_cast<char>(m_piece_repr.at(m_squares[i])));
+            fen.push_back(static_cast<char>(g_piece_repr.at(m_squares[i])));
 
             if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
         }
@@ -225,6 +207,23 @@ namespace DreamChess {
     [[nodiscard]] bool Board::is_in_game() const { return m_in_game; }
 
     /**
+     * @brief "Returns the piece corresponding to index"
+     * @param index The index of the returned piece
+     * @return The corresponding piece
+     */
+    [[nodiscard]] Piece Board::get_piece_at(uint16_t index) const {
+        return m_squares[index];
+    }
+
+    /**
+     * @brief "Returns who plays in current turn"
+     * @return True if it's WHITE, false otherwise
+     */
+    [[nodiscard]] bool Board::get_turn() const {
+        return m_turn;
+    }
+
+    /**
      * @brief "Used to init the board with the neutral FEN configuration"
      * @details "Parses the FEN string and inits the `Board`"
      */
@@ -251,11 +250,7 @@ namespace DreamChess {
                 if(isdigit(sym)) {
                     file += sym - '0';
                 } else {
-                    Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
-                    Piece type = Board::m_fen_to_piece.at(
-                        static_cast<uint8_t>(std::tolower(sym)));
-
-                    m_squares[rank * 8 + file] = color | type;
+                    m_squares[rank * 8 + file] = g_fen_to_piece.at(sym);
                     file++;
                 }
             }
@@ -284,7 +279,7 @@ namespace DreamChess {
                     = move.m_destination
                     - 8 * (move.m_destination > move.m_source ? 1 : -1);
                 m_captured[m_squares[en_passant]]++;
-                m_squares[en_passant] = 0;
+                m_squares[en_passant] = Piece::NONE;
             }
 
             // Updating captured pieces
@@ -297,7 +292,7 @@ namespace DreamChess {
                && move.m_destination - move.m_source == 2) {
                 m_squares[move.m_destination - 1]
                     = m_squares[move.m_destination + 1];
-                m_squares[move.m_destination + 1] = 0;
+                m_squares[move.m_destination + 1] = Piece::NONE;
             }
 
             // Queenside castle
@@ -305,7 +300,7 @@ namespace DreamChess {
                && move.m_source - move.m_destination == 2) {
                 m_squares[move.m_destination + 1]
                     = m_squares[move.m_destination - 2];
-                m_squares[move.m_destination - 2] = 0;
+                m_squares[move.m_destination - 2] = Piece::NONE;
             }
 
             if(move.is_promotion()) {
@@ -318,25 +313,5 @@ namespace DreamChess {
         } else {
             throw std::logic_error("Invalid move!");
         }
-    }
-
-    /**
-     * @brief "Checks if the move is valid"
-     * @details "A `Move` is valid if it's in the `Board` and actually moves the
-     * `Piece`"
-     */
-    [[nodiscard]] bool Board::Move::is_valid() const {
-        return m_source >= 0 && m_source < 64 && m_destination >= 0
-            && m_destination < 64 && m_source != m_destination;
-    }
-
-    /**
-     * @brief "Checks if the move is a promotion move"
-     * @details "A `Move` is promotion if it's made by a pawn and the
-     * destination it's in the opposite player first file"
-     */
-    [[nodiscard]] bool Board::Move::is_promotion() const {
-        return m_piece == Piece::PAWN
-            && (m_destination < 8 || m_destination > 55);
     }
 } // namespace DreamChess

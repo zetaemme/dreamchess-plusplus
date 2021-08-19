@@ -22,7 +22,7 @@ set(INC
 	${PROJECT_SOURCE_DIR}/include/Game.hpp
 	${PROJECT_SOURCE_DIR}/include/History.hpp
 	${PROJECT_SOURCE_DIR}/include/Piece.hpp
-)
+	include/Move.hpp src/Move.cpp)
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 

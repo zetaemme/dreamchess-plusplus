@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July, 2021
+ * @date July-August, 2021
  */
 
 #include "../include/Game.hpp"
@@ -21,6 +21,12 @@ namespace DreamChess {
      */
     bool Game::is_in_game() const {
         return m_board.is_in_game();
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const Game &game) {
+        stream << game.m_board;
+
+        return stream;
     }
 
     /**
