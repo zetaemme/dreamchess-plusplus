@@ -21,7 +21,6 @@ namespace DreamChess {
      */
     Board::Board() { init_board(); }
 
-    // TODO Aggiungere linee per scacchiera
     /**
      * @brief "`out-stream` operator overloading"
      * @details "Print each piece and ends line every 8 files"
@@ -76,7 +75,7 @@ namespace DreamChess {
             }
         }
 
-        std::string turn = m_turn ? "w" : "b";
+        std::string turn = m_turn == Piece::WHITE ? "w" : "b";
         fen.append(" " + turn + " ");
 
         std::string castle;
@@ -111,10 +110,10 @@ namespace DreamChess {
 
         // TODO Manca controllo mossa precedente
         for(uint64_t i = 24; i < 32; i++) {
-            if(!m_turn) {
-                if(m_squares[i] == (Piece::BLACK | Piece::PAWN)) {
-                    if(m_squares[i + 1] == (Piece::WHITE | Piece::PAWN)
-                       || m_squares[i - 1] == (Piece::WHITE | Piece::PAWN)) {
+            if(m_turn == Piece::BLACK) {
+                if(m_squares[i] == Piece::BLACK_PAWN) {
+                    if(m_squares[i + 1] == Piece::WHITE_PAWN
+                       || m_squares[i - 1] == Piece::WHITE_PAWN) {
                         switch(i) {
                             case 24:
                                 en_passant.append("a6");
@@ -144,9 +143,9 @@ namespace DreamChess {
                     }
                 }
             } else {
-                if(m_squares[i] == (Piece::WHITE | Piece::PAWN)) {
-                    if(m_squares[i + 1] == (Piece::BLACK | Piece::PAWN)
-                       || m_squares[i - 1] == (Piece::BLACK | Piece::PAWN)) {
+                if(m_squares[i] == Piece::WHITE_PAWN) {
+                    if(m_squares[i + 1] == Piece::BLACK_PAWN
+                       || m_squares[i - 1] == Piece::BLACK_PAWN) {
                         switch(i) {
                             case 24:
                                 en_passant.append("a3");
@@ -215,14 +214,15 @@ namespace DreamChess {
      * @brief "Returns who plays in current turn"
      * @return True if it's WHITE, false otherwise
      */
-    [[nodiscard]] bool Board::get_turn() const { return m_turn; }
+    [[nodiscard]] Piece::Enum Board::get_turn() const { return m_turn; }
 
     /**
      * @brief "Checks if one of the two sides is under check"
      * @return The side who's in check
      */
     [[nodiscard]] Piece::Enum Board::is_in_check() const {
-        auto playing_side = m_turn ? Piece::BLACK : Piece::WHITE;
+        auto playing_side
+            = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
         auto opponent_king = (Piece::KING | playing_side);
 
         for(uint64_t i = 0; i < 64; i++) {
@@ -279,10 +279,8 @@ namespace DreamChess {
      * @return The color of the piece which is attacked
      */
     [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
-        auto attacking_side_color = m_turn ? Piece::WHITE : Piece::BLACK;
-
         for(uint64_t i = 0; i < 64; i++) {
-            if(Piece::get_color(m_squares[i]) == attacking_side_color) {
+            if(Piece::get_color(m_squares[i]) == m_turn) {
                 Move move {*this, i, index};
 
                 if(is_semi_valid_move(move)) { return Piece::WHITE; }
@@ -331,11 +329,8 @@ namespace DreamChess {
      * @return True if the move is semi_valid, False otherwise
      */
     [[nodiscard]] bool Board::is_semi_valid_move(const Move &move) const {
-        // FIXME Modifica in Board.hpp m_turn per usare Enum
-        auto turn_color = m_turn ? Piece::WHITE : Piece::BLACK;
-
         if(!move.is_valid()
-           || Piece::get_color(m_squares[move.get_source()]) != turn_color) {
+           || Piece::get_color(m_squares[move.get_source()]) != m_turn) {
             return false;
         }
 

@@ -6,10 +6,7 @@
  */
 
 #include "Game.hpp"
-
 #include "Move.hpp"
-
-#include <iostream>
 
 namespace DreamChess {
     /**

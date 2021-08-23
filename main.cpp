@@ -4,7 +4,7 @@
  * @version v1.0
  * @date July-August, 2021
  */
-#include "../include/Game.hpp"
+#include "Game.hpp"
 
 #include <iostream>
 

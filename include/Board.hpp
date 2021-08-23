@@ -30,7 +30,7 @@ namespace DreamChess {
 
         [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
 
-        [[nodiscard]] bool get_turn() const;
+        [[nodiscard]] Piece::Enum get_turn() const;
 
         [[nodiscard]] Piece::Enum is_in_check() const;
 
@@ -40,7 +40,7 @@ namespace DreamChess {
         /**
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
-        bool m_turn = true;
+        Piece::Enum m_turn = Piece::WHITE;
 
         /**
          * @brief "Counts the number of turns since the game started"

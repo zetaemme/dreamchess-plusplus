@@ -5,12 +5,10 @@
  * @date July-August, 2021
  */
 
+#include "Board.hpp"
 #include "Move.hpp"
 
-#include "Board.hpp"
-
 namespace DreamChess {
-
     /**
      * @brief "Constructs a move with 'hard' source and destination"
      * @param board The board where to make the move
