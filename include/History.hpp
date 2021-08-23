@@ -2,15 +2,16 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July, 2021
+ * @date July-August, 2021
  */
 #pragma once
 
 #include "Board.hpp"
+#include "Move.hpp"
 
 #include <list>
 #include <memory>
-#include <string>
+#include <string_view>
 
 namespace DreamChess {
     /**
@@ -22,17 +23,17 @@ namespace DreamChess {
          * @brief "A single step into the History"
          */
         struct Step final {
-            explicit Step(const std::string &, const Board::Move &);
+            Step(std::string_view, const Move &);
 
             /**
              * @brief "The board as it can be seen at this step"
              */
-            const std::string &m_board_fen;
+            std::string_view m_board_fen;
 
             /**
              * @brief "Last move which has been made"
              */
-            const Board::Move &m_move;
+            const Move m_move;
         };
 
         /**
@@ -41,16 +42,11 @@ namespace DreamChess {
         std::unique_ptr<std::list<Step>> m_game_history;
 
     public:
-        explicit History();
-        History(const History &);
-        History(History &&) noexcept;
-        ~History() = default;
-
-        // TODO: Aggiungere operator= per move e copy
+        History();
 
         Step first();
         Step last();
 
-        void add_step(const std::string &, const Board::Move &);
+        void add_step(std::string_view, const Move &);
     };
 } // namespace DreamChess

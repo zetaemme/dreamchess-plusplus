@@ -2,70 +2,45 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July, 2021
+ * @date July-August, 2021
  */
 #pragma once
 
 #include "Piece.hpp"
 
 #include <cstdint>
-#include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
 namespace DreamChess {
+    class Move;
+
     /**
      * @brief "Define Board, Pieces and moves for the game"
      */
     class Board final {
     public:
-        explicit Board();
-        Board(const Board &);
-        Board(Board &&) noexcept;
-        ~Board() = default;
-
-        // TODO: Aggiungere operator= per move e copy
+        Board();
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
 
-        /**
-         * @brief "Describes a `Move` for any piece in the board"
-         */
-        struct Move final {
-            /**
-             * @brief "The move's source square"
-             */
-            uint16_t m_source;
-            /**
-             * @brief "The move's destination square"
-             */
-            uint16_t m_destination;
+        [[nodiscard]] std::string to_fen() const;
 
-            /**
-             * @brief "The piece which is making the move"
-             */
-            Piece m_piece;
-            /**
-             * @brief "The declared promotion present, if promotion"
-             */
-            Piece m_promotion_piece;
+        [[nodiscard]] bool is_in_game() const;
 
-            bool is_valid() const;
+        [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
 
-            /**
-             * @brief "Checks if the move is a promotion move"
-             */
-            bool is_promotion() const;
-        };
+        [[nodiscard]] Piece::Enum get_turn() const;
 
-        std::string to_fen() const;
+        [[nodiscard]] Piece::Enum is_in_check() const;
+
+        bool make_move(const Move &);
 
     private:
         /**
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
-        bool m_turn = true;
+        Piece::Enum m_turn = Piece::WHITE;
 
         /**
          * @brief "Counts the number of turns since the game started"
@@ -73,37 +48,24 @@ namespace DreamChess {
         uint64_t m_turn_counter = 1;
 
         /**
+         * @brief "Checks if the game is still going on"
+         */
+        bool m_in_game = true;
+
+        /**
          * @brief "Array describing the board's state"
          */
-        std::unique_ptr<uint16_t[]> m_squares;
+        std::array<Piece::Enum, 64> m_squares {};
 
         /**
          * @brief "Keeps track of captured pieces"
          */
-        std::unique_ptr<uint16_t[]> m_captured;
-
-        /**
-         * @brief "Vector with all the possible moves for the current board
-         * state"
-         */
-        std::vector<Move> m_move_list;
-
-        /**
-         * @brief "Convention for the FEN to DreamChess::Piece mapping"
-         */
-        const std::map<uint8_t, Piece> m_fen_to_piece {
-            {'p', Piece::PAWN}, {'n', Piece::KNIGHT}, {'b', Piece::BISHOP},
-            {'r', Piece::ROOK}, {'q', Piece::QUEEN},  {'k', Piece::KING}};
-
-        /**
-         * @brief "Used in Piece to char conversion, while printing the board"
-         */
-        const std::map<uint16_t, uint8_t> m_piece_repr {
-            {0, ' '},  {9, 'P'},  {10, 'N'}, {11, 'B'}, {12, 'R'},
-            {13, 'Q'}, {14, 'K'}, {17, 'p'}, {18, 'n'}, {19, 'b'},
-            {20, 'r'}, {21, 'q'}, {22, 'k'}};
+        std::map<Piece::Enum, uint16_t> m_captured {};
 
         void init_board();
-        void make_move(const Move &);
+
+        [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
+        [[nodiscard]] bool is_diagonals_ok(const Move &, int64_t) const;
+        [[nodiscard]] bool is_semi_valid_move(const Move &) const;
     };
 } // namespace DreamChess
