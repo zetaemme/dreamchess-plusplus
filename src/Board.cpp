@@ -395,7 +395,7 @@ namespace DreamChess {
                             return false;
                         }
 
-                        if(!is_diagonals_ok(move, ver)
+                        if(!diag
                            || m_squares[move.get_destination()]
                                   != Piece::NONE) {
                             return false;
@@ -404,7 +404,7 @@ namespace DreamChess {
                 } else {
                     if(ver != 1) { return false; }
 
-                    if(!is_diagonals_ok(move, ver)) { return false; }
+                    if(!diag) { return false; }
 
                     if(m_squares[move.get_destination()] == Piece::NONE) {
                         if(Piece::get_color(m_squares[move.get_source()])
@@ -486,7 +486,7 @@ namespace DreamChess {
                         return false;
                     }
 
-                    if(!is_diagonals_ok(move, ver)) {
+                    if(!diag) {
                         return false;
                     }
                 }
