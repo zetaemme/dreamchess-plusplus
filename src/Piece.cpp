@@ -27,7 +27,7 @@ namespace DreamChess {
     };
 
     /**
-     * @brief "Calculate the given piece's type"
+     * @brief "Calculates the given piece's type"
      * @param target The piece which I want to know the type
      * @return The piece's type
      */
@@ -36,12 +36,21 @@ namespace DreamChess {
     };
 
     /**
-     * @brief "Calculate the given piece's color"
+     * @brief "Calculates the given piece's color"
      * @param target The piece which I want to know the color
      * @return The piece's color
      */
     Piece::Enum Piece::get_color(Enum target) {
         return static_cast<Enum>(
             target & (~PAWN | ~KNIGHT | ~BISHOP | ~ROOK | ~QUEEN | ~KING));
+    }
+
+    /**
+     * @brief "Calculates the target's opposite side color"
+     * @param target The piece which I want to know the opposite color
+     * @return The opposite side's color
+     */
+    Piece::Enum Piece::opposite_side_color(Enum target) {
+        return get_color(target) == WHITE ? BLACK : WHITE;
     }
 } // namespace DreamChess

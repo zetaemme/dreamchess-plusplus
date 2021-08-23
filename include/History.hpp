@@ -13,7 +13,6 @@
 #include <memory>
 #include <string_view>
 
-
 namespace DreamChess {
     /**
      * @brief "The current game History"

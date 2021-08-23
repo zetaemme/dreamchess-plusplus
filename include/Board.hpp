@@ -62,14 +62,7 @@ namespace DreamChess {
          */
         std::map<Piece::Enum, uint16_t> m_captured {};
 
-        /**
-         * @brief "Vector with all the possible moves for the current board
-         * state"
-         */
-        std::vector<Move> m_move_list;
-
         void init_board();
-        void init_move_list();
 
         [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
         [[nodiscard]] bool is_diagonals_ok(const Move &, int64_t) const;

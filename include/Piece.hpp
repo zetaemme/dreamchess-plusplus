@@ -98,5 +98,7 @@ namespace DreamChess {
 
         static Enum get_type(Enum);
         static Enum get_color(Enum);
+
+        static Enum opposite_side_color(Enum);
     };
 } // namespace DreamChess
