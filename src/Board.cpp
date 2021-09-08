@@ -29,14 +29,24 @@ namespace DreamChess {
      * @return The output stream
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
-        for(uint64_t i = 0; i < 64; i++) {
-            stream << Piece::g_piece_repr.at(board.m_squares[i]);
+        It board_it {board};
 
-            if((i + 1) % 8 == 0) { stream << std::endl; }
+        uint16_t i = 0;
+        for(auto &square : board_it) {
+            stream << Piece::g_piece_repr.at(square);
+            i++;
+
+
+            if((i + 1) % 8 == 0) {
+                stream << std::endl;
+                i++;
+            }
         }
 
         return stream;
     }
+
+    Piece::Enum *Board::get_squares_array_ptr() { return m_squares.data(); }
 
     /**
      * @brief "Converts the board to FEN notation"
@@ -478,17 +488,13 @@ namespace DreamChess {
 
                     if(square_attacked(move.get_source() + step)
                        == Piece::opposite_side_color(
-                        m_squares[move.get_piece()])) {
+                           m_squares[move.get_piece()])) {
                         return false;
                     }
                 } else {
-                    if(ver > 1) {
-                        return false;
-                    }
+                    if(ver > 1) { return false; }
 
-                    if(!is_diagonals_ok(move, ver)) {
-                        return false;
-                    }
+                    if(!is_diagonals_ok(move, ver)) { return false; }
                 }
 
                 break;
@@ -553,5 +559,63 @@ namespace DreamChess {
         }
 
         return true;
+    }
+
+    It::It(Board board)
+        : m_pointer(board.get_squares_array_ptr()) {}
+
+    It::It(const It &it)
+        : m_pointer(it.m_pointer) {}
+
+    It::~It() {
+        delete m_pointer;
+        m_pointer = nullptr;
+    }
+
+    It &It::operator=(const It &it) {
+        if(this != &it) {
+            delete m_pointer;
+            m_pointer = it.m_pointer;
+        }
+
+        return *this;
+    }
+
+    Piece::Enum &It::operator*() const { return *m_pointer; }
+
+    bool operator==(const It &it1, const It &it2) {
+        return it1.m_pointer == it2.m_pointer;
+    }
+
+    bool operator!=(const It &it1, const It &it2) {
+        return it1.m_pointer != it2.m_pointer;
+    }
+
+    It &It::operator++() {
+        ++m_pointer;
+        return *this;
+    }
+
+    It It::operator++(int) {
+        auto tmp = *this;
+        ++(*this);
+
+        return tmp;
+    }
+
+    It It::begin() { return It {Board()}; }
+
+    It It::end() {
+        It it {Board()};
+
+        auto current = it.m_pointer;
+        auto next = ++it.m_pointer;
+
+        while(next != nullptr) {
+            next = current;
+            ++current;
+        }
+
+        return it;
     }
 } // namespace DreamChess

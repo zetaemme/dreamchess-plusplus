@@ -8,7 +8,9 @@
 
 #include "Piece.hpp"
 
+#include <array>
 #include <cstdint>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -23,6 +25,8 @@ namespace DreamChess {
         Board();
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
+
+        Piece::Enum *get_squares_array_ptr();
 
         [[nodiscard]] std::string to_fen() const;
 
@@ -67,5 +71,27 @@ namespace DreamChess {
         [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
         [[nodiscard]] bool is_diagonals_ok(const Move &, int64_t) const;
         [[nodiscard]] bool is_semi_valid_move(const Move &) const;
+    };
+
+    /**
+     * @brief "Iterator for the Board class"
+     */
+    struct It : public std::iterator<std::forward_iterator_tag, Board> {
+        Piece::Enum *m_pointer;
+
+        explicit It(Board);
+        It(const It &);
+
+        ~It();
+
+        It &operator=(const It &);
+        Piece::Enum &operator*() const;
+        friend bool operator==(const It &, const It &);
+        friend bool operator!=(const It &, const It &);
+        It &operator++();
+        It operator++(int);
+
+        It begin();
+        It end();
     };
 } // namespace DreamChess

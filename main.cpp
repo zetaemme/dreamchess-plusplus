@@ -8,12 +8,13 @@
 
 #include <iostream>
 
-int main() {
-    DreamChess::Game game {};
+int
+main() {
+    // DreamChess::Game game {};
 
-    std::string input_move;
+    // std::string input_move;
 
-    while(game.is_in_game()) {
+    /*while(game.is_in_game()) {
         std::cout << "---------------------------------------" << std::endl;
         std::cout << game;
         std::cout << "---------------------------------------" << std::endl;
@@ -27,6 +28,14 @@ int main() {
             valid_move = game.make_move(input_move);
         } while(!valid_move
                 && (std::cout << "Invalid move! Retry!" << std::endl));
+    }*/
+
+    DreamChess::Board board {};
+    DreamChess::It board_it {board};
+
+    for(auto it = board_it.begin(); it != board_it.end(); ++it) {
+        std::cout << std::distance(board_it.begin(), it) << ":"
+                  << DreamChess::Piece::g_piece_repr.at(*it) << std::endl;
     }
 
     return 0;
