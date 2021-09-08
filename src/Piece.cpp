@@ -8,6 +8,9 @@
 #include "Piece.hpp"
 
 namespace DreamChess {
+    /**
+     * @brief Maps Piece::Enum to the corresponding FEN piece char
+     */
     const std::map<Piece::Enum, uint8_t> Piece::g_piece_repr
         = {{Piece::NONE, ' '},         {Piece::WHITE_PAWN, 'P'},
            {Piece::WHITE_KNIGHT, 'N'}, {Piece::WHITE_BISHOP, 'B'},
@@ -17,6 +20,9 @@ namespace DreamChess {
            {Piece::BLACK_ROOK, 'r'},   {Piece::BLACK_QUEEN, 'q'},
            {Piece::BLACK_KING, 'k'}};
 
+    /**
+     * @brief Maps the FEN char to the corresponding Piece::Enum
+     */
     const std::map<uint8_t, Piece::Enum> Piece::g_fen_to_piece = {
         {'p', Piece::BLACK_PAWN},   {'n', Piece::BLACK_KNIGHT},
         {'b', Piece::BLACK_BISHOP}, {'r', Piece::BLACK_ROOK},
@@ -27,7 +33,7 @@ namespace DreamChess {
     };
 
     /**
-     * @brief "Calculates the given piece's type"
+     * @brief Calculates the given piece's type
      * @param target The piece which I want to know the type
      * @return The piece's type
      */
@@ -36,7 +42,7 @@ namespace DreamChess {
     };
 
     /**
-     * @brief "Calculates the given piece's color"
+     * @brief Calculates the given piece's color
      * @param target The piece which I want to know the color
      * @return The piece's color
      */
@@ -46,7 +52,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Calculates the target's opposite side color"
+     * @brief Calculates the target's opposite side color
      * @param target The piece which I want to know the opposite color
      * @return The opposite side's color
      */

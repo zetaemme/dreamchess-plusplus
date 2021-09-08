@@ -5,8 +5,9 @@
  * @date July-August, 2021
  */
 
-#include "Board.hpp"
 #include "Move.hpp"
+
+#include "Board.hpp"
 
 namespace DreamChess {
     /**
@@ -31,7 +32,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief The `Move` constructor
+     * @brief The Move constructor
      * @param board The board in which the move has been made
      * @param input Input string in "source-destination" format
      */
@@ -58,13 +59,13 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Source square getter"
+     * @brief Source square getter
      * @return The source square
      */
     [[nodiscard]] uint16_t Move::get_source() const { return m_source; }
 
     /**
-     * @brief "Destination square getter"
+     * @brief Destination square getter
      * @return The destination square
      */
     [[nodiscard]] uint16_t Move::get_destination() const {
@@ -72,13 +73,13 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Gets the piece which is making the move"
+     * @brief Gets the piece which is making the move
      * @return The piece which is making the move
      */
     [[nodiscard]] Piece::Enum Move::get_piece() const { return m_piece; }
 
     /**
-     * @brief "Returns the chosen promotion piece "
+     * @brief Returns the chosen promotion piece
      * @return The chosen promotion piece (QUEEN by default)
      */
     [[nodiscard]] Piece::Enum Move::get_promotion_piece() const {
@@ -86,9 +87,9 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if the move is valid"
-     * @details "A `Move` is valid if it's in the `Board` and actually moves the
-     * `Piece`"
+     * @brief Checks if the move is valid
+     * @details "A Move is valid if it's in the Board and actually moves the
+     * Piece
      */
     [[nodiscard]] bool Move::is_valid() const {
         return m_source >= 0 && m_source < 64 && m_destination >= 0
@@ -96,9 +97,9 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if the move is a promotion move"
-     * @details "A `Move` is promotion if it's made by a pawn and the
-     * destination it's in the opposite player first file"
+     * @brief Checks if the move is a promotion move
+     * @details A Move is promotion if it's made by a pawn and the
+     * destination it's in the opposite player first file
      */
     [[nodiscard]] bool Move::is_promotion() const {
         return m_piece == Piece::PAWN
@@ -106,7 +107,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks a Move possible horizontal squares"
+     * @brief Checks a Move possible horizontal squares
      * @return The number of possible horizontal squares
      */
     [[nodiscard]] int64_t Move::horizontal_check() const {
@@ -114,7 +115,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks a Move possible vertical squares"
+     * @brief Checks a Move possible vertical squares
      * @return The number of possible vertical squares
      */
     [[nodiscard]] int64_t Move::vertical_check() const {

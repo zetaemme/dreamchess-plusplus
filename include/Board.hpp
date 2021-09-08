@@ -62,7 +62,7 @@ namespace DreamChess {
         std::array<Piece::Enum, 64> m_squares {};
 
         /**
-         * @brief "Keeps track of captured pieces"
+         * @brief Keeps track of captured pieces
          */
         std::map<Piece::Enum, uint16_t> m_captured {};
 
@@ -74,24 +74,29 @@ namespace DreamChess {
     };
 
     /**
-     * @brief "Iterator for the Board class"
+     * @brief Iterator for the Board class
      */
-    struct It : public std::iterator<std::forward_iterator_tag, Board> {
-        Piece::Enum *m_pointer;
+    struct BoardIt
+        : public std::iterator<std::forward_iterator_tag, Piece::Enum> {
+        explicit BoardIt(Board);
+        BoardIt(const BoardIt &);
 
-        explicit It(Board);
-        It(const It &);
+        ~BoardIt();
 
-        ~It();
-
-        It &operator=(const It &);
+        BoardIt &operator=(const BoardIt &);
         Piece::Enum &operator*() const;
-        friend bool operator==(const It &, const It &);
-        friend bool operator!=(const It &, const It &);
-        It &operator++();
-        It operator++(int);
+        friend bool operator==(const BoardIt &, const BoardIt &);
+        friend bool operator!=(const BoardIt &, const BoardIt &);
+        BoardIt &operator++();
+        BoardIt operator++(int);
 
-        It begin();
-        It end();
+        BoardIt begin();
+        BoardIt end();
+
+    private:
+        /**
+         * @brief Points to the currently iterated item
+         */
+        Piece::Enum *m_pointer;
     };
 } // namespace DreamChess

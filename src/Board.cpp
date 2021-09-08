@@ -16,14 +16,14 @@
 
 namespace DreamChess {
     /**
-     * @brief "Constructs a `Board`"
-     * @details "Starts with the neutral FEN string, using `init_board()`"
+     * @brief Constructs a Board
+     * @details Starts with the neutral FEN string, using init_board()
      */
     Board::Board() { init_board(); }
 
     /**
-     * @brief "`out-stream` operator overloading"
-     * @details "Print each piece and ends line every 8 files"
+     * @brief Overloads the out-stream operator for the Board
+     * @details Print each piece and ends line every 8 files
      * @param stream The new output stream
      * @param board The printed board
      * @return The output stream
@@ -39,11 +39,17 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Converts the board to FEN notation"
-     * @details "First the method constructs the actual state of the Board, then
+     * @brief Returns a pointer to the first element of the m_squares array
+     * @return The pointer to the first element of m_squares
+     */
+    Piece::Enum *Board::get_squares_array_ptr() { return m_squares.data(); }
+
+    /**
+     * @brief Converts the board to FEN notation
+     * @details First the method constructs the actual state of the Board, then
      *          replaces consecutive whitespaces with the number of ' ' chars.
      *          Finally it adds Move, Castle, En Passant, Semi-moves end Number
-     *          of Moves since the beginning"
+     *          of Moves since the beginning
      * @return The FEN representation of the Board
      */
     [[nodiscard]] std::string Board::to_fen() const {
@@ -197,13 +203,13 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if the game is in progress"
+     * @brief Checks if the game is in progress
      * @return true if the game is in progress, false otherwise
      */
     [[nodiscard]] bool Board::is_in_game() const { return m_in_game; }
 
     /**
-     * @brief "Returns the piece corresponding to index"
+     * @brief Returns the piece corresponding to index
      * @param index The index of the returned piece
      * @return The corresponding piece
      */
@@ -212,13 +218,13 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Returns who plays in current turn"
+     * @brief Returns who plays in current turn
      * @return True if it's WHITE, false otherwise
      */
     [[nodiscard]] Piece::Enum Board::get_turn() const { return m_turn; }
 
     /**
-     * @brief "Checks if one of the two sides is under check"
+     * @brief Checks if one of the two sides is under check
      * @return The side who's in check
      */
     [[nodiscard]] Piece::Enum Board::is_in_check() const {
@@ -234,8 +240,8 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Used to init the board with the neutral FEN configuration"
-     * @details "Parses the FEN string and inits the `Board`"
+     * @brief Used to init the board with the neutral FEN configuration
+     * @details Parses the FEN string and inits the Board
      */
     void Board::init_board() {
         uint16_t file = 0;
@@ -268,7 +274,7 @@ namespace DreamChess {
     }
 
     /**
-     * @breif "Checks if a given square is attached by another piece"
+     * @breif Checks if a given square is attached by another piece
      * @param index The index of the square
      * @return The color of the piece which is attacked
      */
@@ -285,7 +291,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if the diagonals of the given move are free"
+     * @brief Checks if the diagonals of the given move are free
      * @param move The move to check
      * @param ver The possible vertical values from the move source square
      * @return True if the diagonals are free, False otherwise
@@ -318,7 +324,7 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if a move is semi_valid"
+     * @brief Checks if a move is semi_valid
      * @param move The move to check
      * @return True if the move is semi_valid, False otherwise
      */
@@ -478,17 +484,13 @@ namespace DreamChess {
 
                     if(square_attacked(move.get_source() + step)
                        == Piece::opposite_side_color(
-                        m_squares[move.get_piece()])) {
+                           m_squares[move.get_piece()])) {
                         return false;
                     }
                 } else {
-                    if(ver > 1) {
-                        return false;
-                    }
+                    if(ver > 1) { return false; }
 
-                    if(!diag) {
-                        return false;
-                    }
+                    if(!diag) { return false; }
                 }
 
                 break;
@@ -501,10 +503,10 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Makes a move in the current `Board`"
-     * @details "Checks if the `Move` is a "special move", makes a "normal move"
-     * otherwise"
-     * @param move The `Move` to make
+     * @brief Makes a move in the current Board
+     * @details Checks if the `Move` is a "special move", makes a "normal move
+     * otherwise
+     * @param move The Move to make
      */
     bool Board::make_move(const Move &move) {
         if(move.is_valid()) {
@@ -553,5 +555,112 @@ namespace DreamChess {
         }
 
         return true;
+    }
+
+    /**
+     * @brief The Board ForwardIterator constructor
+     * @param board The board that will be iterated by this iterator
+     */
+    BoardIt::BoardIt(Board board)
+        : m_pointer {board.get_squares_array_ptr()} {}
+
+    /**
+     * @brief The Board ForwardIterator copy-constructor
+     * @param it The ForwardIterator from which I'm coping
+     */
+    BoardIt::BoardIt(const BoardIt &it)
+        : m_pointer {it.m_pointer} {}
+
+    /**
+     * @brief The Board ForwardIterator destructor
+     */
+    BoardIt::~BoardIt() { m_pointer = nullptr; }
+
+    /**
+     * @breif Overloads the assignment operator for the Board ForwardIterator
+     * @param it The Board ForwardIterator which I'm assigning to this
+     * @return
+     */
+    BoardIt &BoardIt::operator=(const BoardIt &it) {
+        if(this != &it) {
+            m_pointer = nullptr;
+            m_pointer = it.m_pointer;
+        }
+
+        return *this;
+    }
+
+    /**
+     * @brief Overloads the dereference operator for the Board ForwardIterator
+     * @return The value pointed from m_pointer
+     */
+    Piece::Enum &BoardIt::operator*() const { return *m_pointer; }
+
+    /**
+     * @brief Overloads the equality operator for the Board ForwardIterator
+     * @param it1 The first ForwardIterator
+     * @param it2 The second ForwardIterator
+     * @return True if the two iterators point to the same item, false otherwise
+     */
+    bool operator==(const BoardIt &it1, const BoardIt &it2) {
+        return it1.m_pointer == it2.m_pointer;
+    }
+
+    /**
+     * @brief Overloads the inequality operator for the Board ForwardIterator
+     * @param it1 The first ForwardIterator
+     * @param it2 The second ForwardIterator
+     * @return True if the two iterators don't point to the same item, false
+     * otherwise
+     */
+    bool operator!=(const BoardIt &it1, const BoardIt &it2) {
+        return it1.m_pointer != it2.m_pointer;
+    }
+
+    /**
+     * @brief Overloads the pre-increment operator for the Board ForwardIterator
+     * @return The +1 address pointing iterator
+     */
+    BoardIt &BoardIt::operator++() {
+        ++m_pointer;
+        return *this;
+    }
+
+    /**
+     * @brief Overloads the post-increment operator for the Board
+     * ForwardIterator
+     * @return The iterator before pointing to the +1 address
+     */
+    BoardIt BoardIt::operator++(int) {
+        auto tmp = *this;
+        ++(*this);
+
+        return tmp;
+    }
+
+    /**
+     * @brief Gets an iterator which internal pointer points to the first
+     * square's address
+     * @return The pointer to the first square's address
+     */
+    BoardIt BoardIt::begin() { return BoardIt {Board()}; }
+
+    /**
+     * @brief Gets an iterator which internal pointer points to the last
+     * square's address
+     * @return The pointer to the last square's address
+     */
+    BoardIt BoardIt::end() {
+        BoardIt it {Board()};
+
+        auto current = it.m_pointer;
+        auto next = ++it.m_pointer;
+
+        while(next != nullptr) {
+            current = next;
+            ++next;
+        }
+
+        return it;
     }
 } // namespace DreamChess
