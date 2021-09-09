@@ -29,20 +29,18 @@ namespace DreamChess {
      * @return The output stream
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
-        for(uint64_t i = 0; i < 64; i++) {
-            stream << Piece::g_piece_repr.at(board.m_squares[i]);
+        uint16_t i = 0;
+
+        for(auto &square : board) {
+            stream << Piece::g_piece_repr.at(square);
 
             if((i + 1) % 8 == 0) { stream << std::endl; }
+
+            i++;
         }
 
         return stream;
     }
-
-    /**
-     * @brief Returns a pointer to the first element of the m_squares array
-     * @return The pointer to the first element of m_squares
-     */
-    Piece::Enum *Board::get_squares_array_ptr() { return m_squares.data(); }
 
     /**
      * @brief Converts the board to FEN notation
@@ -55,17 +53,20 @@ namespace DreamChess {
     [[nodiscard]] std::string Board::to_fen() const {
         std::string fen;
 
+        uint64_t i = 0;
+
         // Board representation
-        for(uint64_t i = 0; i < 64; i++) {
-            fen.push_back(
-                static_cast<char>(Piece::g_piece_repr.at(m_squares[i])));
+        for(auto &square : *this) {
+            fen.push_back(static_cast<char>(Piece::g_piece_repr.at(square)));
 
             if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
+
+            i++;
         }
 
         // Removing whitespaces
         uint16_t counter = 0;
-        for(uint64_t i = 0; i < fen.length(); i++) {
+        for(i = 0; i < fen.length(); i++) {
             if(fen.at(i) == ' ') {
                 counter++;
 
@@ -116,7 +117,7 @@ namespace DreamChess {
         std::string en_passant;
 
         // TODO Manca controllo mossa precedente
-        for(uint64_t i = 24; i < 32; i++) {
+        for(i = 24; i < 32; i++) {
             if(m_turn == Piece::BLACK) {
                 if(m_squares[i] == Piece::BLACK_PAWN) {
                     if(m_squares[i + 1] == Piece::WHITE_PAWN
@@ -279,12 +280,16 @@ namespace DreamChess {
      * @return The color of the piece which is attacked
      */
     [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
-        for(uint64_t i = 0; i < 64; i++) {
-            if(Piece::get_color(m_squares[i]) == m_turn) {
+        uint16_t i = 0;
+
+        for(auto &square : *this) {
+            if(Piece::get_color(square) == m_turn) {
                 Move move {*this, i, index};
 
                 if(is_semi_valid_move(move)) { return Piece::WHITE; }
             }
+
+            i++;
         }
 
         return Piece::BLACK;
@@ -558,109 +563,20 @@ namespace DreamChess {
     }
 
     /**
-     * @brief The Board ForwardIterator constructor
-     * @param board The board that will be iterated by this iterator
-     */
-    BoardIt::BoardIt(Board board)
-        : m_pointer {board.get_squares_array_ptr()} {}
-
-    /**
-     * @brief The Board ForwardIterator copy-constructor
-     * @param it The ForwardIterator from which I'm coping
-     */
-    BoardIt::BoardIt(const BoardIt &it)
-        : m_pointer {it.m_pointer} {}
-
-    /**
-     * @brief The Board ForwardIterator destructor
-     */
-    BoardIt::~BoardIt() { m_pointer = nullptr; }
-
-    /**
-     * @breif Overloads the assignment operator for the Board ForwardIterator
-     * @param it The Board ForwardIterator which I'm assigning to this
-     * @return
-     */
-    BoardIt &BoardIt::operator=(const BoardIt &it) {
-        if(this != &it) {
-            m_pointer = nullptr;
-            m_pointer = it.m_pointer;
-        }
-
-        return *this;
-    }
-
-    /**
-     * @brief Overloads the dereference operator for the Board ForwardIterator
-     * @return The value pointed from m_pointer
-     */
-    Piece::Enum &BoardIt::operator*() const { return *m_pointer; }
-
-    /**
-     * @brief Overloads the equality operator for the Board ForwardIterator
-     * @param it1 The first ForwardIterator
-     * @param it2 The second ForwardIterator
-     * @return True if the two iterators point to the same item, false otherwise
-     */
-    bool operator==(const BoardIt &it1, const BoardIt &it2) {
-        return it1.m_pointer == it2.m_pointer;
-    }
-
-    /**
-     * @brief Overloads the inequality operator for the Board ForwardIterator
-     * @param it1 The first ForwardIterator
-     * @param it2 The second ForwardIterator
-     * @return True if the two iterators don't point to the same item, false
-     * otherwise
-     */
-    bool operator!=(const BoardIt &it1, const BoardIt &it2) {
-        return it1.m_pointer != it2.m_pointer;
-    }
-
-    /**
-     * @brief Overloads the pre-increment operator for the Board ForwardIterator
-     * @return The +1 address pointing iterator
-     */
-    BoardIt &BoardIt::operator++() {
-        ++m_pointer;
-        return *this;
-    }
-
-    /**
-     * @brief Overloads the post-increment operator for the Board
+     * @brief Wraps the std::array::iterator begin() method to use it as Board
      * ForwardIterator
-     * @return The iterator before pointing to the +1 address
-     */
-    BoardIt BoardIt::operator++(int) {
-        auto tmp = *this;
-        ++(*this);
-
-        return tmp;
-    }
-
-    /**
-     * @brief Gets an iterator which internal pointer points to the first
-     * square's address
      * @return The pointer to the first square's address
      */
-    BoardIt BoardIt::begin() { return BoardIt {Board()}; }
+    std::array<Piece::Enum, 64>::const_iterator Board::begin() const {
+        return m_squares.begin();
+    }
 
     /**
-     * @brief Gets an iterator which internal pointer points to the last
-     * square's address
+     * @brief Wraps the std::array::iterator end() method to use it as Board
+     * ForwardIterator
      * @return The pointer to the last square's address
      */
-    BoardIt BoardIt::end() {
-        BoardIt it {Board()};
-
-        auto current = it.m_pointer;
-        auto next = ++it.m_pointer;
-
-        while(next != nullptr) {
-            current = next;
-            ++next;
-        }
-
-        return it;
+    std::array<Piece::Enum, 64>::const_iterator Board::end() const {
+        return m_squares.end();
     }
 } // namespace DreamChess

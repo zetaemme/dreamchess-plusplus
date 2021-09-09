@@ -22,12 +22,14 @@ namespace DreamChess {
      * @brief Defines a chess Game board
      */
     class Board final {
+        using internal_structure_type = std::array<Piece::Enum, 64>;
+
     public:
         Board();
 
-        friend std::ostream &operator<<(std::ostream &, const Board &);
+        [[nodiscard]] Piece::Enum is_in_check() const;
 
-        Piece::Enum *get_squares_array_ptr();
+        friend std::ostream &operator<<(std::ostream &, const Board &);
 
         [[nodiscard]] std::string to_fen() const;
 
@@ -37,15 +39,17 @@ namespace DreamChess {
 
         [[nodiscard]] Piece::Enum get_turn() const;
 
-        [[nodiscard]] Piece::Enum is_in_check() const;
-
         bool make_move(const Move &);
+
+        [[nodiscard]] internal_structure_type::const_iterator begin() const;
+
+        [[nodiscard]] internal_structure_type::const_iterator end() const;
 
     private:
         /**
          * @brief false for BLACK's or true for WHITE's turn
          */
-        Piece::Enum m_turn = Piece::WHITE;
+        Piece::Enum m_turn {Piece::WHITE};
 
         /**
          * @brief Counts the number of turns since the game started
@@ -60,7 +64,7 @@ namespace DreamChess {
         /**
          * @brief Array describing the board's state
          */
-        std::array<Piece::Enum, 64> m_squares {};
+        internal_structure_type m_squares {};
 
         /**
          * @brief Keeps track of captured pieces
@@ -74,30 +78,4 @@ namespace DreamChess {
         [[nodiscard]] bool is_semi_valid_move(const Move &) const;
     };
 
-    /**
-     * @brief Iterator for the Board class
-     */
-    struct BoardIt
-        : public std::iterator<std::forward_iterator_tag, Piece::Enum> {
-        explicit BoardIt(Board);
-        BoardIt(const BoardIt &);
-
-        ~BoardIt();
-
-        BoardIt &operator=(const BoardIt &);
-        Piece::Enum &operator*() const;
-        friend bool operator==(const BoardIt &, const BoardIt &);
-        friend bool operator!=(const BoardIt &, const BoardIt &);
-        BoardIt &operator++();
-        BoardIt operator++(int);
-
-        BoardIt begin();
-        BoardIt end();
-
-    private:
-        /**
-         * @brief Points to the currently iterated item
-         */
-        Piece::Enum *m_pointer;
-    };
 } // namespace DreamChess
