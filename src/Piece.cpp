@@ -8,9 +8,6 @@
 #include "Piece.hpp"
 
 namespace DreamChess {
-    /**
-     * @brief Maps Piece::Enum to the corresponding FEN piece char
-     */
     const std::map<Piece::Enum, uint8_t> Piece::g_piece_repr
         = {{Piece::NONE, ' '},         {Piece::WHITE_PAWN, 'P'},
            {Piece::WHITE_KNIGHT, 'N'}, {Piece::WHITE_BISHOP, 'B'},
@@ -20,9 +17,6 @@ namespace DreamChess {
            {Piece::BLACK_ROOK, 'r'},   {Piece::BLACK_QUEEN, 'q'},
            {Piece::BLACK_KING, 'k'}};
 
-    /**
-     * @brief Maps the FEN char to the corresponding Piece::Enum
-     */
     const std::map<uint8_t, Piece::Enum> Piece::g_fen_to_piece = {
         {'p', Piece::BLACK_PAWN},   {'n', Piece::BLACK_KNIGHT},
         {'b', Piece::BLACK_BISHOP}, {'r', Piece::BLACK_ROOK},

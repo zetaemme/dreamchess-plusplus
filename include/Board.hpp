@@ -15,10 +15,11 @@
 #include <vector>
 
 namespace DreamChess {
+    // Move forward declaration
     class Move;
 
     /**
-     * @brief "Define Board, Pieces and moves for the game"
+     * @brief Defines a chess Game board
      */
     class Board final {
     public:
@@ -42,22 +43,22 @@ namespace DreamChess {
 
     private:
         /**
-         * @brief "'false' for BLACK's or 'true' for WHITE's turn"
+         * @brief false for BLACK's or true for WHITE's turn
          */
         Piece::Enum m_turn = Piece::WHITE;
 
         /**
-         * @brief "Counts the number of turns since the game started"
+         * @brief Counts the number of turns since the game started
          */
         uint64_t m_turn_counter = 1;
 
         /**
-         * @brief "Checks if the game is still going on"
+         * @brief Checks if the game is still going on
          */
         bool m_in_game = true;
 
         /**
-         * @brief "Array describing the board's state"
+         * @brief Array describing the board's state
          */
         std::array<Piece::Enum, 64> m_squares {};
 

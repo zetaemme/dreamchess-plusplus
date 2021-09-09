@@ -10,8 +10,12 @@
 #include "History.hpp"
 
 namespace DreamChess {
+    // Move forward declaration
     class Move;
 
+    /**
+     * @brief Describes a chess Game, with a Board and a History
+     */
     class Game final {
     public:
         Game();
@@ -23,12 +27,12 @@ namespace DreamChess {
 
     private:
         /**
-         * @brief "The current game's board"
+         * @brief The current game's Board
          */
         Board m_board;
 
         /**
-         * @brief "The current game's history"
+         * @brief The current game's History
          */
         History m_history;
 

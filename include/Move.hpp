@@ -34,26 +34,27 @@ namespace DreamChess {
         [[nodiscard]] bool is_promotion() const;
 
         [[nodiscard]] int64_t horizontal_check() const;
+
         [[nodiscard]] int64_t vertical_check() const;
 
     private:
         /**
-         * @brief "The move's source square"
+         * @brief The Move's source square
          */
         uint16_t m_source;
         /**
-         * @brief "The move's destination square"
+         * @brief The Move's destination square
          */
         uint16_t m_destination;
 
         /**
-         * @brief "The piece which is making the move"
+         * @brief The Piece which is making the move
          */
         Piece::Enum m_piece;
 
         /**
-         * @brief "The declared promotion present, if promotion"
+         * @brief The declared promotion present, if promotion
          */
         Piece::Enum m_promotion_piece = Piece::NONE;
     };
-}
+} // namespace DreamChess
