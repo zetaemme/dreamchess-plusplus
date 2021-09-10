@@ -11,14 +11,19 @@
 
 namespace DreamChess {
     /**
-     * @brief "Constructs a move with 'hard' source and destination"
+     * @brief Constructs a move with 'hard' source and destination
      * @param board The board where to make the move
      * @param source The source square
      * @param destination The destination square
      */
     Move::Move(const Board &board, uint64_t source, uint64_t destination)
-        : m_source {static_cast<uint16_t>(source)}
-        , m_destination {static_cast<uint16_t>(destination)} {
+        : m_board {board}
+        , m_source {static_cast<uint16_t>(source)}
+        , m_destination {static_cast<uint16_t>(destination)}
+        , m_is_capture {
+              Piece::get_type(board.get_piece_at(m_destination)) != Piece::NONE
+              && Piece::get_type(board.get_piece_at(m_source)) == Piece::PAWN
+              && source - destination % 8 != 0} {
         if(is_valid()) {
             m_piece = board.get_piece_at(m_source);
 
@@ -36,7 +41,8 @@ namespace DreamChess {
      * @param board The board in which the move has been made
      * @param input Input string in "source-destination" format
      */
-    Move::Move(const Board &board, std::string_view input) {
+    Move::Move(const Board &board, std::string_view input)
+        : m_board {board} {
         uint16_t s_file = input.at(0) - 'a';
         uint16_t s_rank = input.at(1) - '1';
 
@@ -97,6 +103,171 @@ namespace DreamChess {
     }
 
     /**
+     * @brief Checks if a move is semi_valid
+     * @param move The move to check
+     * @return True if the move is semi_valid, False otherwise
+     */
+    [[nodiscard]] bool Move::is_semi_valid() const {
+        const auto &squares = m_board.get_squares();
+
+        if(is_valid()
+           || Piece::get_color(squares[m_source]) != m_board.get_turn()) {
+            return false;
+        }
+
+        int64_t hor = horizontal_check();
+        int64_t ver = vertical_check();
+        bool diag = diagonal_check(ver);
+
+        switch(Piece::get_type(m_piece)) {
+            case Piece::KNIGHT:
+                if(hor != 1 && hor != 2) { return false; }
+
+                if(hor == 1 && ver != 2) { return false; }
+
+                if(hor == 2 && ver != 1) { return false; }
+
+                if(squares[m_destination] == Piece::NONE) { break; }
+
+                if(Piece::get_color(squares[m_destination])
+                   == Piece::get_color(squares[m_source])) {
+                    return false;
+                }
+                break;
+
+            case Piece::BISHOP:
+                if(hor != ver) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            case Piece::ROOK:
+                if(hor != 0 && ver != 0) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            case Piece::QUEEN:
+                if(hor != 0 && ver != 0 && hor != ver) { return false; }
+
+                if(!diag) { return false; }
+
+                break;
+
+            case Piece::PAWN:
+                if(m_destination > m_source
+                   && Piece::get_color(squares[m_source]) == Piece::BLACK) {
+                    return false;
+                }
+
+                if(m_destination < m_source
+                   && Piece::get_color(squares[m_source]) == Piece::WHITE) {
+                    return false;
+                }
+
+                if(hor > 1) { return false; }
+
+                if(hor == 0) {
+                    if(ver > 2) { return false; }
+
+                    if(ver == 2) {
+                        if(!(m_source >= 8 && m_source <= 15)
+                           || (m_source >= 48 && m_source <= 55)) {
+                            return false;
+                        }
+
+                        if(!diag || squares[m_destination] != Piece::NONE) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if(ver != 1) { return false; }
+
+                    if(!diag) { return false; }
+
+                    if(squares[m_destination] == Piece::NONE) {
+                        if(Piece::get_color(squares[m_source]) == Piece::WHITE
+                           && !(m_source >= 32 && m_source < 40)) {
+                            return false;
+                        }
+
+                        if(Piece::get_color(squares[m_source]) == Piece::BLACK
+                           && !(m_source >= 24 && m_source < 32)) {
+                            return false;
+                        }
+
+                        uint16_t offset = Piece::get_color(squares[m_source])
+                                               == Piece::WHITE
+                                            ? -8
+                                            : 8;
+
+                        if(squares[m_destination + offset]
+                           != Piece::PAWN
+                                  + Piece::opposite_side_color(
+                                      squares[m_source])) {
+                            return false;
+                        }
+                    }
+                }
+
+                break;
+
+            case Piece::KING:
+                if(hor > 2) {
+                    return false;
+                } else if(hor == 2) {
+                    bool white
+                        = Piece::get_color(squares[m_source]) == Piece::WHITE;
+
+                    uint16_t step = m_destination > m_source ? 1 : -1;
+
+                    uint16_t rook
+                        = step == 1 ? (white ? 7 : 63) : (white ? 0 : 63);
+
+                    if(ver != 0) { return false; }
+
+                    if(m_source != (white ? 4 : 60)) { return false; }
+
+                    if(squares[rook]
+                       != Piece::ROOK + Piece::get_color(squares[m_source])) {
+                        return false;
+                    }
+
+                    uint16_t i = m_source + step;
+
+                    while(i != rook) {
+                        if(squares[i] != Piece::NONE) { return false; }
+
+                        i += step;
+                    }
+
+                    if(m_board.square_attacked(m_source)
+                       == Piece::opposite_side_color(squares[m_piece])) {
+                        return false;
+                    }
+
+                    if(m_board.square_attacked(m_source + step)
+                       == Piece::opposite_side_color(squares[m_piece])) {
+                        return false;
+                    }
+                } else {
+                    if(ver > 1) { return false; }
+
+                    if(!diag) { return false; }
+                }
+
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @brief Checks if the move is a promotion move
      * @details A Move is promotion if it's made by a pawn and the
      * destination it's in the opposite player first file
@@ -105,6 +276,12 @@ namespace DreamChess {
         return m_piece == Piece::PAWN
             && (m_destination < 8 || m_destination > 55);
     }
+
+    /**
+     * @brief Checks if the move is a capture move
+     * @return True if it's a capture move, false otherwise
+     */
+    [[nodiscard]] bool Move::is_capture() const { return m_is_capture; }
 
     /**
      * @brief Checks a Move possible horizontal squares
@@ -120,5 +297,39 @@ namespace DreamChess {
      */
     [[nodiscard]] int64_t Move::vertical_check() const {
         return std::abs(m_source / 8 - m_destination / 8);
+    }
+
+    /**
+     * @brief Checks if the diagonals of the given move are free
+     * @param move The move to check
+     * @param ver The possible vertical values from the move source square
+     * @return True if the diagonals are free, False otherwise
+     */
+    [[nodiscard]] bool Move::diagonal_check(int64_t ver) const {
+        uint16_t step;
+        const auto &squares = m_board.get_squares();
+
+        if(ver != 0) {
+            step = (m_destination - m_source) / ver;
+        } else {
+            step = m_destination > m_source ? 1 : -1;
+        }
+
+        uint16_t i = m_source + step;
+
+        while(i != m_destination) {
+            if(squares[i] != Piece::NONE) { return false; }
+
+            i += step;
+        }
+
+        if(squares[i] != Piece::NONE) { return false; }
+
+        if(Piece::get_color(squares[i])
+           != Piece::get_color(squares[m_source])) {
+            return false;
+        }
+
+        return true;
     }
 } // namespace DreamChess

@@ -6,6 +6,7 @@
  */
 
 #include "Game.hpp"
+
 #include "Move.hpp"
 
 namespace DreamChess {
@@ -32,11 +33,11 @@ namespace DreamChess {
 
         if(m_board.make_move(new_move)) {
             update_history(new_move);
-        } else {
-            return false;
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**

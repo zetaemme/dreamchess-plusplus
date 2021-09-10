@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <map>
 #include <utility>
-#include <vector>
 
 namespace DreamChess {
     /**
@@ -54,47 +53,10 @@ namespace DreamChess {
          */
         static const std::map<uint8_t, Enum> g_fen_to_piece;
 
-        /**
-         * @brief Overloads the logic NOT operator
-         * @param piece The piece value to negate
-         * @return The negated piece value
-         */
-        friend Enum operator~(Enum piece) {
-            return static_cast<Enum>(~static_cast<uint16_t>(piece));
-        }
-
-        /**
-         * @brief Overloads the bitwise OR operator
-         * @param lhs The first piece
-         * @param rhs The second piece
-         * @return The result of the ORed pieces values
-         */
-        friend Enum operator|(Enum lhs, Enum rhs) {
-            return static_cast<Enum>(static_cast<uint16_t>(lhs)
-                                     | static_cast<uint16_t>(rhs));
-        }
-
-        /**
-         * @brief Overloads the bitwise AND operator
-         * @param lhs The first piece
-         * @param rhs The second piece
-         * @return The result of the ANDed pieces values
-         */
-        friend Enum operator&(Enum lhs, Enum rhs) {
-            return static_cast<Enum>(static_cast<uint16_t>(lhs)
-                                     & static_cast<uint16_t>(rhs));
-        }
-
-        /**
-         * @brief Overloads the bitwise XOR operator
-         * @param lhs The first piece
-         * @param rhs The second piece
-         * @return The result of the XORed pieces values
-         */
-        friend Enum operator^(Enum lhs, Enum rhs) {
-            return static_cast<Enum>(static_cast<uint16_t>(lhs)
-                                     ^ static_cast<uint16_t>(rhs));
-        }
+        friend Enum operator~(Enum);
+        friend Enum operator|(Enum, Enum);
+        friend Enum operator&(Enum, Enum);
+        friend Enum operator^(Enum, Enum);
 
         static Enum get_type(Enum);
         static Enum get_color(Enum);

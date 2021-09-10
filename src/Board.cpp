@@ -10,7 +10,6 @@
 #include "Move.hpp"
 
 #include <array>
-#include <cmath>
 #include <iostream>
 #include <sstream>
 
@@ -240,6 +239,10 @@ namespace DreamChess {
         return Piece::NONE;
     }
 
+    [[nodiscard]] std::array<Piece::Enum, 64> Board::get_squares() const {
+        return m_squares;
+    }
+
     /**
      * @brief Used to init the board with the neutral FEN configuration
      * @details Parses the FEN string and inits the Board
@@ -286,225 +289,13 @@ namespace DreamChess {
             if(Piece::get_color(square) == m_turn) {
                 Move move {*this, i, index};
 
-                if(is_semi_valid_move(move)) { return Piece::WHITE; }
+                if(move.is_semi_valid()) { return Piece::WHITE; }
             }
 
             i++;
         }
 
         return Piece::BLACK;
-    }
-
-    /**
-     * @brief Checks if the diagonals of the given move are free
-     * @param move The move to check
-     * @param ver The possible vertical values from the move source square
-     * @return True if the diagonals are free, False otherwise
-     */
-    [[nodiscard]] bool Board::is_diagonals_ok(const Move &move,
-                                              int64_t ver) const {
-        uint16_t step;
-        if(ver != 0) {
-            step = (move.get_destination() - move.get_source()) / ver;
-        } else {
-            step = move.get_destination() > move.get_source() ? 1 : -1;
-        }
-
-        uint16_t i = move.get_source() + step;
-
-        while(i != move.get_destination()) {
-            if(m_squares[i] != Piece::NONE) { return false; }
-
-            i += step;
-        }
-
-        if(m_squares[i] != Piece::NONE) { return false; }
-
-        if(Piece::get_color(m_squares[i])
-           != Piece::get_color(m_squares[move.get_source()])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @brief Checks if a move is semi_valid
-     * @param move The move to check
-     * @return True if the move is semi_valid, False otherwise
-     */
-    [[nodiscard]] bool Board::is_semi_valid_move(const Move &move) const {
-        if(!move.is_valid()
-           || Piece::get_color(m_squares[move.get_source()]) != m_turn) {
-            return false;
-        }
-
-        int64_t hor = move.horizontal_check();
-        int64_t ver = move.vertical_check();
-
-        bool diag = is_diagonals_ok(move, ver);
-
-        switch(Piece::get_type(move.get_piece())) {
-            case Piece::KNIGHT:
-                if(hor != 1 && hor != 2) { return false; }
-
-                if(hor == 1 && ver != 2) { return false; }
-
-                if(hor == 2 && ver != 1) { return false; }
-
-                if(m_squares[move.get_destination()] == Piece::NONE) { break; }
-
-                if(Piece::get_color(m_squares[move.get_destination()])
-                   == Piece::get_color(m_squares[move.get_source()])) {
-                    return false;
-                }
-                break;
-
-            case Piece::BISHOP:
-                if(hor != ver) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::ROOK:
-                if(hor != 0 && ver != 0) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::QUEEN:
-                if(hor != 0 && ver != 0 && hor != ver) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::PAWN:
-                if(move.get_destination() > move.get_source()
-                   && Piece::get_color(m_squares[move.get_source()])
-                          == Piece::BLACK) {
-                    return false;
-                }
-
-                if(move.get_destination() < move.get_source()
-                   && Piece::get_color(m_squares[move.get_source()])
-                          == Piece::WHITE) {
-                    return false;
-                }
-
-                if(hor > 1) { return false; }
-
-                if(hor == 0) {
-                    if(ver > 2) { return false; }
-
-                    if(ver == 2) {
-                        if(!(move.get_source() >= 8 && move.get_source() <= 15)
-                           || (move.get_source() >= 48
-                               && move.get_source() <= 55)) {
-                            return false;
-                        }
-
-                        if(!diag
-                           || m_squares[move.get_destination()]
-                                  != Piece::NONE) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if(ver != 1) { return false; }
-
-                    if(!diag) { return false; }
-
-                    if(m_squares[move.get_destination()] == Piece::NONE) {
-                        if(Piece::get_color(m_squares[move.get_source()])
-                               == Piece::WHITE
-                           && !(move.get_source() >= 32
-                                && move.get_source() < 40)) {
-                            return false;
-                        }
-
-                        if(Piece::get_color(m_squares[move.get_source()])
-                               == Piece::BLACK
-                           && !(move.get_source() >= 24
-                                && move.get_source() < 32)) {
-                            return false;
-                        }
-
-                        uint16_t offset
-                            = Piece::get_color(m_squares[move.get_source()])
-                                   == Piece::WHITE
-                                ? -8
-                                : 8;
-
-                        if(m_squares[move.get_destination() + offset]
-                           != Piece::PAWN
-                                  + Piece::opposite_side_color(
-                                      m_squares[move.get_source()])) {
-                            return false;
-                        }
-                    }
-                }
-
-                break;
-
-            case Piece::KING:
-                if(hor > 2) {
-                    return false;
-                } else if(hor == 2) {
-                    bool white = Piece::get_color(m_squares[move.get_source()])
-                              == Piece::WHITE;
-
-                    uint16_t step
-                        = move.get_destination() > move.get_source() ? 1 : -1;
-
-                    uint16_t rook
-                        = step == 1 ? (white ? 7 : 63) : (white ? 0 : 63);
-
-                    if(ver != 0) { return false; }
-
-                    if(move.get_source() != (white ? 4 : 60)) { return false; }
-
-                    if(m_squares[rook]
-                       != Piece::ROOK
-                              + Piece::get_color(
-                                  m_squares[move.get_source()])) {
-                        return false;
-                    }
-
-                    uint16_t i = move.get_source() + step;
-
-                    while(i != rook) {
-                        if(m_squares[i] != Piece::NONE) { return false; }
-
-                        i += step;
-                    }
-
-                    if(square_attacked(move.get_source())
-                       == Piece::opposite_side_color(
-                           m_squares[move.get_piece()])) {
-                        return false;
-                    }
-
-                    if(square_attacked(move.get_source() + step)
-                       == Piece::opposite_side_color(
-                           m_squares[move.get_piece()])) {
-                        return false;
-                    }
-                } else {
-                    if(ver > 1) { return false; }
-
-                    if(!diag) { return false; }
-                }
-
-                break;
-
-            default:
-                return false;
-        }
-
-        return true;
     }
 
     /**
@@ -517,7 +308,9 @@ namespace DreamChess {
         if(move.is_valid()) {
             // En-passant
             if(Piece::get_type(move.get_piece()) == Piece::PAWN
-               && m_squares[move.get_destination()] == 0) {
+               && (Piece::get_type(m_squares[move.get_destination()])
+                       == Piece::NONE
+                   && move.get_source() % 8 != move.get_destination() % 8)) {
                 uint16_t en_passant
                     = move.get_destination()
                     - 8 * (move.get_destination() > move.get_source() ? 1 : -1);
@@ -526,7 +319,8 @@ namespace DreamChess {
             }
 
             // Updating captured pieces
-            if(move.get_destination() != 0) {
+            if(Piece::get_type(m_squares[move.get_destination()])
+               != Piece::NONE) {
                 m_captured[m_squares[move.get_destination()]]++;
             }
 
@@ -558,6 +352,8 @@ namespace DreamChess {
         } else {
             return false;
         }
+
+        m_turn = Piece::opposite_side_color(m_turn);
 
         return true;
     }

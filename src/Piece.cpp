@@ -27,6 +27,48 @@ namespace DreamChess {
     };
 
     /**
+     * @brief Overloads the logic NOT operator
+     * @param piece The piece value to negate
+     * @return The negated piece value
+     */
+    Piece::Enum operator~(Piece::Enum piece) {
+        return static_cast<Piece::Enum>(~static_cast<uint16_t>(piece));
+    }
+
+    /**
+     * @brief Overloads the bitwise OR operator
+     * @param lhs The first piece
+     * @param rhs The second piece
+     * @return The result of the ORed pieces values
+     */
+    Piece::Enum operator|(Piece::Enum lhs, Piece::Enum rhs) {
+        return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs)
+                                        | static_cast<uint16_t>(rhs));
+    }
+
+    /**
+     * @brief Overloads the bitwise AND operator
+     * @param lhs The first piece
+     * @param rhs The second piece
+     * @return The result of the ANDed pieces values
+     */
+    Piece::Enum operator&(Piece::Enum lhs, Piece::Enum rhs) {
+        return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs)
+                                        & static_cast<uint16_t>(rhs));
+    }
+
+    /**
+     * @brief Overloads the bitwise XOR operator
+     * @param lhs The first piece
+     * @param rhs The second piece
+     * @return The result of the XORed pieces values
+     */
+    Piece::Enum operator^(Piece::Enum lhs, Piece::Enum rhs) {
+        return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs)
+                                        ^ static_cast<uint16_t>(rhs));
+    }
+
+    /**
      * @brief Calculates the given piece's type
      * @param target The piece which I want to know the type
      * @return The piece's type

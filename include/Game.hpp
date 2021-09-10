@@ -20,10 +20,10 @@ namespace DreamChess {
     public:
         Game();
 
+        friend std::ostream &operator<<(std::ostream &, const Game &);
+
         [[nodiscard]] bool is_in_game() const;
         [[nodiscard]] bool make_move(std::string_view);
-
-        friend std::ostream &operator<<(std::ostream &, const Game &);
 
     private:
         /**

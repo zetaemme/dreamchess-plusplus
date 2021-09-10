@@ -27,25 +27,24 @@ namespace DreamChess {
     public:
         Board();
 
-        [[nodiscard]] Piece::Enum is_in_check() const;
-
         friend std::ostream &operator<<(std::ostream &, const Board &);
-
-        [[nodiscard]] std::string to_fen() const;
-
-        [[nodiscard]] bool is_in_game() const;
-
-        [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
-
-        [[nodiscard]] Piece::Enum get_turn() const;
 
         bool make_move(const Move &);
 
+        [[nodiscard]] bool is_in_game() const;
+        [[nodiscard]] Piece::Enum is_in_check() const;
+
+        [[nodiscard]] internal_structure_type get_squares() const;
+        [[nodiscard]] Piece::Enum get_turn() const;
+
+        [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
+        [[nodiscard]] std::string to_fen() const;
+        [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
+
         [[nodiscard]] internal_structure_type::const_iterator begin() const;
-
         [[nodiscard]] internal_structure_type::const_iterator end() const;
-
     private:
+
         /**
          * @brief false for BLACK's or true for WHITE's turn
          */
@@ -72,10 +71,5 @@ namespace DreamChess {
         std::map<Piece::Enum, uint16_t> m_captured {};
 
         void init_board();
-
-        [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
-        [[nodiscard]] bool is_diagonals_ok(const Move &, int64_t) const;
-        [[nodiscard]] bool is_semi_valid_move(const Move &) const;
     };
-
 } // namespace DreamChess
