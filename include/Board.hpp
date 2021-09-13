@@ -34,10 +34,10 @@ namespace DreamChess {
         [[nodiscard]] bool is_in_game() const;
         [[nodiscard]] Piece::Enum is_in_check() const;
 
-        [[nodiscard]] internal_structure_type get_squares() const;
-        [[nodiscard]] Piece::Enum get_turn() const;
+        [[nodiscard]] internal_structure_type squares() const;
+        [[nodiscard]] Piece::Enum turn() const;
 
-        [[nodiscard]] Piece::Enum get_piece_at(uint16_t) const;
+        [[nodiscard]] Piece::Enum piece_at(uint16_t) const;
         [[nodiscard]] std::string to_fen() const;
         [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
 
@@ -53,12 +53,12 @@ namespace DreamChess {
         /**
          * @brief Counts the number of turns since the game started
          */
-        uint64_t m_turn_counter = 1;
+        uint64_t m_turn_counter {1};
 
         /**
          * @brief Checks if the game is still going on
          */
-        bool m_in_game = true;
+        bool m_in_game {true};
 
         /**
          * @brief Array describing the board's state

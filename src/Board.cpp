@@ -213,7 +213,7 @@ namespace DreamChess {
      * @param index The index of the returned piece
      * @return The corresponding piece
      */
-    [[nodiscard]] Piece::Enum Board::get_piece_at(uint16_t index) const {
+    [[nodiscard]] Piece::Enum Board::piece_at(uint16_t index) const {
         return m_squares[index];
     }
 
@@ -221,7 +221,7 @@ namespace DreamChess {
      * @brief Returns who plays in current turn
      * @return True if it's WHITE, false otherwise
      */
-    [[nodiscard]] Piece::Enum Board::get_turn() const { return m_turn; }
+    [[nodiscard]] Piece::Enum Board::turn() const { return m_turn; }
 
     /**
      * @brief Checks if one of the two sides is under check
@@ -232,14 +232,16 @@ namespace DreamChess {
             = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
         auto opponent_king = (Piece::KING | playing_side);
 
-        for(uint64_t i = 0; i < 64; i++) {
-            if(m_squares[i] == opponent_king) { return square_attacked(i); }
+        for(auto &square : *this) {
+            if(square == opponent_king) {
+                return square_attacked(&square - &m_squares[0]);
+            }
         }
 
         return Piece::NONE;
     }
 
-    [[nodiscard]] std::array<Piece::Enum, 64> Board::get_squares() const {
+    [[nodiscard]] std::array<Piece::Enum, 64> Board::squares() const {
         return m_squares;
     }
 
@@ -283,16 +285,14 @@ namespace DreamChess {
      * @return The color of the piece which is attacked
      */
     [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
-        uint16_t i = 0;
-
         for(auto &square : *this) {
             if(Piece::get_color(square) == m_turn) {
-                Move move {*this, i, index};
+                Move move {*this,
+                           static_cast<uint64_t>(&square - &m_squares[0]),
+                           index};
 
                 if(move.is_semi_valid()) { return Piece::WHITE; }
             }
-
-            i++;
         }
 
         return Piece::BLACK;
@@ -305,54 +305,51 @@ namespace DreamChess {
      * @param move The Move to make
      */
     bool Board::make_move(const Move &move) {
-        if(move.is_valid()) {
-            // En-passant
-            if(Piece::get_type(move.get_piece()) == Piece::PAWN
-               && (Piece::get_type(m_squares[move.get_destination()])
-                       == Piece::NONE
-                   && move.get_source() % 8 != move.get_destination() % 8)) {
-                uint16_t en_passant
-                    = move.get_destination()
-                    - 8 * (move.get_destination() > move.get_source() ? 1 : -1);
-                m_captured[m_squares[en_passant]]++;
-                m_squares[en_passant] = Piece::NONE;
-            }
-
-            // Updating captured pieces
-            if(Piece::get_type(m_squares[move.get_destination()])
-               != Piece::NONE) {
-                m_captured[m_squares[move.get_destination()]]++;
-            }
-
-            // kingside castle
-            if(Piece::get_type(move.get_piece()) == Piece::KING
-               && move.get_destination() - move.get_source() == 2) {
-                m_squares[move.get_destination() - 1]
-                    = m_squares[move.get_destination() + 1];
-                m_squares[move.get_destination() + 1] = Piece::NONE;
-            }
-
-            // Queenside castle
-            if(Piece::get_type(move.get_piece()) == Piece::KING
-               && move.get_source() - move.get_destination() == 2) {
-                m_squares[move.get_destination() + 1]
-                    = m_squares[move.get_destination() - 2];
-                m_squares[move.get_destination() - 2] = Piece::NONE;
-            }
-
-            if(move.is_promotion()) {
-                // Promotion
-                m_squares[move.get_destination()] = move.get_promotion_piece();
-            } else {
-                // The actual "common" move
-                m_squares[move.get_destination()]
-                    = m_squares[move.get_source()];
-                m_squares[move.get_source()] = Piece::NONE;
-            }
-        } else {
+        if(!move.is_valid()) {
             return false;
         }
 
+        // En-passant
+        if(Piece::get_type(move.piece()) == Piece::PAWN
+           && (Piece::get_type(m_squares[move.destination()]) == Piece::NONE
+               && move.source() % 8 != move.destination() % 8)) {
+            uint16_t en_passant
+                = move.destination()
+                - 8 * (move.destination() > move.source() ? 1 : -1);
+            m_captured[m_squares[en_passant]]++;
+            m_squares[en_passant] = Piece::NONE;
+        }
+
+        // Updating captured pieces
+        if(Piece::get_type(m_squares[move.destination()]) != Piece::NONE) {
+            m_captured[m_squares[move.destination()]]++;
+        }
+
+        // kingside castle
+        if(Piece::get_type(move.piece()) == Piece::KING
+           && move.destination() - move.source() == 2) {
+            m_squares[move.destination() - 1]
+                = m_squares[move.destination() + 1];
+            m_squares[move.destination() + 1] = Piece::NONE;
+        }
+
+        // Queenside castle
+        if(Piece::get_type(move.piece()) == Piece::KING
+           && move.source() - move.destination() == 2) {
+            m_squares[move.destination() + 1]
+                = m_squares[move.destination() - 2];
+            m_squares[move.destination() - 2] = Piece::NONE;
+        }
+
+        if(move.is_promotion()) {
+            // Promotion
+            m_squares[move.destination()] = move.promotion_piece();
+        } else {
+            // The actual "common" move
+            m_squares[move.destination()] = m_squares[move.source()];
+        }
+
+        m_squares[move.source()] = Piece::NONE;
         m_turn = Piece::opposite_side_color(m_turn);
 
         return true;

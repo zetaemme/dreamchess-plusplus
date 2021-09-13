@@ -19,17 +19,13 @@ namespace DreamChess {
     Move::Move(const Board &board, uint64_t source, uint64_t destination)
         : m_board {board}
         , m_source {static_cast<uint16_t>(source)}
-        , m_destination {static_cast<uint16_t>(destination)}
-        , m_is_capture {
-              Piece::get_type(board.get_piece_at(m_destination)) != Piece::NONE
-              && Piece::get_type(board.get_piece_at(m_source)) == Piece::PAWN
-              && source - destination % 8 != 0} {
+        , m_destination {static_cast<uint16_t>(destination)} {
         if(is_valid()) {
-            m_piece = board.get_piece_at(m_source);
+            m_piece = board.piece_at(m_source);
 
-            if(board.get_turn() && m_destination >= 0 && m_destination <= 7) {
+            if(board.turn() && m_destination >= 0 && m_destination <= 7) {
                 m_promotion_piece = Piece::WHITE_QUEEN;
-            } else if(!board.get_turn() && m_destination >= 56
+            } else if(!board.turn() && m_destination >= 56
                       && m_destination <= 63) {
                 m_promotion_piece = Piece::BLACK_QUEEN;
             }
@@ -53,11 +49,11 @@ namespace DreamChess {
         m_destination = d_rank * 8 + d_file;
 
         if(is_valid()) {
-            m_piece = board.get_piece_at(m_source);
+            m_piece = board.piece_at(m_source);
 
-            if(board.get_turn() && m_destination >= 0 && m_destination <= 7) {
+            if(board.turn() && m_destination >= 0 && m_destination <= 7) {
                 m_promotion_piece = Piece::WHITE_QUEEN;
-            } else if(!board.get_turn() && m_destination >= 56
+            } else if(!board.turn() && m_destination >= 56
                       && m_destination <= 63) {
                 m_promotion_piece = Piece::BLACK_QUEEN;
             }
@@ -68,27 +64,25 @@ namespace DreamChess {
      * @brief Source square getter
      * @return The source square
      */
-    [[nodiscard]] uint16_t Move::get_source() const { return m_source; }
+    [[nodiscard]] uint16_t Move::source() const { return m_source; }
 
     /**
      * @brief Destination square getter
      * @return The destination square
      */
-    [[nodiscard]] uint16_t Move::get_destination() const {
-        return m_destination;
-    }
+    [[nodiscard]] uint16_t Move::destination() const { return m_destination; }
 
     /**
      * @brief Gets the piece which is making the move
      * @return The piece which is making the move
      */
-    [[nodiscard]] Piece::Enum Move::get_piece() const { return m_piece; }
+    [[nodiscard]] Piece::Enum Move::piece() const { return m_piece; }
 
     /**
      * @brief Returns the chosen promotion piece
      * @return The chosen promotion piece (QUEEN by default)
      */
-    [[nodiscard]] Piece::Enum Move::get_promotion_piece() const {
+    [[nodiscard]] Piece::Enum Move::promotion_piece() const {
         return m_promotion_piece;
     }
 
@@ -98,8 +92,9 @@ namespace DreamChess {
      * Piece
      */
     [[nodiscard]] bool Move::is_valid() const {
-        return m_source >= 0 && m_source < 64 && m_destination >= 0
-            && m_destination < 64 && m_source != m_destination;
+        if(!is_semi_valid()) { return false; }
+
+        return m_board.is_in_check() == Piece::NONE;
     }
 
     /**
@@ -108,10 +103,17 @@ namespace DreamChess {
      * @return True if the move is semi_valid, False otherwise
      */
     [[nodiscard]] bool Move::is_semi_valid() const {
-        const auto &squares = m_board.get_squares();
+        const auto &squares = m_board.squares();
 
-        if(is_valid()
-           || Piece::get_color(squares[m_source]) != m_board.get_turn()) {
+        if(m_source > 63 || m_source < 0 || m_destination > 63
+           || m_destination < 0 || m_source == m_destination
+           || squares[m_source] == Piece::NONE
+           || Piece::get_color(squares[m_source]) != m_board.turn()) {
+            return false;
+        }
+
+        if(Piece::get_color(squares[m_destination])
+           == Piece::get_color(squares[m_source])) {
             return false;
         }
 
@@ -121,38 +123,29 @@ namespace DreamChess {
 
         switch(Piece::get_type(m_piece)) {
             case Piece::KNIGHT:
-                if(hor != 1 && hor != 2) { return false; }
-
-                if(hor == 1 && ver != 2) { return false; }
-
-                if(hor == 2 && ver != 1) { return false; }
+                if((hor != 1 && hor != 2) || (hor == 1 && ver != 2)
+                   || (hor == 2 && ver != 1)) {
+                    return false;
+                }
 
                 if(squares[m_destination] == Piece::NONE) { break; }
 
-                if(Piece::get_color(squares[m_destination])
-                   == Piece::get_color(squares[m_source])) {
-                    return false;
-                }
                 break;
 
             case Piece::BISHOP:
-                if(hor != ver) { return false; }
-
-                if(!diag) { return false; }
+                if(hor != ver || !diag) { return false; }
 
                 break;
 
             case Piece::ROOK:
-                if(hor != 0 && ver != 0) { return false; }
-
-                if(!diag) { return false; }
+                if((hor != 0 && ver != 0) || !diag) { return false; }
 
                 break;
 
             case Piece::QUEEN:
-                if(hor != 0 && ver != 0 && hor != ver) { return false; }
-
-                if(!diag) { return false; }
+                if((hor != 0 && ver != 0 && hor != ver) || !diag) {
+                    return false;
+                }
 
                 break;
 
@@ -183,9 +176,7 @@ namespace DreamChess {
                         }
                     }
                 } else {
-                    if(ver != 1) { return false; }
-
-                    if(!diag) { return false; }
+                    if(ver != 1 || !diag) { return false; }
 
                     if(squares[m_destination] == Piece::NONE) {
                         if(Piece::get_color(squares[m_source]) == Piece::WHITE
@@ -204,9 +195,9 @@ namespace DreamChess {
                                             : 8;
 
                         if(squares[m_destination + offset]
-                           != Piece::PAWN
-                                  + Piece::opposite_side_color(
-                                      squares[m_source])) {
+                           != (Piece::PAWN
+                               | Piece::opposite_side_color(
+                                   squares[m_source]))) {
                             return false;
                         }
                     }
@@ -230,8 +221,7 @@ namespace DreamChess {
 
                     if(m_source != (white ? 4 : 60)) { return false; }
 
-                    if(squares[rook]
-                       != Piece::ROOK + Piece::get_color(squares[m_source])) {
+                    if(squares[rook] != (Piece::ROOK | m_board.turn())) {
                         return false;
                     }
 
@@ -253,9 +243,7 @@ namespace DreamChess {
                         return false;
                     }
                 } else {
-                    if(ver > 1) { return false; }
-
-                    if(!diag) { return false; }
+                    if(ver > 1 || !diag) { return false; }
                 }
 
                 break;
@@ -274,14 +262,8 @@ namespace DreamChess {
      */
     [[nodiscard]] bool Move::is_promotion() const {
         return m_piece == Piece::PAWN
-            && (m_destination < 8 || m_destination > 55);
+            && (m_destination < 8 || m_destination >= 56);
     }
-
-    /**
-     * @brief Checks if the move is a capture move
-     * @return True if it's a capture move, false otherwise
-     */
-    [[nodiscard]] bool Move::is_capture() const { return m_is_capture; }
 
     /**
      * @brief Checks a Move possible horizontal squares
@@ -307,7 +289,7 @@ namespace DreamChess {
      */
     [[nodiscard]] bool Move::diagonal_check(int64_t ver) const {
         uint16_t step;
-        const auto &squares = m_board.get_squares();
+        const auto &squares = m_board.squares();
 
         if(ver != 0) {
             step = (m_destination - m_source) / ver;
