@@ -224,21 +224,26 @@ namespace DreamChess {
     [[nodiscard]] Piece::Enum Board::turn() const { return m_turn; }
 
     /**
+     * @brief Gets the next turn moving color
+     * @return The opposite of m_turn
+     */
+    [[nodiscard]] Piece::Enum Board::opponent_turn() const {
+        return m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
+    }
+
+    /**
      * @brief Checks if one of the two sides is under check
      * @return The side who's in check
      */
-    [[nodiscard]] Piece::Enum Board::is_in_check() const {
-        auto playing_side
-            = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
-        auto opponent_king = (Piece::KING | playing_side);
-
+    [[nodiscard]] bool Board::is_in_check() const {
         for(auto &square : *this) {
-            if(square == opponent_king) {
-                return square_attacked(&square - &m_squares[0]);
+            if(square == (Piece::KING | m_turn)) {
+                return square_attacked(&square - &m_squares[0],
+                                       opponent_turn());
             }
         }
 
-        return Piece::NONE;
+        return true;
     }
 
     [[nodiscard]] std::array<Piece::Enum, 64> Board::squares() const {
@@ -284,18 +289,19 @@ namespace DreamChess {
      * @param index The index of the square
      * @return The color of the piece which is attacked
      */
-    [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
+    [[nodiscard]] bool Board::square_attacked(uint64_t index,
+                                              Piece::Enum turn) const {
         for(auto &square : *this) {
-            if(Piece::get_color(square) == m_turn) {
+            if(Piece::get_color(square) == turn) {
                 Move move {*this,
                            static_cast<uint64_t>(&square - &m_squares[0]),
                            index};
 
-                if(move.is_semi_valid()) { return Piece::WHITE; }
+                if(move.is_semi_valid()) { return true; }
             }
         }
 
-        return Piece::BLACK;
+        return false;
     }
 
     /**
@@ -304,14 +310,10 @@ namespace DreamChess {
      * otherwise
      * @param move The Move to make
      */
-    bool Board::make_move(const Move &move) {
-        if(!move.is_valid()) {
-            return false;
-        }
-
+    void Board::make_move(const Move &move) {
         // En-passant
         if(Piece::get_type(move.piece()) == Piece::PAWN
-           && (Piece::get_type(m_squares[move.destination()]) == Piece::NONE
+           && (m_squares[move.destination()] == Piece::NONE
                && move.source() % 8 != move.destination() % 8)) {
             uint16_t en_passant
                 = move.destination()
@@ -321,7 +323,7 @@ namespace DreamChess {
         }
 
         // Updating captured pieces
-        if(Piece::get_type(m_squares[move.destination()]) != Piece::NONE) {
+        if(m_squares[move.destination()] != Piece::NONE) {
             m_captured[m_squares[move.destination()]]++;
         }
 
@@ -350,9 +352,8 @@ namespace DreamChess {
         }
 
         m_squares[move.source()] = Piece::NONE;
-        m_turn = Piece::opposite_side_color(m_turn);
 
-        return true;
+        m_turn = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
     }
 
     /**

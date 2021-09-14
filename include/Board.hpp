@@ -22,33 +22,36 @@ namespace DreamChess {
      * @brief Defines a chess Game board
      */
     class Board final {
-        using internal_structure_type = std::array<Piece::Enum, 64>;
+        using piece_t = Piece::Enum;
+        using internal_structure_type = std::array<piece_t, 64>;
 
     public:
         Board();
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
 
-        bool make_move(const Move &);
+        void make_move(const Move &);
 
         [[nodiscard]] bool is_in_game() const;
-        [[nodiscard]] Piece::Enum is_in_check() const;
+        [[nodiscard]] bool is_in_check() const;
 
         [[nodiscard]] internal_structure_type squares() const;
-        [[nodiscard]] Piece::Enum turn() const;
+        [[nodiscard]] piece_t turn() const;
+        [[nodiscard]] piece_t opponent_turn() const;
 
-        [[nodiscard]] Piece::Enum piece_at(uint16_t) const;
+        [[nodiscard]] piece_t piece_at(uint16_t) const;
         [[nodiscard]] std::string to_fen() const;
-        [[nodiscard]] Piece::Enum square_attacked(uint64_t) const;
+        [[nodiscard]] bool square_attacked(uint64_t, piece_t) const;
 
         [[nodiscard]] internal_structure_type::const_iterator begin() const;
         [[nodiscard]] internal_structure_type::const_iterator end() const;
+
     private:
 
         /**
          * @brief false for BLACK's or true for WHITE's turn
          */
-        Piece::Enum m_turn {Piece::WHITE};
+        piece_t m_turn {Piece::WHITE};
 
         /**
          * @brief Counts the number of turns since the game started
@@ -68,7 +71,7 @@ namespace DreamChess {
         /**
          * @brief Keeps track of captured pieces
          */
-        std::map<Piece::Enum, uint16_t> m_captured {};
+        std::map<piece_t, uint16_t> m_captured {};
 
         void init_board();
     };

@@ -31,13 +31,12 @@ namespace DreamChess {
     bool Game::make_move(std::string_view input) {
         Move new_move {m_board, input};
 
-        if(m_board.make_move(new_move)) {
-            update_history(new_move);
+        if(!new_move.is_valid()) { return false; }
 
-            return true;
-        }
+        m_board.make_move(new_move);
+        update_history(new_move);
 
-        return false;
+        return true;
     }
 
     /**

@@ -94,7 +94,7 @@ namespace DreamChess {
     [[nodiscard]] bool Move::is_valid() const {
         if(!is_semi_valid()) { return false; }
 
-        return m_board.is_in_check() == Piece::NONE;
+        return !m_board.is_in_check();
     }
 
     /**
@@ -122,34 +122,36 @@ namespace DreamChess {
         bool diag = diagonal_check(ver);
 
         switch(Piece::get_type(m_piece)) {
-            case Piece::KNIGHT:
+            case Piece::KNIGHT: {
                 if((hor != 1 && hor != 2) || (hor == 1 && ver != 2)
                    || (hor == 2 && ver != 1)) {
                     return false;
                 }
 
-                if(squares[m_destination] == Piece::NONE) { break; }
-
                 break;
+            }
 
-            case Piece::BISHOP:
+            case Piece::BISHOP: {
                 if(hor != ver || !diag) { return false; }
 
                 break;
+            }
 
-            case Piece::ROOK:
+            case Piece::ROOK: {
                 if((hor != 0 && ver != 0) || !diag) { return false; }
 
                 break;
+            }
 
-            case Piece::QUEEN:
+            case Piece::QUEEN: {
                 if((hor != 0 && ver != 0 && hor != ver) || !diag) {
                     return false;
                 }
 
                 break;
+            }
 
-            case Piece::PAWN:
+            case Piece::PAWN: {
                 if(m_destination > m_source
                    && Piece::get_color(squares[m_source]) == Piece::BLACK) {
                     return false;
@@ -204,8 +206,9 @@ namespace DreamChess {
                 }
 
                 break;
+            }
 
-            case Piece::KING:
+            case Piece::KING: {
                 if(hor > 2) {
                     return false;
                 } else if(hor == 2) {
@@ -233,13 +236,13 @@ namespace DreamChess {
                         i += step;
                     }
 
-                    if(m_board.square_attacked(m_source)
-                       == Piece::opposite_side_color(squares[m_piece])) {
+                    if(m_board.square_attacked(m_source,
+                                               m_board.opponent_turn())) {
                         return false;
                     }
 
-                    if(m_board.square_attacked(m_source + step)
-                       == Piece::opposite_side_color(squares[m_piece])) {
+                    if(m_board.square_attacked(m_source + step,
+                                               m_board.opponent_turn())) {
                         return false;
                     }
                 } else {
@@ -247,6 +250,7 @@ namespace DreamChess {
                 }
 
                 break;
+            }
 
             default:
                 return false;

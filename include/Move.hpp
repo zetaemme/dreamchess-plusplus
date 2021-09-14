@@ -16,14 +16,16 @@ namespace DreamChess {
      * @brief A single move in the Game
      */
     class Move final {
+        using piece_t = Piece::Enum;
+        
     public:
         Move(const Board &, uint64_t, uint64_t);
         Move(const Board &, std::string_view);
 
         [[nodiscard]] uint16_t source() const;
         [[nodiscard]] uint16_t destination() const;
-        [[nodiscard]] Piece::Enum piece() const;
-        [[nodiscard]] Piece::Enum promotion_piece() const;
+        [[nodiscard]] piece_t piece() const;
+        [[nodiscard]] piece_t promotion_piece() const;
 
         [[nodiscard]] bool is_valid() const;
         [[nodiscard]] bool is_semi_valid() const;
@@ -49,11 +51,11 @@ namespace DreamChess {
         /**
          * @brief The Piece which is making the move
          */
-        Piece::Enum m_piece;
+        piece_t m_piece;
 
         /**
          * @brief The declared promotion present, if promotion
          */
-        Piece::Enum m_promotion_piece {Piece::NONE};
+        piece_t m_promotion_piece {Piece::NONE};
     };
 } // namespace DreamChess

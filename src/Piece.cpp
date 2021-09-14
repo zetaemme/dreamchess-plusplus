@@ -26,6 +26,16 @@ namespace DreamChess {
         {'Q', Piece::WHITE_QUEEN},  {'K', Piece::WHITE_KING},
     };
 
+    // FIXME Controllare overload degli operatori, ritornano risultati sbagliati
+    /*
+     (gdb) print(~Piece::BLACK_QUEEN)
+           $1 = -145
+     (gdb) print(Piece::get_color(Piece::BLACK_QUEEN))
+           $2 = DreamChess::Piece::BLACK_QUEEN
+     (gdb) print(Piece::get_type(Piece::BLACK_QUEEN))
+           $3 = DreamChess::Piece::BLACK_QUEEN
+     */
+
     /**
      * @brief Overloads the logic NOT operator
      * @param piece The piece value to negate
