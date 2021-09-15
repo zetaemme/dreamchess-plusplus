@@ -292,7 +292,7 @@ namespace DreamChess {
     [[nodiscard]] bool Board::square_attacked(uint64_t index,
                                               Piece::Enum turn) const {
         for(auto &square : *this) {
-            if(Piece::get_color(square) == turn) {
+            if(Piece::color(square) == turn) {
                 Move move {*this,
                            static_cast<uint64_t>(&square - &m_squares[0]),
                            index};
@@ -312,7 +312,7 @@ namespace DreamChess {
      */
     void Board::make_move(const Move &move) {
         // En-passant
-        if(Piece::get_type(move.piece()) == Piece::PAWN
+        if(Piece::type(move.piece()) == Piece::PAWN
            && (m_squares[move.destination()] == Piece::NONE
                && move.source() % 8 != move.destination() % 8)) {
             uint16_t en_passant
@@ -328,7 +328,7 @@ namespace DreamChess {
         }
 
         // kingside castle
-        if(Piece::get_type(move.piece()) == Piece::KING
+        if(Piece::type(move.piece()) == Piece::KING
            && move.destination() - move.source() == 2) {
             m_squares[move.destination() - 1]
                 = m_squares[move.destination() + 1];
@@ -336,7 +336,7 @@ namespace DreamChess {
         }
 
         // Queenside castle
-        if(Piece::get_type(move.piece()) == Piece::KING
+        if(Piece::type(move.piece()) == Piece::KING
            && move.source() - move.destination() == 2) {
             m_squares[move.destination() + 1]
                 = m_squares[move.destination() - 2];

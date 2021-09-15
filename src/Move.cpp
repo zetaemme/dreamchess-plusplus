@@ -108,12 +108,12 @@ namespace DreamChess {
         if(m_source > 63 || m_source < 0 || m_destination > 63
            || m_destination < 0 || m_source == m_destination
            || squares[m_source] == Piece::NONE
-           || Piece::get_color(squares[m_source]) != m_board.turn()) {
+           || Piece::color(squares[m_source]) != m_board.turn()) {
             return false;
         }
 
-        if(Piece::get_color(squares[m_destination])
-           == Piece::get_color(squares[m_source])) {
+        if(Piece::color(squares[m_destination])
+           == Piece::color(squares[m_source])) {
             return false;
         }
 
@@ -121,7 +121,7 @@ namespace DreamChess {
         int64_t ver = vertical_check();
         bool diag = diagonal_check(ver);
 
-        switch(Piece::get_type(m_piece)) {
+        switch(Piece::type(m_piece)) {
             case Piece::KNIGHT: {
                 if((hor != 1 && hor != 2) || (hor == 1 && ver != 2)
                    || (hor == 2 && ver != 1)) {
@@ -153,12 +153,12 @@ namespace DreamChess {
 
             case Piece::PAWN: {
                 if(m_destination > m_source
-                   && Piece::get_color(squares[m_source]) == Piece::BLACK) {
+                   && Piece::color(squares[m_source]) == Piece::BLACK) {
                     return false;
                 }
 
                 if(m_destination < m_source
-                   && Piece::get_color(squares[m_source]) == Piece::WHITE) {
+                   && Piece::color(squares[m_source]) == Piece::WHITE) {
                     return false;
                 }
 
@@ -181,17 +181,17 @@ namespace DreamChess {
                     if(ver != 1 || !diag) { return false; }
 
                     if(squares[m_destination] == Piece::NONE) {
-                        if(Piece::get_color(squares[m_source]) == Piece::WHITE
+                        if(Piece::color(squares[m_source]) == Piece::WHITE
                            && !(m_source >= 32 && m_source < 40)) {
                             return false;
                         }
 
-                        if(Piece::get_color(squares[m_source]) == Piece::BLACK
+                        if(Piece::color(squares[m_source]) == Piece::BLACK
                            && !(m_source >= 24 && m_source < 32)) {
                             return false;
                         }
 
-                        uint16_t offset = Piece::get_color(squares[m_source])
+                        uint16_t offset = Piece::color(squares[m_source])
                                                == Piece::WHITE
                                             ? -8
                                             : 8;
@@ -213,7 +213,7 @@ namespace DreamChess {
                     return false;
                 } else if(hor == 2) {
                     bool white
-                        = Piece::get_color(squares[m_source]) == Piece::WHITE;
+                        = Piece::color(squares[m_source]) == Piece::WHITE;
 
                     uint16_t step = m_destination > m_source ? 1 : -1;
 
@@ -311,8 +311,8 @@ namespace DreamChess {
 
         if(squares[i] != Piece::NONE) { return false; }
 
-        if(Piece::get_color(squares[i])
-           != Piece::get_color(squares[m_source])) {
+        if(Piece::color(squares[i])
+           != Piece::color(squares[m_source])) {
             return false;
         }
 

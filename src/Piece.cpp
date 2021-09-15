@@ -9,32 +9,18 @@
 
 namespace DreamChess {
     const std::map<Piece::Enum, uint8_t> Piece::g_piece_repr
-        = {{Piece::NONE, ' '},         {Piece::WHITE_PAWN, 'P'},
-           {Piece::WHITE_KNIGHT, 'N'}, {Piece::WHITE_BISHOP, 'B'},
-           {Piece::WHITE_ROOK, 'R'},   {Piece::WHITE_QUEEN, 'Q'},
-           {Piece::WHITE_KING, 'K'},   {Piece::BLACK_PAWN, 'p'},
-           {Piece::BLACK_KNIGHT, 'n'}, {Piece::BLACK_BISHOP, 'b'},
-           {Piece::BLACK_ROOK, 'r'},   {Piece::BLACK_QUEEN, 'q'},
-           {Piece::BLACK_KING, 'k'}};
+        = {{NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
+           {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},
+           {WHITE_KING, 'K'},   {BLACK_PAWN, 'p'}, {BLACK_KNIGHT, 'n'},
+           {BLACK_BISHOP, 'b'}, {BLACK_ROOK, 'r'}, {BLACK_QUEEN, 'q'},
+           {BLACK_KING, 'k'}};
 
     const std::map<uint8_t, Piece::Enum> Piece::g_fen_to_piece = {
-        {'p', Piece::BLACK_PAWN},   {'n', Piece::BLACK_KNIGHT},
-        {'b', Piece::BLACK_BISHOP}, {'r', Piece::BLACK_ROOK},
-        {'q', Piece::BLACK_QUEEN},  {'k', Piece::BLACK_KING},
-        {'P', Piece::WHITE_PAWN},   {'N', Piece::WHITE_KNIGHT},
-        {'B', Piece::WHITE_BISHOP}, {'R', Piece::WHITE_ROOK},
-        {'Q', Piece::WHITE_QUEEN},  {'K', Piece::WHITE_KING},
+        {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
+        {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
+        {'P', WHITE_PAWN}, {'N', WHITE_KNIGHT}, {'B', WHITE_BISHOP},
+        {'R', WHITE_ROOK}, {'Q', WHITE_QUEEN},  {'K', WHITE_KING},
     };
-
-    // FIXME Controllare overload degli operatori, ritornano risultati sbagliati
-    /*
-     (gdb) print(~Piece::BLACK_QUEEN)
-           $1 = -145
-     (gdb) print(Piece::get_color(Piece::BLACK_QUEEN))
-           $2 = DreamChess::Piece::BLACK_QUEEN
-     (gdb) print(Piece::get_type(Piece::BLACK_QUEEN))
-           $3 = DreamChess::Piece::BLACK_QUEEN
-     */
 
     /**
      * @brief Overloads the bitwise OR operator
@@ -63,19 +49,18 @@ namespace DreamChess {
      * @param target The piece which I want to know the type
      * @return The piece's type
      */
-    Piece::Enum Piece::get_type(Enum target) {
+    Piece::Enum Piece::type(Enum target) {
         return static_cast<Enum>(
             target & (PAWN | KNIGHT | BISHOP | ROOK | QUEEN | KING));
-    };
+    }
 
     /**
      * @brief Calculates the given piece's color
      * @param target The piece which I want to know the color
      * @return The piece's color
      */
-    Piece::Enum Piece::get_color(Enum target) {
-        return static_cast<Enum>(
-            target & (WHITE | BLACK));
+    Piece::Enum Piece::color(Enum target) {
+        return static_cast<Enum>(target & (WHITE | BLACK));
     }
 
     /**
@@ -84,6 +69,6 @@ namespace DreamChess {
      * @return The opposite side's color
      */
     Piece::Enum Piece::opposite_side_color(Enum target) {
-        return get_color(target) == WHITE ? BLACK : WHITE;
+        return color(target) == WHITE ? BLACK : WHITE;
     }
 } // namespace DreamChess
