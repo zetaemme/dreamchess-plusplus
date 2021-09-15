@@ -10,56 +10,62 @@
 #include "Move.hpp"
 
 #include <array>
-#include <cmath>
 #include <iostream>
 #include <sstream>
 
 namespace DreamChess {
     /**
-     * @brief "Constructs a `Board`"
-     * @details "Starts with the neutral FEN string, using `init_board()`"
+     * @brief Constructs a Board
+     * @details Starts with the neutral FEN string, using init_board()
      */
     Board::Board() { init_board(); }
 
     /**
-     * @brief "`out-stream` operator overloading"
-     * @details "Print each piece and ends line every 8 files"
+     * @brief Overloads the out-stream operator for the Board
+     * @details Print each piece and ends line every 8 files
      * @param stream The new output stream
      * @param board The printed board
      * @return The output stream
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
-        for(uint64_t i = 0; i < 64; i++) {
-            stream << Piece::g_piece_repr.at(board.m_squares[i]);
+        uint16_t i = 0;
+
+        for(auto &square : board) {
+            stream << Piece::g_piece_repr.at(square);
 
             if((i + 1) % 8 == 0) { stream << std::endl; }
+
+            i++;
         }
 
         return stream;
     }
 
     /**
-     * @brief "Converts the board to FEN notation"
-     * @details "First the method constructs the actual state of the Board, then
+     * @brief Converts the board to FEN notation
+     * @details First the method constructs the actual state of the Board, then
      *          replaces consecutive whitespaces with the number of ' ' chars.
      *          Finally it adds Move, Castle, En Passant, Semi-moves end Number
-     *          of Moves since the beginning"
+     *          of Moves since the beginning
      * @return The FEN representation of the Board
      */
     [[nodiscard]] std::string Board::to_fen() const {
         std::string fen;
 
+        uint64_t i = 0;
+
         // Board representation
-        for(uint64_t i = 0; i < 64; i++) {
-            fen.push_back(
-                static_cast<char>(Piece::g_piece_repr.at(m_squares[i])));
+        for(auto &square : *this) {
+            fen.push_back(static_cast<char>(Piece::g_piece_repr.at(square)));
 
             if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
+
+            i++;
         }
 
         // Removing whitespaces
         uint16_t counter = 0;
-        for(uint64_t i = 0; i < fen.length(); i++) {
+        for(i = 0; i < fen.length(); i++) {
             if(fen.at(i) == ' ') {
                 counter++;
 
@@ -110,7 +116,7 @@ namespace DreamChess {
         std::string en_passant;
 
         // TODO Manca controllo mossa precedente
-        for(uint64_t i = 24; i < 32; i++) {
+        for(i = 24; i < 32; i++) {
             if(m_turn == Piece::BLACK) {
                 if(m_squares[i] == Piece::BLACK_PAWN) {
                     if(m_squares[i + 1] == Piece::WHITE_PAWN
@@ -197,45 +203,56 @@ namespace DreamChess {
     }
 
     /**
-     * @brief "Checks if the game is in progress"
+     * @brief Checks if the game is in progress
      * @return true if the game is in progress, false otherwise
      */
     [[nodiscard]] bool Board::is_in_game() const { return m_in_game; }
 
     /**
-     * @brief "Returns the piece corresponding to index"
+     * @brief Returns the piece corresponding to index
      * @param index The index of the returned piece
      * @return The corresponding piece
      */
-    [[nodiscard]] Piece::Enum Board::get_piece_at(uint16_t index) const {
+    [[nodiscard]] Piece::Enum Board::piece_at(uint16_t index) const {
         return m_squares[index];
     }
 
     /**
-     * @brief "Returns who plays in current turn"
+     * @brief Returns who plays in current turn
      * @return True if it's WHITE, false otherwise
      */
-    [[nodiscard]] Piece::Enum Board::get_turn() const { return m_turn; }
+    [[nodiscard]] Piece::Enum Board::turn() const { return m_turn; }
 
     /**
-     * @brief "Checks if one of the two sides is under check"
-     * @return The side who's in check
+     * @brief Gets the next turn moving color
+     * @return The opposite of m_turn
      */
-    [[nodiscard]] Piece::Enum Board::is_in_check() const {
-        auto playing_side
-            = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
-        auto opponent_king = (Piece::KING | playing_side);
-
-        for(uint64_t i = 0; i < 64; i++) {
-            if(m_squares[i] == opponent_king) { return square_attacked(i); }
-        }
-
-        return Piece::NONE;
+    [[nodiscard]] Piece::Enum Board::opponent_turn() const {
+        return m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
     }
 
     /**
-     * @brief "Used to init the board with the neutral FEN configuration"
-     * @details "Parses the FEN string and inits the `Board`"
+     * @brief Checks if one of the two sides is under check
+     * @return The side who's in check
+     */
+    [[nodiscard]] bool Board::is_in_check() const {
+        for(auto &square : *this) {
+            if(square == (Piece::KING | m_turn)) {
+                return square_attacked(&square - &m_squares[0],
+                                       opponent_turn());
+            }
+        }
+
+        return true;
+    }
+
+    [[nodiscard]] std::array<Piece::Enum, 64> Board::squares() const {
+        return m_squares;
+    }
+
+    /**
+     * @brief Used to init the board with the neutral FEN configuration
+     * @details Parses the FEN string and inits the Board
      */
     void Board::init_board() {
         uint16_t file = 0;
@@ -268,290 +285,92 @@ namespace DreamChess {
     }
 
     /**
-     * @breif "Checks if a given square is attached by another piece"
+     * @breif Checks if a given square is attached by another piece
      * @param index The index of the square
      * @return The color of the piece which is attacked
      */
-    [[nodiscard]] Piece::Enum Board::square_attacked(uint64_t index) const {
-        for(uint64_t i = 0; i < 64; i++) {
-            if(Piece::get_color(m_squares[i]) == m_turn) {
-                Move move {*this, i, index};
+    [[nodiscard]] bool Board::square_attacked(uint64_t index,
+                                              Piece::Enum turn) const {
+        for(auto &square : *this) {
+            if(Piece::color(square) == turn) {
+                Move move {*this,
+                           static_cast<uint64_t>(&square - &m_squares[0]),
+                           index};
 
-                if(is_semi_valid_move(move)) { return Piece::WHITE; }
+                if(move.is_semi_valid()) { return true; }
             }
         }
 
-        return Piece::BLACK;
+        return false;
     }
 
     /**
-     * @brief "Checks if the diagonals of the given move are free"
-     * @param move The move to check
-     * @param ver The possible vertical values from the move source square
-     * @return True if the diagonals are free, False otherwise
+     * @brief Makes a move in the current Board
+     * @details Checks if the `Move` is a "special move", makes a "normal move
+     * otherwise
+     * @param move The Move to make
      */
-    [[nodiscard]] bool Board::is_diagonals_ok(const Move &move,
-                                              int64_t ver) const {
-        uint16_t step;
-        if(ver != 0) {
-            step = (move.get_destination() - move.get_source()) / ver;
+    void Board::make_move(const Move &move) {
+        // En-passant
+        if(Piece::type(move.piece()) == Piece::PAWN
+           && (m_squares[move.destination()] == Piece::NONE
+               && move.source() % 8 != move.destination() % 8)) {
+            uint16_t en_passant
+                = move.destination()
+                - 8 * (move.destination() > move.source() ? 1 : -1);
+            m_captured[m_squares[en_passant]]++;
+            m_squares[en_passant] = Piece::NONE;
+        }
+
+        // Updating captured pieces
+        if(m_squares[move.destination()] != Piece::NONE) {
+            m_captured[m_squares[move.destination()]]++;
+        }
+
+        // kingside castle
+        if(Piece::type(move.piece()) == Piece::KING
+           && move.destination() - move.source() == 2) {
+            m_squares[move.destination() - 1]
+                = m_squares[move.destination() + 1];
+            m_squares[move.destination() + 1] = Piece::NONE;
+        }
+
+        // Queenside castle
+        if(Piece::type(move.piece()) == Piece::KING
+           && move.source() - move.destination() == 2) {
+            m_squares[move.destination() + 1]
+                = m_squares[move.destination() - 2];
+            m_squares[move.destination() - 2] = Piece::NONE;
+        }
+
+        if(move.is_promotion()) {
+            // Promotion
+            m_squares[move.destination()] = move.promotion_piece();
         } else {
-            step = move.get_destination() > move.get_source() ? 1 : -1;
+            // The actual "common" move
+            m_squares[move.destination()] = m_squares[move.source()];
         }
 
-        uint16_t i = move.get_source() + step;
+        m_squares[move.source()] = Piece::NONE;
 
-        while(i != move.get_destination()) {
-            if(m_squares[i] != Piece::NONE) { return false; }
-
-            i += step;
-        }
-
-        if(m_squares[i] != Piece::NONE) { return false; }
-
-        if(Piece::get_color(m_squares[i])
-           != Piece::get_color(m_squares[move.get_source()])) {
-            return false;
-        }
-
-        return true;
+        m_turn = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
     }
 
     /**
-     * @brief "Checks if a move is semi_valid"
-     * @param move The move to check
-     * @return True if the move is semi_valid, False otherwise
+     * @brief Wraps the std::array::iterator begin() method to use it as Board
+     * ForwardIterator
+     * @return The pointer to the first square's address
      */
-    [[nodiscard]] bool Board::is_semi_valid_move(const Move &move) const {
-        if(!move.is_valid()
-           || Piece::get_color(m_squares[move.get_source()]) != m_turn) {
-            return false;
-        }
-
-        int64_t hor = move.horizontal_check();
-        int64_t ver = move.vertical_check();
-
-        bool diag = is_diagonals_ok(move, ver);
-
-        switch(Piece::get_type(move.get_piece())) {
-            case Piece::KNIGHT:
-                if(hor != 1 && hor != 2) { return false; }
-
-                if(hor == 1 && ver != 2) { return false; }
-
-                if(hor == 2 && ver != 1) { return false; }
-
-                if(m_squares[move.get_destination()] == Piece::NONE) { break; }
-
-                if(Piece::get_color(m_squares[move.get_destination()])
-                   == Piece::get_color(m_squares[move.get_source()])) {
-                    return false;
-                }
-                break;
-
-            case Piece::BISHOP:
-                if(hor != ver) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::ROOK:
-                if(hor != 0 && ver != 0) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::QUEEN:
-                if(hor != 0 && ver != 0 && hor != ver) { return false; }
-
-                if(!diag) { return false; }
-
-                break;
-
-            case Piece::PAWN:
-                if(move.get_destination() > move.get_source()
-                   && Piece::get_color(m_squares[move.get_source()])
-                          == Piece::BLACK) {
-                    return false;
-                }
-
-                if(move.get_destination() < move.get_source()
-                   && Piece::get_color(m_squares[move.get_source()])
-                          == Piece::WHITE) {
-                    return false;
-                }
-
-                if(hor > 1) { return false; }
-
-                if(hor == 0) {
-                    if(ver > 2) { return false; }
-
-                    if(ver == 2) {
-                        if(!(move.get_source() >= 8 && move.get_source() <= 15)
-                           || (move.get_source() >= 48
-                               && move.get_source() <= 55)) {
-                            return false;
-                        }
-
-                        if(!is_diagonals_ok(move, ver)
-                           || m_squares[move.get_destination()]
-                                  != Piece::NONE) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if(ver != 1) { return false; }
-
-                    if(!is_diagonals_ok(move, ver)) { return false; }
-
-                    if(m_squares[move.get_destination()] == Piece::NONE) {
-                        if(Piece::get_color(m_squares[move.get_source()])
-                               == Piece::WHITE
-                           && !(move.get_source() >= 32
-                                && move.get_source() < 40)) {
-                            return false;
-                        }
-
-                        if(Piece::get_color(m_squares[move.get_source()])
-                               == Piece::BLACK
-                           && !(move.get_source() >= 24
-                                && move.get_source() < 32)) {
-                            return false;
-                        }
-
-                        uint16_t offset
-                            = Piece::get_color(m_squares[move.get_source()])
-                                   == Piece::WHITE
-                                ? -8
-                                : 8;
-
-                        if(m_squares[move.get_destination() + offset]
-                           != Piece::PAWN
-                                  + Piece::opposite_side_color(
-                                      m_squares[move.get_source()])) {
-                            return false;
-                        }
-                    }
-                }
-
-                break;
-
-            case Piece::KING:
-                if(hor > 2) {
-                    return false;
-                } else if(hor == 2) {
-                    bool white = Piece::get_color(m_squares[move.get_source()])
-                              == Piece::WHITE;
-
-                    uint16_t step
-                        = move.get_destination() > move.get_source() ? 1 : -1;
-
-                    uint16_t rook
-                        = step == 1 ? (white ? 7 : 63) : (white ? 0 : 63);
-
-                    if(ver != 0) { return false; }
-
-                    if(move.get_source() != (white ? 4 : 60)) { return false; }
-
-                    if(m_squares[rook]
-                       != Piece::ROOK
-                              + Piece::get_color(
-                                  m_squares[move.get_source()])) {
-                        return false;
-                    }
-
-                    uint16_t i = move.get_source() + step;
-
-                    while(i != rook) {
-                        if(m_squares[i] != Piece::NONE) { return false; }
-
-                        i += step;
-                    }
-
-                    if(square_attacked(move.get_source())
-                       == Piece::opposite_side_color(
-                           m_squares[move.get_piece()])) {
-                        return false;
-                    }
-
-                    if(square_attacked(move.get_source() + step)
-                       == Piece::opposite_side_color(
-                        m_squares[move.get_piece()])) {
-                        return false;
-                    }
-                } else {
-                    if(ver > 1) {
-                        return false;
-                    }
-
-                    if(!is_diagonals_ok(move, ver)) {
-                        return false;
-                    }
-                }
-
-                break;
-
-            default:
-                return false;
-        }
-
-        return true;
+    std::array<Piece::Enum, 64>::const_iterator Board::begin() const {
+        return m_squares.begin();
     }
 
     /**
-     * @brief "Makes a move in the current `Board`"
-     * @details "Checks if the `Move` is a "special move", makes a "normal move"
-     * otherwise"
-     * @param move The `Move` to make
+     * @brief Wraps the std::array::iterator end() method to use it as Board
+     * ForwardIterator
+     * @return The pointer to the last square's address
      */
-    bool Board::make_move(const Move &move) {
-        if(move.is_valid()) {
-            // En-passant
-            if(Piece::get_type(move.get_piece()) == Piece::PAWN
-               && m_squares[move.get_destination()] == 0) {
-                uint16_t en_passant
-                    = move.get_destination()
-                    - 8 * (move.get_destination() > move.get_source() ? 1 : -1);
-                m_captured[m_squares[en_passant]]++;
-                m_squares[en_passant] = Piece::NONE;
-            }
-
-            // Updating captured pieces
-            if(move.get_destination() != 0) {
-                m_captured[m_squares[move.get_destination()]]++;
-            }
-
-            // kingside castle
-            if(Piece::get_type(move.get_piece()) == Piece::KING
-               && move.get_destination() - move.get_source() == 2) {
-                m_squares[move.get_destination() - 1]
-                    = m_squares[move.get_destination() + 1];
-                m_squares[move.get_destination() + 1] = Piece::NONE;
-            }
-
-            // Queenside castle
-            if(Piece::get_type(move.get_piece()) == Piece::KING
-               && move.get_source() - move.get_destination() == 2) {
-                m_squares[move.get_destination() + 1]
-                    = m_squares[move.get_destination() - 2];
-                m_squares[move.get_destination() - 2] = Piece::NONE;
-            }
-
-            if(move.is_promotion()) {
-                // Promotion
-                m_squares[move.get_destination()] = move.get_promotion_piece();
-            } else {
-                // The actual "common" move
-                m_squares[move.get_destination()]
-                    = m_squares[move.get_source()];
-                m_squares[move.get_source()] = Piece::NONE;
-            }
-        } else {
-            return false;
-        }
-
-        return true;
+    std::array<Piece::Enum, 64>::const_iterator Board::end() const {
+        return m_squares.end();
     }
 } // namespace DreamChess

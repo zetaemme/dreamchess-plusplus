@@ -15,29 +15,29 @@
 
 namespace DreamChess {
     /**
-     * @brief "The current game History"
+     * @brief The current game History
      */
     class History final {
     private:
         /**
-         * @brief "A single step into the History"
+         * @brief A single step into the History
          */
         struct Step final {
             Step(std::string_view, const Move &);
 
             /**
-             * @brief "The board as it can be seen at this step"
+             * @brief The Board as it can be seen at this step
              */
             std::string_view m_board_fen;
 
             /**
-             * @brief "Last move which has been made"
+             * @brief Last move which has been made
              */
             const Move m_move;
         };
 
         /**
-         * @brief "Game history so far"
+         * @brief Game history so far
          */
         std::unique_ptr<std::list<Step>> m_game_history;
 

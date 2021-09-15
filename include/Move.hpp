@@ -6,54 +6,56 @@
  */
 #pragma once
 
+#include "Board.hpp"
 #include "Piece.hpp"
 
 #include <string_view>
 
 namespace DreamChess {
-    class Board;
-
     /**
      * @brief A single move in the Game
      */
     class Move final {
+        using piece_t = Piece::Enum;
+        
     public:
         Move(const Board &, uint64_t, uint64_t);
         Move(const Board &, std::string_view);
 
-        [[nodiscard]] uint16_t get_source() const;
-
-        [[nodiscard]] uint16_t get_destination() const;
-
-        [[nodiscard]] Piece::Enum get_piece() const;
-
-        [[nodiscard]] Piece::Enum get_promotion_piece() const;
+        [[nodiscard]] uint16_t source() const;
+        [[nodiscard]] uint16_t destination() const;
+        [[nodiscard]] piece_t piece() const;
+        [[nodiscard]] piece_t promotion_piece() const;
 
         [[nodiscard]] bool is_valid() const;
-
+        [[nodiscard]] bool is_semi_valid() const;
         [[nodiscard]] bool is_promotion() const;
 
         [[nodiscard]] int64_t horizontal_check() const;
         [[nodiscard]] int64_t vertical_check() const;
+        [[nodiscard]] bool diagonal_check(int64_t) const;
 
     private:
+        Board m_board;
+
         /**
-         * @brief "The move's source square"
+         * @brief The Move's source square
          */
         uint16_t m_source;
+
         /**
-         * @brief "The move's destination square"
+         * @brief The Move's destination square
          */
         uint16_t m_destination;
 
         /**
-         * @brief "The piece which is making the move"
+         * @brief The Piece which is making the move
          */
-        Piece::Enum m_piece;
+        piece_t m_piece;
 
         /**
-         * @brief "The declared promotion present, if promotion"
+         * @brief The declared promotion present, if promotion
          */
-        Piece::Enum m_promotion_piece = Piece::NONE;
+        piece_t m_promotion_piece {Piece::NONE};
     };
-}
+} // namespace DreamChess

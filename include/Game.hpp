@@ -10,25 +10,29 @@
 #include "History.hpp"
 
 namespace DreamChess {
+    // Move forward declaration
     class Move;
 
+    /**
+     * @brief Describes a chess Game, with a Board and a History
+     */
     class Game final {
     public:
         Game();
 
+        friend std::ostream &operator<<(std::ostream &, const Game &);
+
         [[nodiscard]] bool is_in_game() const;
         [[nodiscard]] bool make_move(std::string_view);
 
-        friend std::ostream &operator<<(std::ostream &, const Game &);
-
     private:
         /**
-         * @brief "The current game's board"
+         * @brief The current game's Board
          */
         Board m_board;
 
         /**
-         * @brief "The current game's history"
+         * @brief The current game's History
          */
         History m_history;
 
