@@ -37,15 +37,6 @@ namespace DreamChess {
      */
 
     /**
-     * @brief Overloads the logic NOT operator
-     * @param piece The piece value to negate
-     * @return The negated piece value
-     */
-    Piece::Enum operator~(Piece::Enum piece) {
-        return static_cast<Piece::Enum>(~static_cast<uint16_t>(piece));
-    }
-
-    /**
      * @brief Overloads the bitwise OR operator
      * @param lhs The first piece
      * @param rhs The second piece
@@ -68,23 +59,13 @@ namespace DreamChess {
     }
 
     /**
-     * @brief Overloads the bitwise XOR operator
-     * @param lhs The first piece
-     * @param rhs The second piece
-     * @return The result of the XORed pieces values
-     */
-    Piece::Enum operator^(Piece::Enum lhs, Piece::Enum rhs) {
-        return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs)
-                                        ^ static_cast<uint16_t>(rhs));
-    }
-
-    /**
      * @brief Calculates the given piece's type
      * @param target The piece which I want to know the type
      * @return The piece's type
      */
     Piece::Enum Piece::get_type(Enum target) {
-        return static_cast<Enum>(target & (~BLACK | ~WHITE));
+        return static_cast<Enum>(
+            target & (PAWN | KNIGHT | BISHOP | ROOK | QUEEN | KING));
     };
 
     /**
@@ -94,7 +75,7 @@ namespace DreamChess {
      */
     Piece::Enum Piece::get_color(Enum target) {
         return static_cast<Enum>(
-            target & (~PAWN | ~KNIGHT | ~BISHOP | ~ROOK | ~QUEEN | ~KING));
+            target & (WHITE | BLACK));
     }
 
     /**

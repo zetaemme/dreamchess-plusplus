@@ -26,6 +26,7 @@ namespace DreamChess {
             ROOK = 1 << 3,
             QUEEN = 1 << 4,
             KING = 1 << 5,
+
             WHITE = 1 << 6,
             BLACK = 1 << 7,
 
@@ -53,10 +54,8 @@ namespace DreamChess {
          */
         static const std::map<uint8_t, Enum> g_fen_to_piece;
 
-        friend Enum operator~(Enum);
         friend Enum operator|(Enum, Enum);
         friend Enum operator&(Enum, Enum);
-        friend Enum operator^(Enum, Enum);
 
         static Enum get_type(Enum);
         static Enum get_color(Enum);
