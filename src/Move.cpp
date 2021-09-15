@@ -112,19 +112,21 @@ namespace DreamChess {
             return false;
         }
 
-        if(Piece::color(squares[m_destination])
-           == Piece::color(squares[m_source])) {
-            return false;
-        }
-
         int64_t hor = horizontal_check();
         int64_t ver = vertical_check();
         bool diag = diagonal_check(ver);
 
-        switch(Piece::type(m_piece)) {
+        switch(Piece::type(squares[m_source])) {
             case Piece::KNIGHT: {
                 if((hor != 1 && hor != 2) || (hor == 1 && ver != 2)
                    || (hor == 2 && ver != 1)) {
+                    return false;
+                }
+
+                if(squares[m_destination] == Piece::NONE) { break; }
+
+                if(Piece::color(squares[m_destination])
+                   == Piece::color(squares[m_source])) {
                     return false;
                 }
 
@@ -168,8 +170,8 @@ namespace DreamChess {
                     if(ver > 2) { return false; }
 
                     if(ver == 2) {
-                        if(!(m_source >= 8 && m_source <= 15)
-                           || (m_source >= 48 && m_source <= 55)) {
+                        if(!(((m_source >= 8) && (m_source <= 15))
+                             || ((m_source >= 48) && (m_source <= 55)))) {
                             return false;
                         }
 
@@ -191,10 +193,10 @@ namespace DreamChess {
                             return false;
                         }
 
-                        uint16_t offset = Piece::color(squares[m_source])
-                                               == Piece::WHITE
-                                            ? -8
-                                            : 8;
+                        uint16_t offset
+                            = Piece::color(squares[m_source]) == Piece::WHITE
+                                ? -8
+                                : 8;
 
                         if(squares[m_destination + offset]
                            != (Piece::PAWN
@@ -311,8 +313,7 @@ namespace DreamChess {
 
         if(squares[i] != Piece::NONE) { return false; }
 
-        if(Piece::color(squares[i])
-           != Piece::color(squares[m_source])) {
+        if(Piece::color(squares[i]) != Piece::color(squares[m_source])) {
             return false;
         }
 
