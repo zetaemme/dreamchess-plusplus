@@ -97,6 +97,7 @@ namespace DreamChess {
         return !m_board.is_in_check();
     }
 
+    // FIXME Non permette doppio avanzamento del pedone in prima mossa, fixare
     /**
      * @brief Checks if a move is semi_valid
      * @param move The move to check

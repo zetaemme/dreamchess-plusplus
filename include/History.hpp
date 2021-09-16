@@ -23,7 +23,7 @@ namespace DreamChess {
          * @brief A single step into the History
          */
         struct Step final {
-            Step(std::string_view, const Move &);
+            Step(std::string_view, Move);
 
             /**
              * @brief The Board as it can be seen at this step
@@ -43,9 +43,6 @@ namespace DreamChess {
 
     public:
         History();
-
-        Step first();
-        Step last();
 
         void add_step(std::string_view, const Move &);
     };
