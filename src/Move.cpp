@@ -290,7 +290,6 @@ namespace DreamChess {
 
     /**
      * @brief Checks if the diagonals of the given move are free
-     * @param move The move to check
      * @param ver The possible vertical values from the move source square
      * @return True if the diagonals are free, False otherwise
      */

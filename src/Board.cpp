@@ -246,6 +246,10 @@ namespace DreamChess {
         return true;
     }
 
+    /**
+     * @brief Returns the squares array of Board
+     * @return The m_squares array
+     */
     [[nodiscard]] std::array<Piece::Enum, 64> Board::squares() const {
         return m_squares;
     }
@@ -285,8 +289,9 @@ namespace DreamChess {
     }
 
     /**
-     * @breif Checks if a given square is attached by another piece
+     * @brief Checks if a given square is attached by another piece
      * @param index The index of the square
+     * @param turn The playing turn
      * @return The color of the piece which is attacked
      */
     [[nodiscard]] bool Board::square_attacked(uint64_t index,

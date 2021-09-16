@@ -24,7 +24,7 @@ namespace DreamChess {
     bool Game::is_in_game() const { return m_board.is_in_game(); }
 
     /**
-     * @breif Wraps Board::make_move and updates m_history
+     * @brief Wraps Board::make_move and updates m_history
      * @param input The user input containing the move "source-destination"
      * @return True if the move is valid, False otherwise
      */
