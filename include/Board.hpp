@@ -23,7 +23,7 @@ namespace DreamChess {
      */
     class Board final {
         using piece_t = Piece::Enum;
-        using internal_structure_type = std::array<piece_t, 64>;
+        using internal_structure_t = std::array<piece_t, 64>;
 
     public:
         Board();
@@ -35,16 +35,15 @@ namespace DreamChess {
         [[nodiscard]] bool is_in_game() const;
         [[nodiscard]] bool is_in_check() const;
 
-        [[nodiscard]] internal_structure_type squares() const;
+        [[nodiscard]] internal_structure_t squares() const;
         [[nodiscard]] piece_t turn() const;
         [[nodiscard]] piece_t opponent_turn() const;
 
         [[nodiscard]] piece_t piece_at(uint16_t) const;
-        [[nodiscard]] std::string to_fen() const;
         [[nodiscard]] bool square_attacked(uint64_t, piece_t) const;
 
-        [[nodiscard]] internal_structure_type::const_iterator begin() const;
-        [[nodiscard]] internal_structure_type::const_iterator end() const;
+        [[nodiscard]] internal_structure_t::const_iterator begin() const;
+        [[nodiscard]] internal_structure_t::const_iterator end() const;
 
     private:
 
@@ -66,7 +65,7 @@ namespace DreamChess {
         /**
          * @brief Array describing the board's state
          */
-        internal_structure_type m_squares {};
+        internal_structure_t m_squares {};
 
         /**
          * @brief Keeps track of captured pieces

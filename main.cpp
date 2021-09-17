@@ -25,7 +25,7 @@ int main() {
             std::cin >> input_move;
 
             valid_move = game.make_move(input_move);
-        } while(!valid_move
+        } while(!valid_move 
                 && (std::cout << "Invalid move! Retry!" << std::endl));
     }
 

@@ -42,167 +42,6 @@ namespace DreamChess {
     }
 
     /**
-     * @brief Converts the board to FEN notation
-     * @details First the method constructs the actual state of the Board, then
-     *          replaces consecutive whitespaces with the number of ' ' chars.
-     *          Finally it adds Move, Castle, En Passant, Semi-moves end Number
-     *          of Moves since the beginning
-     * @return The FEN representation of the Board
-     */
-    [[nodiscard]] std::string Board::to_fen() const {
-        std::string fen;
-
-        uint64_t i = 0;
-
-        // Board representation
-        for(auto &square : *this) {
-            fen.push_back(static_cast<char>(Piece::g_piece_repr.at(square)));
-
-            if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
-
-            i++;
-        }
-
-        // Removing whitespaces
-        uint16_t counter = 0;
-        for(i = 0; i < fen.length(); i++) {
-            if(fen.at(i) == ' ') {
-                counter++;
-
-                for(uint64_t j = i; j < i + 7; j++) {
-                    if(!isblank(fen.at(j))) { break; }
-
-                    counter++;
-                }
-
-                fen.replace(i, counter, std::to_string(counter));
-                i++;
-                counter = 0;
-            }
-        }
-
-        std::string turn = m_turn == Piece::WHITE ? "w" : "b";
-        fen.append(" " + turn + " ");
-
-        std::string castle;
-
-        if(!is_in_check()) {
-            // White can castle
-            if(m_squares[4] == Piece::WHITE_KING) {
-                // Kingside
-                if(m_squares[7] == Piece::WHITE_ROOK) { castle.append("K"); }
-
-                // Queenside
-                if(m_squares[0] == Piece::WHITE_ROOK) { castle.append("Q"); }
-            }
-
-            // Black can castle
-            if(m_squares[60] == Piece::BLACK_KING) {
-                // Kingside
-                if(m_squares[63] == Piece::BLACK_ROOK) { castle.append("k"); }
-
-                // Queenside
-                if(m_squares[56] == Piece::BLACK_ROOK) { castle.append("q"); }
-            }
-        }
-
-        if(!castle.empty()) {
-            fen.append(castle + " ");
-        } else {
-            // No castle is possible
-            fen.append("- ");
-        }
-
-        std::string en_passant;
-
-        // TODO Manca controllo mossa precedente
-        for(i = 24; i < 32; i++) {
-            if(m_turn == Piece::BLACK) {
-                if(m_squares[i] == Piece::BLACK_PAWN) {
-                    if(m_squares[i + 1] == Piece::WHITE_PAWN
-                       || m_squares[i - 1] == Piece::WHITE_PAWN) {
-                        switch(i) {
-                            case 24:
-                                en_passant.append("a6");
-                                break;
-                            case 25:
-                                en_passant.append("b6");
-                                break;
-                            case 26:
-                                en_passant.append("c6");
-                                break;
-                            case 27:
-                                en_passant.append("d6");
-                                break;
-                            case 28:
-                                en_passant.append("e6");
-                                break;
-                            case 29:
-                                en_passant.append("f6");
-                                break;
-                            case 30:
-                                en_passant.append("g6");
-                                break;
-                            default:
-                                en_passant.append("h6");
-                                break;
-                        }
-                    }
-                }
-            } else {
-                if(m_squares[i] == Piece::WHITE_PAWN) {
-                    if(m_squares[i + 1] == Piece::BLACK_PAWN
-                       || m_squares[i - 1] == Piece::BLACK_PAWN) {
-                        switch(i) {
-                            case 24:
-                                en_passant.append("a3");
-                                break;
-                            case 25:
-                                en_passant.append("b3");
-                                break;
-                            case 26:
-                                en_passant.append("c3");
-                                break;
-                            case 27:
-                                en_passant.append("d3");
-                                break;
-                            case 28:
-                                en_passant.append("e3");
-                                break;
-                            case 29:
-                                en_passant.append("f3");
-                                break;
-                            case 30:
-                                en_passant.append("g3");
-                                break;
-                            default:
-                                en_passant.append("h3");
-                                break;
-                        }
-                    }
-                }
-            }
-
-            if(!en_passant.empty()) { break; }
-        }
-
-        if(!en_passant.empty()) {
-            fen.append(en_passant + " ");
-        } else {
-            fen.append("- ");
-        }
-
-        // Half-moves
-        // TODO Implementare
-        fen.append("0 ");
-
-        // Turn number
-        fen.append(std::to_string(m_turn_counter));
-
-        return fen;
-    }
-
-    /**
      * @brief Checks if the game is in progress
      * @return true if the game is in progress, false otherwise
      */
@@ -363,7 +202,7 @@ namespace DreamChess {
 
     /**
      * @brief Wraps the std::array::iterator begin() method to use it as Board
-     * ForwardIterator
+     * ConstIterator
      * @return The pointer to the first square's address
      */
     std::array<Piece::Enum, 64>::const_iterator Board::begin() const {
@@ -372,7 +211,7 @@ namespace DreamChess {
 
     /**
      * @brief Wraps the std::array::iterator end() method to use it as Board
-     * ForwardIterator
+     * ConstIterator
      * @return The pointer to the last square's address
      */
     std::array<Piece::Enum, 64>::const_iterator Board::end() const {

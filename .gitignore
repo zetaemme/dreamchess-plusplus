@@ -101,7 +101,9 @@ fabric.properties
 .nfs*
 
 ### Project template
+bin
 build
+doc
 
 ### LaTeX template
 report/*

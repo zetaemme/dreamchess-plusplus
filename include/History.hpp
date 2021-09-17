@@ -23,12 +23,7 @@ namespace DreamChess {
          * @brief A single step into the History
          */
         struct Step final {
-            Step(std::string_view, Move);
-
-            /**
-             * @brief The Board as it can be seen at this step
-             */
-            std::string_view m_board_fen;
+            Step(Move);
 
             /**
              * @brief Last move which has been made
@@ -36,14 +31,21 @@ namespace DreamChess {
             const Move m_move;
         };
 
+        using internal_structure_t = std::list<Step>;
+
         /**
          * @brief Game history so far
          */
-        std::unique_ptr<std::list<Step>> m_game_history;
+        internal_structure_t m_game_history {};
+
+        [[nodiscard]] internal_structure_t::const_iterator begin() const;
+        [[nodiscard]] internal_structure_t::const_iterator end() const;
 
     public:
         History();
 
-        void add_step(std::string_view, const Move &);
+        void add_step(const Move &);
+
+
     };
 } // namespace DreamChess
