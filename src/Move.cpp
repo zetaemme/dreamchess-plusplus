@@ -23,7 +23,7 @@ namespace DreamChess {
         if(is_valid()) {
             m_piece = board.piece_at(m_source);
 
-            if(board.turn() && m_destination >= 0 && m_destination <= 7) {
+            if(board.turn() && m_destination <= 7) {
                 m_promotion_piece = Piece::WHITE_QUEEN;
             } else if(!board.turn() && m_destination >= 56
                       && m_destination <= 63) {
@@ -51,7 +51,7 @@ namespace DreamChess {
         if(is_valid()) {
             m_piece = board.piece_at(m_source);
 
-            if(board.turn() && m_destination >= 0 && m_destination <= 7) {
+            if(board.turn() && m_destination <= 7) {
                 m_promotion_piece = Piece::WHITE_QUEEN;
             } else if(!board.turn() && m_destination >= 56
                       && m_destination <= 63) {
@@ -106,9 +106,7 @@ namespace DreamChess {
     [[nodiscard]] bool Move::is_semi_valid() const {
         const auto &squares = m_board.squares();
 
-        if(m_source > 63 || m_source < 0 || m_destination > 63
-           || m_destination < 0 || m_source == m_destination
-           || squares[m_source] == Piece::NONE
+        if(m_source == m_destination || squares[m_source] == Piece::NONE
            || Piece::color(squares[m_source]) != m_board.turn()) {
             return false;
         }
