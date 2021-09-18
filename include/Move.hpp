@@ -35,6 +35,8 @@ namespace DreamChess {
         [[nodiscard]] int64_t vertical_check() const;
         [[nodiscard]] bool diagonal_check(int64_t) const;
 
+        std::string to_alg() const;
+
     private:
         Board m_board;
 

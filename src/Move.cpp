@@ -317,4 +317,28 @@ namespace DreamChess {
 
         return true;
     }
+
+    /**
+     * @brief Converts a Move to his its algebraic notation
+     * @return The Move in algebraic notation
+     */
+    std::string Move::to_alg() const {
+        auto pos = std::div(m_destination, 8);
+        
+        std::string res {};
+
+        if(Piece::type(m_piece) != Piece::PAWN) {
+            res.push_back(Piece::g_piece_repr.at(m_piece));
+        }
+
+        res.push_back(static_cast<char>('a' + pos.rem));
+        res.push_back(static_cast<char>('1' + pos.quot));
+
+        if(is_promotion()) {
+            res.push_back('/');
+            res.push_back(Piece::g_piece_repr.at(m_promotion_piece));
+        }
+
+        return res;
+    }
 } // namespace DreamChess

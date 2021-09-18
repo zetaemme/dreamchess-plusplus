@@ -27,7 +27,7 @@ namespace DreamChess {
     /**
      * @brief Wraps the std::vector::const_iterator begin() method to use it as 
      * Board ConstIterator
-     * @return The pointer to the first square's address
+     * @return The pointer to the first Move of the game
      */
     [[nodiscard]] std::list<History::Step>::const_iterator History::begin() const {
         return m_game_history.begin();
@@ -36,7 +36,7 @@ namespace DreamChess {
     /**
      * @brief Wraps the std::vector::const_iterator end() method to use it as 
      * Board ConstIterator
-     * @return The pointer to the last square's address
+     * @return The pointer to the last Move which has been made
      */
     [[nodiscard]] std::list<History::Step>::const_iterator History::end() const {
         return m_game_history.end();
@@ -44,9 +44,8 @@ namespace DreamChess {
 
     /**
      * @brief Constructs the Step
-     * @details Each Step is a view of the board and the move which brought
-     * us here
+     * @details Each Step is the algebraic notation representation of the Move
      */
-    History::Step::Step(Move move)
-        : m_move {std::move(move)} {}
+    History::Step::Step(const Move &move)
+        : m_move {move.to_alg()} {}
 } // namespace DreamChess

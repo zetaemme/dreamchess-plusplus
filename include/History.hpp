@@ -23,12 +23,12 @@ namespace DreamChess {
          * @brief A single step into the History
          */
         struct Step final {
-            Step(Move);
+            Step(const Move &);
 
             /**
              * @brief Last move which has been made
              */
-            const Move m_move;
+            const std::string_view m_move;
         };
 
         using internal_structure_t = std::list<Step>;

@@ -53,11 +53,6 @@ namespace DreamChess {
         piece_t m_turn {Piece::WHITE};
 
         /**
-         * @brief Counts the number of turns since the game started
-         */
-        uint64_t m_turn_counter {1};
-
-        /**
          * @brief Checks if the game is still going on
          */
         bool m_in_game {true};
