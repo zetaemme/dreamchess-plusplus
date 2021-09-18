@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "array": "cpp",
-        "string_view": "cpp"
-    },
-    "cmake.configureOnOpen": true,
-    "C_Cpp.clang_format_path": "/usr/bin/clang-format"
-}
