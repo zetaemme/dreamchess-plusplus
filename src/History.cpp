@@ -7,6 +7,9 @@
 
 #include "History.hpp"
 
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <utility>
 
 namespace DreamChess {
@@ -45,8 +48,14 @@ namespace DreamChess {
     /**
      * @brief Exports History to a file 
      */
-    constexpr void History::export_to_file() {
-        // TODO
+    constexpr void History::export_to_file(std::string_view game_id) {
+        std::filesystem::current_path(std::filesystem::temp_directory_path());
+
+        if(!std::filesystem::create_directory("../history")) {
+            std::cerr << "Failed to create the \'history\' dir!";
+        }
+
+        std::ofstream history_file {"../history/game_history.txt"};
     }
 
     /**

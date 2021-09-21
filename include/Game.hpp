@@ -23,7 +23,9 @@ namespace DreamChess {
         friend std::ostream &operator<<(std::ostream &, const Game &);
 
         [[nodiscard]] bool is_in_game() const;
+
         [[nodiscard]] bool make_move(std::string_view);
+        static constexpr void export_to_file();
 
     private:
         /**

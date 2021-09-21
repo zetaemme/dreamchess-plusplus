@@ -16,6 +16,19 @@ namespace DreamChess {
     Game::Game()
         : m_board(Board {})
         , m_history(History {}) {}
+    
+    /**
+     * @brief Overloads the out-stream operator for Game
+     * @details Wraps the Board::operator<< to print the Board
+     * @param stream The out-stream
+     * @param game This game
+     * @return The output stream
+     */
+    std::ostream &operator<<(std::ostream &stream, const Game &game) {
+        stream << game.m_board;
+
+        return stream;
+    }
 
     /**
      * @brief Checks if the game is still going on
@@ -40,16 +53,12 @@ namespace DreamChess {
     }
 
     /**
-     * @brief Overloads the out-stream operator for Game
-     * @param stream The out-stream
-     * @param game This game
-     * @return The output stream
+     * @brief Exports the Game's Hisotry to a file
+     * @details Wraps History::export_to_file() method
      */
-    std::ostream &operator<<(std::ostream &stream, const Game &game) {
-        stream << game.m_board;
-
-        return stream;
-    }
+    constexpr void Game::export_to_file() {
+        History::export_to_file();
+    }    
 
     /**
      * @brief Updates the Game's history
