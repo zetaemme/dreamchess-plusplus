@@ -17,14 +17,6 @@ namespace DreamChess {
     History::History() {}
 
     /**
-     * @brief Adds a step to the History list
-     * @param move The last move made in the referenced board
-     */
-    void History::add_step(const Move &move) {
-        m_game_history.push_back(Step {move});
-    }
-
-    /**
      * @brief Wraps the std::vector::const_iterator begin() method to use it as 
      * Board ConstIterator
      * @return The pointer to the first Move of the game
@@ -40,6 +32,21 @@ namespace DreamChess {
      */
     [[nodiscard]] std::list<History::Step>::const_iterator History::end() const {
         return m_game_history.end();
+    }
+
+    /**
+     * @brief Adds a step to the History list
+     * @param move The last move made in the referenced board
+     */
+    void History::add_step(const Move &move) {
+        m_game_history.push_back(Step {move});
+    }
+
+    /**
+     * @brief Exports History to a file 
+     */
+    constexpr void History::export_to_file() {
+        // TODO
     }
 
     /**

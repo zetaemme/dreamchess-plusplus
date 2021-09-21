@@ -46,6 +46,6 @@ namespace DreamChess {
 
         void add_step(const Move &);
 
-
+        static constexpr void export_to_file();
     };
 } // namespace DreamChess
