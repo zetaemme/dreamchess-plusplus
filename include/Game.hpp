@@ -9,6 +9,9 @@
 #include "Board.hpp"
 #include "History.hpp"
 
+#include <cstdlib>
+#include <ctime>
+
 namespace DreamChess {
     // Move forward declaration
     class Move;
@@ -25,7 +28,7 @@ namespace DreamChess {
         [[nodiscard]] bool is_in_game() const;
 
         [[nodiscard]] bool make_move(std::string_view);
-        static constexpr void export_to_file();
+        void export_to_file() const;
 
     private:
         /**

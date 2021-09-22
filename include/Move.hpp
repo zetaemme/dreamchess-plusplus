@@ -17,7 +17,7 @@ namespace DreamChess {
      */
     class Move final {
         using piece_t = Piece::Enum;
-        
+
     public:
         Move(const Board &, uint64_t, uint64_t);
         Move(const Board &, std::string_view);
@@ -35,9 +35,12 @@ namespace DreamChess {
         [[nodiscard]] int64_t vertical_check() const;
         [[nodiscard]] bool diagonal_check(int64_t) const;
 
-        std::string to_alg() const;
+        [[nodiscard]] std::string to_alg() const;
 
     private:
+        /**
+         * @brief The Board where the Move has been made
+         */
         Board m_board;
 
         /**

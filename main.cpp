@@ -7,6 +7,7 @@
 #include "Game.hpp"
 
 #include <iostream>
+#include <string>
 
 int main() {
     DreamChess::Game game {};
@@ -18,15 +19,19 @@ int main() {
         std::cout << game;
         std::cout << "---------------------------------------" << std::endl;
 
-        bool valid_move;
+        bool valid;
 
         do {
             std::cout << "Input move: ";
             std::cin >> input_move;
 
-            valid_move = game.make_move(input_move);
-        } while(!valid_move 
-                && (std::cout << "Invalid move! Retry!" << std::endl));
+            if(input_move == "export_history") {
+                game.export_to_file();
+                valid = true;
+            } else {
+                valid = game.make_move(input_move);
+            }
+        } while(!valid && (std::cout << "Invalid move! Retry!" << std::endl));
     }
 
     return 0;

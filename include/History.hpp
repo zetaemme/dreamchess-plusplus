@@ -23,12 +23,12 @@ namespace DreamChess {
          * @brief A single step into the History
          */
         struct Step final {
-            Step(const Move &);
-
             /**
              * @brief Last move which has been made
              */
             const std::string_view m_move;
+
+            explicit Step(const Move &);
         };
 
         using internal_structure_t = std::list<Step>;
@@ -38,14 +38,15 @@ namespace DreamChess {
          */
         internal_structure_t m_game_history {};
 
-        [[nodiscard]] internal_structure_t::const_iterator begin() const;
-        [[nodiscard]] internal_structure_t::const_iterator end() const;
-
     public:
-        History();
+        /**
+         * @brief Constructs a History object
+         */
+        History() = default;
 
         void add_step(const Move &);
 
-        static constexpr void export_to_file(std::string_view);
+        [[nodiscard]] internal_structure_t::const_iterator begin() const;
+        [[nodiscard]] internal_structure_t::const_iterator end() const;
     };
 } // namespace DreamChess

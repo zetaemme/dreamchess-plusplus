@@ -9,6 +9,11 @@
 
 #include "Move.hpp"
 
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
 namespace DreamChess {
     /**
      * @brief Creates a Game object
@@ -16,7 +21,7 @@ namespace DreamChess {
     Game::Game()
         : m_board(Board {})
         , m_history(History {}) {}
-    
+
     /**
      * @brief Overloads the out-stream operator for Game
      * @details Wraps the Board::operator<< to print the Board
@@ -56,14 +61,30 @@ namespace DreamChess {
      * @brief Exports the Game's Hisotry to a file
      * @details Wraps History::export_to_file() method
      */
-    constexpr void Game::export_to_file() {
-        History::export_to_file();
-    }    
+    void Game::export_to_file() const {
+        if(!std::filesystem::create_directory("../history")) {
+            std::cerr << "Failed to create the \'history\' dir!";
+        }
+
+        std::ofstream history_file {"../history/game_history.txt"};
+
+        std::filesystem::permissions("../history/game_history.txt",
+                                     std::filesystem::perms::owner_write
+                                         | std::filesystem::perms::group_write
+                                         | std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::add);
+
+        // FIXME Il file viene creato e ci viene scritto qualcosa dentro,
+        // controllare codifica e contenuto di m_move
+        for(auto &step : m_history) {
+            history_file << step.m_move;
+        }
+
+        history_file.close();
+    }
 
     /**
      * @brief Updates the Game's history
      */
-    void Game::update_history(const Move &move) {
-        m_history.add_step(move);
-    }
+    void Game::update_history(const Move &move) { m_history.add_step(move); }
 } // namespace DreamChess

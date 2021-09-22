@@ -46,16 +46,15 @@ namespace DreamChess {
         [[nodiscard]] internal_structure_t::const_iterator end() const;
 
     private:
+        /**
+         * @brief Checks if the game is still going on
+         */
+        bool m_in_game {true};
 
         /**
          * @brief false for BLACK's or true for WHITE's turn
          */
         piece_t m_turn {Piece::WHITE};
-
-        /**
-         * @brief Checks if the game is still going on
-         */
-        bool m_in_game {true};
 
         /**
          * @brief Array describing the board's state
