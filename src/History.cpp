@@ -19,6 +19,25 @@ namespace DreamChess {
     }
 
     /**
+     * @brief Exports the History as a string
+     * @details Every Step is exported as <Move number>. <Move in algebraic>
+     */
+    [[nodiscard]] std::string History::export_all() const {
+        auto output_history = m_game_history;
+        std::string move_list;
+
+        for(uint64_t i = 0; i < m_game_history.size(); i++) {
+            move_list += std::to_string(i + 1) + ". " 
+                        + std::string {output_history.front().m_move};
+            move_list.push_back('\n');
+            
+            output_history.pop_front();
+        }
+
+        return move_list;
+    }
+
+    /**
      * @brief Wraps the std::list::const_iterator begin() method to use it as
      * Board ConstIterator
      * @return The pointer to the first Move of the game

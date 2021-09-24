@@ -24,9 +24,9 @@ namespace DreamChess {
          */
         struct Step final {
             /**
-             * @brief Last move which has been made
+             * @brief Last Move which has been made
              */
-            const std::string_view m_move;
+            std::string m_move;
 
             explicit Step(const Move &);
         };
@@ -34,7 +34,7 @@ namespace DreamChess {
         using internal_structure_t = std::list<Step>;
 
         /**
-         * @brief Game history so far
+         * @brief Game History so far
          */
         internal_structure_t m_game_history {};
 
@@ -45,6 +45,8 @@ namespace DreamChess {
         History() = default;
 
         void add_step(const Move &);
+
+        [[nodiscard]] std::string export_all() const;
 
         [[nodiscard]] internal_structure_t::const_iterator begin() const;
         [[nodiscard]] internal_structure_t::const_iterator end() const;

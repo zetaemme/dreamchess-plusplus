@@ -98,6 +98,7 @@ namespace DreamChess {
     }
 
     // FIXME Non permette doppio avanzamento del pedone in prima mossa, fixare
+    // FIXME Se muovi la torre (forse anche gli altri?) da std::out_of_range
     /**
      * @brief Checks if a move is semi_valid
      * @param move The move to check
@@ -323,7 +324,8 @@ namespace DreamChess {
      * @return The Move in algebraic notation
      */
     [[nodiscard]] std::string Move::to_alg() const {
-        auto pos = std::div(m_destination, 8);
+        uint16_t rem = m_destination % 8;
+        uint16_t quot = m_destination / 8;
 
         std::string res {};
 
@@ -331,8 +333,8 @@ namespace DreamChess {
             res.push_back(Piece::g_piece_repr.at(m_piece));
         }
 
-        res.push_back(static_cast<char>('a' + pos.rem));
-        res.push_back(static_cast<char>('1' + pos.quot));
+        res.push_back(static_cast<char>('a' + rem));
+        res.push_back(static_cast<char>('1' + quot));
 
         if(is_promotion()) {
             res.push_back('/');

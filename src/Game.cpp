@@ -74,11 +74,7 @@ namespace DreamChess {
                                          | std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::add);
 
-        // FIXME Il file viene creato e ci viene scritto qualcosa dentro,
-        // controllare codifica e contenuto di m_move
-        for(auto &step : m_history) {
-            history_file << step.m_move;
-        }
+        history_file << m_history.export_all();
 
         history_file.close();
     }
