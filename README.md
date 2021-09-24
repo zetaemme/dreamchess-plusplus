@@ -9,7 +9,7 @@ Use `cmake` >= 3.16 to build the project, simply launch
 ```bash
 mkdir build
 cd build
-cmake . -B build
+cmake .. -B .
 ```
 at this point you should have created 2 `make` targets:
 * `install`: Creates a `bin` directory in the `dreamchess++` root with the executable
