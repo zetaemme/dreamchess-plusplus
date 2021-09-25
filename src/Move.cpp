@@ -98,7 +98,11 @@ namespace DreamChess {
     }
 
     // FIXME Non permette doppio avanzamento del pedone in prima mossa
-    // FIXME Se muovi la torre (forse anche gli altri?) da std::out_of_range
+    // FIXME Se muovi la torre (forse anche gli altri?) da INVALID_MOVE
+    //       Cavallo -> ok
+    //       Alfiere -> INVALID_MOVE
+    //       Regina -> INVALID_MOVE
+    //       Re -> INVAID_MOVE
     /**
      * @brief Checks if a move is semi_valid
      * @param move The move to check
@@ -107,7 +111,8 @@ namespace DreamChess {
     [[nodiscard]] bool Move::is_semi_valid() const {
         const auto &squares = m_board.squares();
 
-        if(m_source == m_destination || squares[m_source] == Piece::NONE
+        if(m_source > 63 || m_destination > 63 ||m_source == m_destination 
+           || squares[m_source] == Piece::NONE
            || Piece::color(squares[m_source]) != m_board.turn()) {
             return false;
         }
@@ -118,8 +123,8 @@ namespace DreamChess {
 
         switch(Piece::type(squares[m_source])) {
             case Piece::KNIGHT: {
-                if((hor != 1 && hor != 2) || (hor == 1 && ver != 2)
-                   || (hor == 2 && ver != 1)) {
+                if(((hor != 1) && (hor != 2)) || ((hor == 1) && (ver != 2))
+                   || ((hor == 2) && (ver != 1))) {
                     return false;
                 }
 
@@ -134,19 +139,19 @@ namespace DreamChess {
             }
 
             case Piece::BISHOP: {
-                if(hor != ver || !diag) { return false; }
+                if((hor != ver) || !diag) { return false; }
 
                 break;
             }
 
             case Piece::ROOK: {
-                if((hor != 0 && ver != 0) || !diag) { return false; }
+                if(((hor != 0) && (ver != 0)) || !diag) { return false; }
 
                 break;
             }
 
             case Piece::QUEEN: {
-                if((hor != 0 && ver != 0 && hor != ver) || !diag) {
+                if(((hor != 0) && (ver != 0) && (hor != ver)) || !diag) {
                     return false;
                 }
 
@@ -154,13 +159,13 @@ namespace DreamChess {
             }
 
             case Piece::PAWN: {
-                if(m_destination > m_source
-                   && Piece::color(squares[m_source]) == Piece::BLACK) {
+                if((m_destination > m_source)
+                   && (Piece::color(squares[m_source]) == Piece::BLACK)) {
                     return false;
                 }
 
-                if(m_destination < m_source
-                   && Piece::color(squares[m_source]) == Piece::WHITE) {
+                if((m_destination < m_source)
+                   && (Piece::color(squares[m_source]) == Piece::WHITE)) {
                     return false;
                 }
 
@@ -175,21 +180,21 @@ namespace DreamChess {
                             return false;
                         }
 
-                        if(!diag || squares[m_destination] != Piece::NONE) {
+                        if(!diag || (squares[m_destination] != Piece::NONE)) {
                             return false;
                         }
                     }
                 } else {
-                    if(ver != 1 || !diag) { return false; }
+                    if((ver != 1) || !diag) { return false; }
 
                     if(squares[m_destination] == Piece::NONE) {
-                        if(Piece::color(squares[m_source]) == Piece::WHITE
-                           && !(m_source >= 32 && m_source < 40)) {
+                        if((Piece::color(squares[m_source]) == Piece::WHITE)
+                           && !((m_source >= 32) && (m_source < 40))) {
                             return false;
                         }
 
-                        if(Piece::color(squares[m_source]) == Piece::BLACK
-                           && !(m_source >= 24 && m_source < 32)) {
+                        if((Piece::color(squares[m_source]) == Piece::BLACK)
+                           && !((m_source >= 24) && (m_source < 32))) {
                             return false;
                         }
 
@@ -220,7 +225,7 @@ namespace DreamChess {
                     uint16_t step = m_destination > m_source ? 1 : -1;
 
                     uint16_t rook
-                        = step == 1 ? (white ? 7 : 63) : (white ? 0 : 63);
+                        = step == 1 ? (white ? 7 : 63) : (white ? 0 : 56);
 
                     if(ver != 0) { return false; }
 
@@ -248,7 +253,7 @@ namespace DreamChess {
                         return false;
                     }
                 } else {
-                    if(ver > 1 || !diag) { return false; }
+                    if((ver > 1) || !diag) { return false; }
                 }
 
                 break;

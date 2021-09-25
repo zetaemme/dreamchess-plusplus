@@ -11,6 +11,8 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <string>
 
 namespace DreamChess {
     // Move forward declaration
@@ -30,6 +32,8 @@ namespace DreamChess {
         [[nodiscard]] bool make_move(std::string_view);
         void export_to_file() const;
 
+        bool is_licence_valid();
+
     private:
         /**
          * @brief The current game's Board
@@ -42,5 +46,12 @@ namespace DreamChess {
         History m_history;
 
         void update_history(const Move &);
+
+        constexpr size_t generate_licence();
+
+        template<size_t N>
+        static constexpr size_t licence_hash(size_t prime, 
+                                             const char (&str)[N], 
+                                             size_t len = N - 1);
     };
 } // namespace DreamChess

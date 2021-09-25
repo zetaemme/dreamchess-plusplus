@@ -79,8 +79,54 @@ namespace DreamChess {
         history_file.close();
     }
 
+    // TODO Usare hash nel modo corretto
+    /**
+     * @brief Checks if the 'game_licence.txt' file is a valid licence
+     * @return true if the licence is valid, false otherwise
+     */
+    bool Game::is_licence_valid() {
+        std::ifstream licence_file;
+
+        licence_file.open("../game_licence.txt");
+
+        if(licence_file.is_open()) {
+            std::string game_licence;
+
+            licence_file >> game_licence;
+
+            return licence_hash(31, game_licence) == generate_licence();
+        }
+
+        return false;
+    }
+
     /**
      * @brief Updates the Game's history
      */
     void Game::update_history(const Move &move) { m_history.add_step(move); }
+
+    /**
+     * @brief Generates the "licence" value
+     * @details This shouldn't exist, added in order to introduce a compile
+     * time feature to the project
+     * @return The hashed Game licence
+     */
+    constexpr uint64_t Game::generate_licence() {
+        return licence_hash(31, "dreamchess");
+    }
+
+    /**
+     * @brief A compile time hash function
+     * @param prime A prime number
+     * @param str A cheracter from the string str
+     * @param len The remaining chars to be hashed
+     */
+    template<size_t N>
+    static constexpr size_t licence_hash(size_t prime, 
+                                         const char (&str)[N], 
+                                         size_t len = N - 1) {
+        return len <= 1 
+            ? str[0] 
+            : (prime * licence_hash(prime, str, len - 1) + str[len - 1]);
+    }
 } // namespace DreamChess

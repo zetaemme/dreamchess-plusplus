@@ -12,26 +12,31 @@
 int main() {
     DreamChess::Game game {};
 
-    std::string input_move;
+    if(game.is_licence_valid()) {
+        std::string input_move;
 
-    while(game.is_in_game()) {
-        std::cout << "---------------------------------------" << std::endl;
-        std::cout << game;
-        std::cout << "---------------------------------------" << std::endl;
+        while(game.is_in_game()) {
+            std::cout << "---------------------------------------" << std::endl;
+            std::cout << game;
+            std::cout << "---------------------------------------" << std::endl;
 
-        bool valid;
+            bool valid;
 
-        do {
-            std::cout << "Input move: ";
-            std::cin >> input_move;
+            do {
+                std::cout << "Input move: ";
+                std::cin >> input_move;
 
-            if(input_move == "export_history") {
-                game.export_to_file();
-                valid = true;
-            } else {
-                valid = game.make_move(input_move);
-            }
-        } while(!valid && (std::cout << "Invalid move! Retry!" << std::endl));
+                if(input_move == "export_history") {
+                    game.export_to_file();
+                    valid = true;
+                } else {
+                    valid = game.make_move(input_move);
+                }
+            } while(!valid && (std::cout << "Invalid move! Retry!" << std::endl));
+        }
+    } else {
+        std::cerr << "Invalid licence!";
+        return -1;
     }
 
     return 0;
