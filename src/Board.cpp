@@ -14,6 +14,9 @@
 #include <sstream>
 
 namespace DreamChess {
+    using piece_t = Piece::Enum;
+    using internal_structure_t = std::array<piece_t, 64>;
+
     /**
      * @brief Constructs a Board
      * @details Starts with the neutral FEN string, using init_board()
@@ -138,7 +141,7 @@ namespace DreamChess {
      * @brief Returns the squares array of Board
      * @return The m_squares array
      */
-    [[nodiscard]] std::array<Piece::Enum, 64> Board::squares() const {
+    [[nodiscard]] internal_structure_t Board::squares() const {
         return m_squares;
     }
 
@@ -146,13 +149,13 @@ namespace DreamChess {
      * @brief Returns who plays in current turn
      * @return True if it's WHITE, false otherwise
      */
-    [[nodiscard]] Piece::Enum Board::turn() const { return m_turn; }
+    [[nodiscard]] piece_t Board::turn() const { return m_turn; }
 
     /**
      * @brief Gets the next turn moving color
      * @return The opposite of m_turn
      */
-    [[nodiscard]] Piece::Enum Board::opponent_turn() const {
+    [[nodiscard]] piece_t Board::opponent_turn() const {
         return m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
     }
 
@@ -161,7 +164,7 @@ namespace DreamChess {
      * @param index The index of the returned piece
      * @return The corresponding piece
      */
-    [[nodiscard]] Piece::Enum Board::piece_at(uint16_t index) const {
+    [[nodiscard]] piece_t Board::piece_at(uint16_t index) const {
         return m_squares[index];
     }
 
@@ -172,7 +175,7 @@ namespace DreamChess {
      * @return The color of the piece which is attacked
      */
     [[nodiscard]] bool Board::square_attacked(uint64_t index,
-                                              Piece::Enum turn) const {
+                                              piece_t turn) const {
         for(auto &square : m_squares) {
             if(Piece::color(square) == turn) {
                 Move move {static_cast<uint64_t>(&square - &m_squares[0]),
@@ -386,7 +389,7 @@ namespace DreamChess {
      * ConstIterator
      * @return The pointer to the first square's address
      */
-    std::array<Piece::Enum, 64>::const_iterator Board::begin() const {
+    [[nodiscard]] internal_structure_t::const_iterator Board::begin() const {
         return m_squares.begin();
     }
 
@@ -395,7 +398,7 @@ namespace DreamChess {
      * ConstIterator
      * @return The pointer to the last square's address
      */
-    std::array<Piece::Enum, 64>::const_iterator Board::end() const {
+    [[nodiscard]] internal_structure_t::const_iterator Board::end() const {
         return m_squares.end();
     }
 
