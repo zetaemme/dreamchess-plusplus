@@ -47,9 +47,18 @@ namespace DreamChess {
      * @return True if the move is valid, False otherwise
      */
     bool Game::make_move(std::string_view input) {
-        Move new_move {m_board, input};
+        uint16_t s_file = input.at(0) - 'a';
+        uint16_t s_rank = input.at(1) - '1';
 
-        if(!new_move.is_valid()) { return false; }
+        uint16_t d_file = input.at(3) - 'a';
+        uint16_t d_rank = input.at(4) - '1';
+
+        uint16_t source = (s_rank * 8) + s_file;
+        uint16_t destination = (d_rank * 8) + d_file;
+
+        Move new_move {source, destination, m_board.piece_at(source)};
+
+        if(!m_board.move_is_valid(new_move)) { return false; }
 
         m_board.make_move(new_move);
         update_history(new_move);
@@ -79,54 +88,8 @@ namespace DreamChess {
         history_file.close();
     }
 
-    // TODO Usare hash nel modo corretto
-    /**
-     * @brief Checks if the 'game_licence.txt' file is a valid licence
-     * @return true if the licence is valid, false otherwise
-     */
-    bool Game::is_licence_valid() {
-        std::ifstream licence_file;
-
-        licence_file.open("../game_licence.txt");
-
-        if(licence_file.is_open()) {
-            std::string game_licence;
-
-            licence_file >> game_licence;
-
-            return licence_hash(31, game_licence) == generate_licence();
-        }
-
-        return false;
-    }
-
     /**
      * @brief Updates the Game's history
      */
     void Game::update_history(const Move &move) { m_history.add_step(move); }
-
-    /**
-     * @brief Generates the "licence" value
-     * @details This shouldn't exist, added in order to introduce a compile
-     * time feature to the project
-     * @return The hashed Game licence
-     */
-    constexpr uint64_t Game::generate_licence() {
-        return licence_hash(31, "dreamchess");
-    }
-
-    /**
-     * @brief A compile time hash function
-     * @param prime A prime number
-     * @param str A cheracter from the string str
-     * @param len The remaining chars to be hashed
-     */
-    template<size_t N>
-    static constexpr size_t licence_hash(size_t prime, 
-                                         const char (&str)[N], 
-                                         size_t len = N - 1) {
-        return len <= 1 
-            ? str[0] 
-            : (prime * licence_hash(prime, str, len - 1) + str[len - 1]);
-    }
 } // namespace DreamChess

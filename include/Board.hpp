@@ -34,6 +34,7 @@ namespace DreamChess {
 
         [[nodiscard]] bool is_in_game() const;
         [[nodiscard]] bool is_in_check() const;
+        [[nodiscard]] bool is_mated() const;
 
         [[nodiscard]] internal_structure_t squares() const;
         [[nodiscard]] piece_t turn() const;
@@ -41,6 +42,10 @@ namespace DreamChess {
 
         [[nodiscard]] piece_t piece_at(uint16_t) const;
         [[nodiscard]] bool square_attacked(uint64_t, piece_t) const;
+
+        [[nodiscard]] bool move_is_valid(const Move &) const;
+        [[nodiscard]] bool move_is_semi_valid(const Move &) const;
+        [[nodiscard]] bool move_is_promotion(const Move &) const;
 
         [[nodiscard]] internal_structure_t::const_iterator begin() const;
         [[nodiscard]] internal_structure_t::const_iterator end() const;
@@ -67,5 +72,9 @@ namespace DreamChess {
         std::map<piece_t, uint16_t> m_captured {};
 
         void init_board();
+
+        [[nodiscard]] int64_t horizontal_check(const Move &) const;
+        [[nodiscard]] int64_t vertical_check(const Move &) const;
+        [[nodiscard]] bool diagonal_check(int64_t, const Move &) const;
     };
 } // namespace DreamChess
