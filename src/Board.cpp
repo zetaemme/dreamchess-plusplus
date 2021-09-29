@@ -199,12 +199,6 @@ namespace DreamChess {
         return !is_in_check();
     }
 
-    // FIXME Se muovi la:
-    //       Torre -> INVALID_MOVE
-    //       Cavallo -> ok
-    //       Alfiere -> INVALID_MOVE
-    //       Regina -> INVALID_MOVE
-    //       Re -> INVAID_MOVE
     /**
      * @brief Checks if a move is semi_valid
      * @param move The move to check
