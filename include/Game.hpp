@@ -9,6 +9,11 @@
 #include "Board.hpp"
 #include "History.hpp"
 
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
+#include <string>
+
 namespace DreamChess {
     // Move forward declaration
     class Move;
@@ -23,7 +28,9 @@ namespace DreamChess {
         friend std::ostream &operator<<(std::ostream &, const Game &);
 
         [[nodiscard]] bool is_in_game() const;
+
         [[nodiscard]] bool make_move(std::string_view);
+        void export_to_file() const;
 
     private:
         /**

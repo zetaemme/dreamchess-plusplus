@@ -7,39 +7,60 @@
 
 #include "History.hpp"
 
+#include <utility>
+
 namespace DreamChess {
     /**
-     * @brief Constructs the History
-     * @details History can be seen as a list of Steps
-     */
-    History::History()
-        : m_game_history {std::make_unique<std::list<Step>>()} {}
-
-    /**
-     * @brief Returns the first move of the game
-     */
-    History::Step History::first() { return m_game_history->front(); }
-
-    /**
-     * @brief Returns the last played move
-     */
-    History::Step History::last() { return m_game_history->back(); }
-
-    /**
      * @brief Adds a step to the History list
-     * @param board_fen The Step's view of the board
      * @param move The last move made in the referenced board
      */
-    void History::add_step(std::string_view board_fen, const Move &move) {
-        m_game_history->push_back(Step {board_fen, move});
+    void History::add_step(const Move &move) {
+        m_game_history.push_back(Step {move});
+    }
+
+    /**
+     * @brief Exports the History as a string
+     * @details Every Step is exported as <Move number>. <Move in algebraic>
+     */
+    [[nodiscard]] std::string History::export_all() const {
+        auto output_history = m_game_history;
+        std::string move_list;
+
+        for(uint64_t i = 0; i < m_game_history.size(); i++) {
+            move_list += std::to_string(i + 1) + ". " 
+                        + std::string {output_history.front().m_move};
+            move_list.push_back('\n');
+            
+            output_history.pop_front();
+        }
+
+        return move_list;
+    }
+
+    /**
+     * @brief Wraps the std::list::const_iterator begin() method to use it as
+     * Board ConstIterator
+     * @return The pointer to the first Move of the game
+     */
+    [[nodiscard]] std::list<History::Step>::const_iterator
+    History::begin() const {
+        return m_game_history.begin();
+    }
+
+    /**
+     * @brief Wraps the std::list::const_iterator end() method to use it as
+     * Board ConstIterator
+     * @return The pointer to the last Move which has been made
+     */
+    [[nodiscard]] std::list<History::Step>::const_iterator
+    History::end() const {
+        return m_game_history.end();
     }
 
     /**
      * @brief Constructs the Step
-     * @details Each Step is a view of the board and the move which brought
-     * us here
+     * @details Each Step is the algebraic notation representation of the Move
      */
-    History::Step::Step(const std::string_view board_fen, const Move &move)
-        : m_board_fen {board_fen}
-        , m_move {move} {}
+    History::Step::Step(const Move &move)
+        : m_move {move.to_alg()} {}
 } // namespace DreamChess

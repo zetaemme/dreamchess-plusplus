@@ -1,0 +1,68 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{hyperref}
+
+\hypersetup{hidelinks}
+
+\begin{document}
+    \clearpage
+
+    \begin{titlepage}
+        \centering
+        \vspace*{\fill}
+        {\scshape\LARGE Modern C++ Programming \par}
+        \vspace{1.5cm}
+        \line(1,0){160} \\
+        {\huge\bfseries Dreamchess++ \par}
+        \line(1,0){160} \\
+        \vspace{0.5cm}
+        {\scshape\LARGE Report del Progetto \par}
+        \vspace{2cm}
+        {\Large\itshape Mattia Zorzan \par}
+        \vspace{1cm}
+
+        \vspace{5cm}
+        \vspace*{\fill}
+        {\large \today \par}
+    \end{titlepage}
+    \thispagestyle{empty}
+    \newpage
+    \tableofcontents
+    \thispagestyle{empty}
+    \newpage
+    \section{Project design}\label{sec:design}
+        Affrontare il porting di un progetto come \href{https://github.com/dreamchess/dreamchess}{dreamchess} ha sicuramente richiesto delle scelte abbastanza radicali nel design, soprattutto a causa delle possibilità offerte da \textit{C++17}.
+        \subsection{Macros}\label{subsec:macros}
+            È stato in primis deciso di accantonare completamente l'utilizzo delle \textit{Macro}, largamente utilizzate nel progetto originale per cose come la specifica dei pezzi della scacchiera e di alcune funzioni riguardanti essi, trasformate e riportate nell'omonima classe.
+            Altre invece sono state completamente rimosse in quanto riguardanti la GUI oppure lo stato della schacchiera, controllabile tramite semplici funzioni e membri booleani delle classi.\\
+            Unica eccezione fatta per \texttt{\#pragma}, utilizzato come \texttt{\#pragma once} in sostituzione delle \textit{include guards}.
+        \subsection{Computazione}\label{subsec:computation}
+            Da sottlineare la quasi totalità di computazione a runtime per il progetto, rendendo praticamente impossibile l'utilizzo sensato ed efficace di \textit{templates} o \texttt{constexpr}.
+        \subsection{Enumerazioni}\label{subsec:enum}
+            Come anticipato, ho preferito rimuovere completamente l'utilizzo di Macro, è stato quindi necessario convertire quanto espresso in quella forma in maniera più "moderna", nasce in questo modo l'enumerazione di \textbf{Piece}, rappresentata tramite \textit{Flag Enum}, ogni pezzo può essere visto come un valore a \textit{8 bit}, i due più significativi indicano il colore, metre gli altri la tipologia del pezzo.
+            All'assenza di un pezzo in un quadrato nella scacchiera corrisponde il valore 0.
+        \subsection{Struttura del dato}\label{subsec:datastruct}
+            Nella rappresentazione della schacchiera si è passati dal "raw" array di C al più moderno e sicuro \texttt{std::array}, questo ha permesso alla classe \textbf{Board} di ereditare \texttt{std::array::const\_iterator}, rendendo possibile un'iterazione sui vari quadrati in modo più sicuro usando un \textit{range-based for loop}.\\
+            È stato, naturalmente, preferito l'utilizzo di \textit{smart pointers} invece di "raw" pointers (dove necessari).
+    \newpage
+    \section{Challenges}\label{sec:challenges}
+        Nel continuo evolvere delle scelte implementative da adottare, 3 sono state fondamentali nel produrre il risultato finale
+        \paragraph{Rappresentazione dei pezzi}
+            Come discusso nella sezione precedente, l'unità fondamentale del gioco ha richeisto, come ci si poteva immaginare, il maggior tempo di sviluppo prima di arrivare alla sua forma definitiva.\\
+            Parte infatti come semplice \texttt{enum}, contente una codifica numerica dei vari pezzi e colori messi in OR tra loro, quanto di più semplice si possa pensare. La promozione a classe avviene con la necessità di conoscere il \textit{tipo} o il \textit{colore} del pezzo di un determinato quadrato della schacchiera, vengono quindi overloadati gli operatori per poter usare i metodi statici \texttt{Piece::color} e \texttt{Piece::type}.
+        \paragraph{Validità delle mosse}
+            Forse la funzionalità che ha richiesto più debug.
+            Sicuramente migliorabile alla fine si è riportata quasi interamente l'implementazione originale, alleggerita dal punto di vista dei parametri, sfruttando convenientemente la visibilità dei membri delle varie classi e qualche miglioramento logico.
+            Alleggerita inoltre dalla "forzatura" nello scegliere il pezzo per la promozione del pedone, impostato di default ad una regina (mossa più furba anche in partite di medio livello).\\
+            La conversione a C++ inoltre ha permesso di spezzare i check sulla mossa da quelli sullo stato della scacchiera, precedentemente parte della scacchiera come unico file.
+        \paragraph{Notazione}
+            Il progetto originale supportava ogni tipologia di notazione, ho preferito utilizzare la notazione FEN in quanto riportava l'intero stato della scacchiera e non solo la mossa eseguita.
+            La \textbf{History} è infatti composta da una serie di \textit{Step}, composti dall'ultima mossa eseguita e dalla FEN dello stato attuale della scacchiera, in modo che sia facilmente ricostruibile.\\
+            Altra variazione dal progetto iniziale è quello di eseguire l'inizializzazione della schacchiera tramite parsing di una stringa FEN, invece dell'hard-coding dei vari pezzi nell'array \texttt{squares} di \textbf{Board}, utilizzata nell'originale dreamchess.
+    \newpage
+    \section{Prestazioni}
+        TODO
+\end{document}
