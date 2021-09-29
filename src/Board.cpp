@@ -199,7 +199,6 @@ namespace DreamChess {
         return !is_in_check();
     }
 
-    // FIXME Non permette doppio avanzamento del pedone in prima mossa
     // FIXME Se muovi la:
     //       Torre -> INVALID_MOVE
     //       Cavallo -> ok
@@ -284,11 +283,10 @@ namespace DreamChess {
                                  && (move.source() <= 55)))) {
                             return false;
                         }
+                    }
 
-                        if(!diag
-                           || (m_squares[move.destination()] != Piece::NONE)) {
-                            return false;
-                        }
+                    if(m_squares[move.destination()] != Piece::NONE) {
+                        return false;
                     }
                 } else {
                     if((ver != 1) || !diag) { return false; }
@@ -437,25 +435,25 @@ namespace DreamChess {
     }
 
     /**
-     * @brief Checks a Move possible horizontal squares
-     * @return The number of possible horizontal squares
+     * @brief Checks the number of horizontal squares a Move is making
+     * @return The number of horizontal squares
      */
     [[nodiscard]] int64_t Board::horizontal_check(const Move &move) const {
         return std::abs(move.source() % 8 - move.destination() % 8);
     }
 
     /**
-     * @brief Checks a Move possible vertical squares
-     * @return The number of possible vertical squares
+     * @brief Checks the number of vertical squares a Move is making
+     * @return The number of vertical squares
      */
     [[nodiscard]] int64_t Board::vertical_check(const Move &move) const {
         return std::abs(move.source() / 8 - move.destination() / 8);
     }
 
     /**
-     * @brief Checks if the diagonals of the given move are free
+     * @brief Checks if a Move is diagonal
      * @param ver The possible vertical values from the move source square
-     * @return True if the diagonals are free, False otherwise
+     * @return true if is moving diagonally, false otherwise
      */
     [[nodiscard]] bool Board::diagonal_check(int64_t ver,
                                              const Move &move) const {
@@ -478,7 +476,7 @@ namespace DreamChess {
         if(m_squares[i] != Piece::NONE) { return false; }
 
         if(Piece::color(m_squares[i])
-           != Piece::color(m_squares[move.source()])) {
+           == Piece::color(m_squares[move.source()])) {
             return false;
         }
 
