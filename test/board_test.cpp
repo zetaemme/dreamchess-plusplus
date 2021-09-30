@@ -39,6 +39,6 @@ TEST(BoardTest, BoardCreation) {
     ASSERT_EQ(board.squares()[3], Piece::WHITE_QUEEN);
     ASSERT_EQ(board.squares()[4], Piece::WHITE_KING);
 
-    ASSERT_EQ(board.squares()[59], Piece::WHITE_QUEEN);
-    ASSERT_EQ(board.squares()[60], Piece::WHITE_KING);
+    ASSERT_EQ(board.squares()[59], Piece::BLACK_QUEEN);
+    ASSERT_EQ(board.squares()[60], Piece::BLACK_KING);
 }
