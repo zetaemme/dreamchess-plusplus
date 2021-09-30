@@ -34,4 +34,11 @@ TEST(BoardTest, BoardCreation) {
 
     ASSERT_EQ(board.squares()[61], Piece::BLACK_BISHOP);
     ASSERT_EQ(board.squares()[58], Piece::BLACK_BISHOP);
+
+    // Royals checks
+    ASSERT_EQ(board.squares()[3], Piece::WHITE_QUEEN);
+    ASSERT_EQ(board.squares()[4], Piece::WHITE_KING);
+
+    ASSERT_EQ(board.squares()[59], Piece::WHITE_QUEEN);
+    ASSERT_EQ(board.squares()[60], Piece::WHITE_KING);
 }
