@@ -97,10 +97,18 @@ namespace DreamChess {
     }
 
     /**
-     * @brief Checks if the game is in progress
-     * @return true if the game is in progress, false otherwise
+     * @brief Checks if the Game is still in progress
+     * @details A Game is in progress if neither one of the players is in check
+     * and mated
+     * @return true if the Game is in progress, false otherwise
      */
-    [[nodiscard]] bool Board::is_in_game() const { return m_in_game; }
+    [[nodiscard]] bool Board::is_in_game() const {
+        if(is_in_check() && is_mated()) {
+            return false;
+        }
+
+        return true; 
+    }
 
     /**
      * @brief Checks if one of the two sides is under check

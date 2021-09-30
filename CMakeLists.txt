@@ -6,33 +6,36 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
 #--------------
 # MAIN SECTION
 #--------------
 
 set(SRC
-    ${PROJECT_SOURCE_DIR}/main.cpp
-    ${PROJECT_SOURCE_DIR}/src/Board.cpp
-    ${PROJECT_SOURCE_DIR}/src/Game.cpp
-    ${PROJECT_SOURCE_DIR}/src/History.cpp
-    ${PROJECT_SOURCE_DIR}/src/Move.cpp
-    ${PROJECT_SOURCE_DIR}/src/Piece.cpp
+    main.cpp
+    src/Board.cpp
+    src/Game.cpp
+    src/History.cpp
+    src/Move.cpp
+    src/Piece.cpp
 )
 
 set(INC
-    ${PROJECT_SOURCE_DIR}/include/Board.hpp
-    ${PROJECT_SOURCE_DIR}/include/Game.hpp
-    ${PROJECT_SOURCE_DIR}/include/History.hpp
-    ${PROJECT_SOURCE_DIR}/include/Move.hpp
-    ${PROJECT_SOURCE_DIR}/include/Piece.hpp
+    include/Board.hpp
+    include/Game.hpp
+    include/History.hpp
+    include/Move.hpp
+    include/Piece.hpp
 )
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
-add_executable(${PROJECT_NAME} ${INC} ${SRC})
+add_library(${PROJECT_NAME} ${INC} ${SRC})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+
+add_executable(${PROJECT_NAME}_main main.cpp)
+
+target_link_libraries(${PROJECT_NAME}_main PRIVATE ${PROJECT_NAME})
 
 #------------------
 # CLEANING SECTION
@@ -55,7 +58,7 @@ install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 #-----------------------
 # DOCUMENTATION SECTION
 #-----------------------
-find_package(Doxygen QUIET)
+find_package(Doxygen QUIET REQUIRED)
 
 if(DOXYGEN_FOUND)
     set(DOXYGEN_PROJECT_NAME "Dreamchess++")
@@ -71,3 +74,25 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating documentation..."
     )
 endif(DOXYGEN_FOUND)
+
+#-----------------
+# TESTING SECTION
+#-----------------
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(dreamchess_test test/board_test.cpp)
+target_include_directories(dreamchess_test PRIVATE include)
+
+target_link_libraries(dreamchess_test PRIVATE gtest_main ${PROJECT_NAME})
+
+include(GoogleTest)
+gtest_discover_tests(dreamchess_test)

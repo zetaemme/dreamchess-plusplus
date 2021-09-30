@@ -52,11 +52,6 @@ namespace DreamChess {
 
     private:
         /**
-         * @brief Checks if the game is still going on
-         */
-        bool m_in_game {true};
-
-        /**
          * @brief false for BLACK's or true for WHITE's turn
          */
         piece_t m_turn {Piece::WHITE};
