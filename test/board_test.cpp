@@ -1,44 +1,85 @@
 #include <gtest/gtest.h>
 
 #include "Board.hpp"
+#include "Move.hpp"
 
-TEST(BoardTest, BoardCreation) {
-    DreamChess:Board board {};
+class BoardTest : public ::testing::Test {
+protected:
+    DreamChess::Board board {};
 
-    // Pawns check
-    for(uint64_t i = 8; i < 16; i++) {
-        ASSERT_EQ(board.squares()[i], Piece::WHITE_PAWN);
+    bool pawns_check() const {
+        for(uint64_t i = 8; i < 16; i++) {
+            if(board.squares()[i] != DreamChess::Piece::WHITE_PAWN) {
+                return false;
+            }
+        }
+
+        for(uint64_t i = 48; i < 56; i++) {
+            if(board.squares()[i] != DreamChess::Piece::BLACK_PAWN) {
+                return false;
+            }
+        }
+
+        return true;
     }
+    bool rooks_check() const {
+        if(board.squares()[0] != DreamChess::Piece::WHITE_ROOK
+           || board.squares()[7] != DreamChess::Piece::WHITE_ROOK) {
+               return false;
+        }
 
-    for(uint64_t i = 48; i < 56; i++) {
-        ASSERT_EQ(board.squares()[i], Piece::BLACK_PAWN);
+        if(board.squares()[63] != DreamChess::Piece::BLACK_ROOK
+           || board.squares()[56] != DreamChess::Piece::BLACK_ROOK) {
+               return false;
+        }
+
+        return true;
     }
+    bool knights_check() const {
+        if(board.squares()[1] != DreamChess::Piece::WHITE_KNIGHT
+           || board.squares()[6] != DreamChess::Piece::WHITE_KNIGHT) {
+            return false;
+        }
 
-    // Rooks check
-    ASSERT_EQ(board.squares()[0], Piece::WHITE_ROOK);
-    ASSERT_EQ(board.squares()[7], Piece::WHITE_ROOK);
+        if(board.squares()[62] != DreamChess::Piece::BLACK_KNIGHT
+           || board.squares()[57] != DreamChess::Piece::BLACK_KNIGHT) {
+            return false;
+        }
 
-    ASSERT_EQ(board.squares()[63], Piece::BLACK_ROOK);
-    ASSERT_EQ(board.squares()[56], Piece::BLACK_ROOK);
+        return true;
+    }
+    bool bishop_check() const {
+        if(board.squares()[2] != DreamChess::Piece::WHITE_BISHOP
+           || board.squares()[5] != DreamChess::Piece::WHITE_BISHOP) {
+            return false;
+        }
 
-    // Knights check
-    ASSERT_EQ(board.squares()[1], Piece::WHITE_KNIGHT);
-    ASSERT_EQ(board.squares()[6], Piece::WHITE_KNIGHT);
+        if(board.squares()[61] != DreamChess::Piece::BLACK_BISHOP
+           || board.squares()[58] != DreamChess::Piece::BLACK_BISHOP) {
+            return false;
+        }
 
-    ASSERT_EQ(board.squares()[62], Piece::BLACK_KNIGHT);
-    ASSERT_EQ(board.squares()[57], Piece::BLACK_KNIGHT);
+        return true;
+    }
+    bool royals_check() const {
+        if(board.squares()[3] != DreamChess::Piece::WHITE_QUEEN
+           || board.squares()[4] != DreamChess::Piece::WHITE_KING) {
+            return false;
+        }
 
-    // Bishops check
-    ASSERT_EQ(board.squares()[2], Piece::WHITE_BISHOP);
-    ASSERT_EQ(board.squares()[5], Piece::WHITE_BISHOP);
+        if(board.squares()[59] != DreamChess::Piece::BLACK_QUEEN
+           || board.squares()[60] != DreamChess::Piece::BLACK_KING) {
+            return false;
+        }
 
-    ASSERT_EQ(board.squares()[61], Piece::BLACK_BISHOP);
-    ASSERT_EQ(board.squares()[58], Piece::BLACK_BISHOP);
+        return true;
+    }
+};
 
-    // Royals checks
-    ASSERT_EQ(board.squares()[3], Piece::WHITE_QUEEN);
-    ASSERT_EQ(board.squares()[4], Piece::WHITE_KING);
-
-    ASSERT_EQ(board.squares()[59], Piece::BLACK_QUEEN);
-    ASSERT_EQ(board.squares()[60], Piece::BLACK_KING);
+TEST_F(BoardTest, BoardCorrectCreation) {
+    ASSERT_EQ(pawns_check(), true);
+    ASSERT_EQ(rooks_check(), true);
+    ASSERT_EQ(knights_check(), true);    
+    ASSERT_EQ(bishop_check(), true);
+    ASSERT_EQ(royals_check(), true);    
 }

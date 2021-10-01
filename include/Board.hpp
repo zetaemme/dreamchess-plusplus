@@ -16,7 +16,7 @@
 
 namespace DreamChess {
     // Move forward declaration
-    class Move;
+    struct Move;
 
     /**
      * @brief Defines a chess Game board
@@ -67,9 +67,12 @@ namespace DreamChess {
         std::map<piece_t, uint16_t> m_captured {};
 
         void init_board();
+        void clear();
 
         [[nodiscard]] int64_t horizontal_check(const Move &) const;
         [[nodiscard]] int64_t vertical_check(const Move &) const;
         [[nodiscard]] bool diagonal_check(int64_t, const Move &) const;
+
+        friend class Game;
     };
 } // namespace DreamChess

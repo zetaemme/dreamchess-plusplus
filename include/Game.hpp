@@ -16,7 +16,7 @@
 
 namespace DreamChess {
     // Move forward declaration
-    class Move;
+    struct Move;
 
     /**
      * @brief Describes a chess Game, with a Board and a History
@@ -31,6 +31,8 @@ namespace DreamChess {
 
         [[nodiscard]] bool make_move(std::string_view);
         void export_to_file() const;
+
+        void reset();
 
     private:
         /**

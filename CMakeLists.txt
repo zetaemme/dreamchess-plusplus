@@ -27,15 +27,14 @@ set(INC
     include/Piece.hpp
 )
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+add_library(dc++ ${INC} ${SRC})
+target_include_directories(dc++ PUBLIC include)
 
-add_library(${PROJECT_NAME} ${INC} ${SRC})
+add_compile_options(-Wall -Wextra -Wpedantic -Werror -g)
 
-target_include_directories(${PROJECT_NAME} PUBLIC include)
+add_executable(dc++_main main.cpp)
 
-add_executable(${PROJECT_NAME}_main main.cpp)
-
-target_link_libraries(${PROJECT_NAME}_main PRIVATE ${PROJECT_NAME})
+target_link_libraries(dc++_main PRIVATE dc++)
 
 #------------------
 # CLEANING SECTION
@@ -53,7 +52,7 @@ add_custom_target(clean_all
 # INSTALL SECTION
 #-----------------
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS dc++ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 #-----------------------
 # DOCUMENTATION SECTION
@@ -75,6 +74,21 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
+#------------------
+# VALGRIND SECTION
+#------------------
+find_program(VALGRIND_EXE valgrind)
+
+if(VALGRIND_EXE)
+    add_custom_target(valgrind
+        COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
+        COMMAND ${CMAKE_COMMAND} --build . --target dc++_main
+        COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all 
+                --track-fds=yes --track-origins=yes ./dc++_main
+        COMMAND ${CMAKE_COMMAND} -E echo "Done!"
+    )
+endif()
+
 #-----------------
 # TESTING SECTION
 #-----------------
@@ -89,10 +103,13 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(dreamchess_test test/board_test.cpp)
-target_include_directories(dreamchess_test PRIVATE include)
+add_executable(dc++_test 
+    test/game_test.cpp
+    test/board_test.cpp
+)
 
-target_link_libraries(dreamchess_test PRIVATE gtest_main ${PROJECT_NAME})
+target_include_directories(dc++_test PRIVATE include)
+target_link_libraries(dc++_test PRIVATE gtest_main dc++)
 
 include(GoogleTest)
-gtest_discover_tests(dreamchess_test)
+gtest_discover_tests(dc++_test)

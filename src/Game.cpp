@@ -89,6 +89,16 @@ namespace DreamChess {
     }
 
     /**
+     * @brief Resets the whole Board
+     * @details First it whipe out every Piece in the Board, then it calls to
+     * Board::init_board() to set each Piece in the original position
+     */
+    void Game::reset() {
+        m_board.clear();
+        m_board.init_board();
+    }
+
+    /**
      * @brief Updates the Game's history
      */
     void Game::update_history(const Move &move) { m_history.add_step(move); }

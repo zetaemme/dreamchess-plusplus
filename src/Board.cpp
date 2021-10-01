@@ -93,7 +93,7 @@ namespace DreamChess {
 
         m_squares[move.source()] = Piece::NONE;
 
-        m_turn = m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
+        m_turn = opponent_turn();
     }
 
     /**
@@ -433,6 +433,15 @@ namespace DreamChess {
                     file++;
                 }
             }
+        }
+    }
+
+    /**
+     * @brief Clears all Board's squares
+     */
+    void Board::clear() {
+        for(auto &square : m_squares) {
+            square = Piece::NONE;
         }
     }
 
