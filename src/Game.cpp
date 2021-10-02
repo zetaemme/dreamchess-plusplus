@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July-August, 2021
+ * @date July-October, 2021
  */
 
 #include "Game.hpp"

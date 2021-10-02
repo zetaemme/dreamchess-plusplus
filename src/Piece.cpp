@@ -2,12 +2,13 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July-August, 2021
+ * @date July-October, 2021
  */
 
 #include "Piece.hpp"
 
 namespace DreamChess {
+    // FIXME Stando a valgrind questo non si dealloca
     const std::map<Piece::Enum, uint8_t> Piece::g_piece_repr
         = {{NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
            {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},

@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July-August, 2021
+ * @date July-October, 2021
  */
 
 #include "Board.hpp"
@@ -31,14 +31,12 @@ namespace DreamChess {
      * @return The output stream
      */
     std::ostream &operator<<(std::ostream &stream, const Board &board) {
-        uint16_t i = 0;
-
         for(auto &square : board) {
-            stream << Piece::g_piece_repr.at(square);
+            stream << Piece::g_piece_repr.at(square) << " ";
 
-            if((i + 1) % 8 == 0) { stream << std::endl; }
-
-            i++;
+            if((&square - &board.squares()[0]) % 8 == 0) { 
+                stream << std::endl; 
+            }
         }
 
         return stream;
@@ -115,7 +113,7 @@ namespace DreamChess {
      * @return The side who's in check
      */
     [[nodiscard]] bool Board::is_in_check() const {
-        for(auto &square : *this) {
+        for(auto &square : m_squares) {
             if(square == (Piece::KING | m_turn)) {
                 return square_attacked(&square - &m_squares[0],
                                        opponent_turn());

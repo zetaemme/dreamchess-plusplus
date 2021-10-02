@@ -2,7 +2,7 @@
  * @copyright Dreamchess++
  * @author Mattia Zorzan
  * @version v1.0
- * @date July-August, 2021
+ * @date July-October, 2021
  */
 #include "Game.hpp"
 
@@ -15,9 +15,9 @@ int main() {
     std::string input_move;
 
     while(game.is_in_game()) {
-        std::cout << "---------------------------------------" << std::endl;
+        std::cout << "---------------------" << std::endl;
         std::cout << game;
-        std::cout << "---------------------------------------" << std::endl;
+        std::cout << "---------------------" << std::endl;
 
         bool valid;
 

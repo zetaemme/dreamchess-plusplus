@@ -84,7 +84,7 @@ if(VALGRIND_EXE)
         COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
         COMMAND ${CMAKE_COMMAND} --build . --target dc++_main
         COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all 
-                --track-fds=yes --track-origins=yes ./dc++_main
+                                --track-fds=yes --track-origins=yes ./dc++_main 
         COMMAND ${CMAKE_COMMAND} -E echo "Done!"
     )
 endif()
