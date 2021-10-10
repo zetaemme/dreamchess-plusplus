@@ -6,49 +6,49 @@
  */
 #pragma once
 
-#include "Board.hpp"
-#include "Move.hpp"
-
 #include <list>
 #include <memory>
 #include <string_view>
 
+#include "Board.hpp"
+#include "Move.hpp"
+
 namespace DreamChess {
+/**
+ * @brief The current game History
+ */
+class History final {
+private:
     /**
-     * @brief The current game History
+     * @brief A single step into the History
      */
-    class History final {
-    private:
+    struct Step final {
         /**
-         * @brief A single step into the History
+         * @brief Last Move which has been made
          */
-        struct Step final {
-            /**
-             * @brief Last Move which has been made
-             */
-            std::string m_move;
+        std::string m_move;
 
-            explicit Step(const Move &);
-        };
-
-        using internal_structure_t = std::list<Step>;
-
-        /**
-         * @brief Game History so far
-         */
-        internal_structure_t m_game_history {};
-
-    public:
-        /**
-         * @brief Constructs a History object
-         */
-        History() = default;
-
-        void add_step(const Move &);
-
-        [[nodiscard]] std::string export_all() const;
-
-        [[nodiscard]] internal_structure_t::const_iterator begin() const;
-        [[nodiscard]] internal_structure_t::const_iterator end() const;
+        explicit Step(const Move &);
     };
-} // namespace DreamChess
+
+    using internal_structure_t = std::list<Step>;
+
+    /**
+     * @brief Game History so far
+     */
+    internal_structure_t m_game_history{};
+
+public:
+    /**
+     * @brief Constructs a History object
+     */
+    History() = default;
+
+    void add_step(const Move &);
+
+    [[nodiscard]] std::string export_all() const;
+
+    [[nodiscard]] internal_structure_t::const_iterator begin() const;
+    [[nodiscard]] internal_structure_t::const_iterator end() const;
+};
+}    // namespace DreamChess

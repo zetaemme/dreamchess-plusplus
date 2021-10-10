@@ -8,7 +8,7 @@
 #include "Piece.hpp"
 
 namespace DreamChess {
-    // FIXME Stando a valgrind questo non si dealloca
+    // FIXME Trasformare entrambe le global in funzioni
     const std::map<Piece::Enum, uint8_t> Piece::g_piece_repr
         = {{NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
            {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},

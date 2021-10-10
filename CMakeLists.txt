@@ -5,7 +5,6 @@ project(dreamchess++ LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "{CMAKE_CXX_FLAGS} -std=c++17")
 
 #--------------
 # MAIN SECTION
@@ -31,7 +30,7 @@ set(INC
 add_library(dc++ ${INC} ${SRC})
 target_include_directories(dc++ PUBLIC include)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror -g)
+add_compile_options(-std=c++17 -Wall -Wextra -Wpedantic -Werror -g)
 
 add_executable(dc++_main main.cpp)
 
