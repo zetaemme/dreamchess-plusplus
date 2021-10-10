@@ -36,6 +36,7 @@ private:
     /**
      * @brief Game History so far
      */
+    // FIXME La history è still_reachable secondo valgrind
     internal_structure_t m_game_history{};
 
 public:

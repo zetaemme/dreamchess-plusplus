@@ -32,7 +32,7 @@ Board::Board() { init_board(); }
  */
 std::ostream &operator<<(std::ostream &stream, const Board &board) {
     for (auto &square : board) {
-        stream << Piece::g_piece_repr.at(square) << " ";
+        stream << Piece::char_representation(square) << " ";
 
         if ((&square - &board.squares()[0]) % 8 == 0) {
             stream << std::endl;
@@ -439,7 +439,7 @@ void Board::init_board() {
             if (isdigit(sym)) {
                 file += sym - '0';
             } else {
-                m_squares[rank * 8 + file] = Piece::g_fen_to_piece.at(sym);
+                m_squares[rank * 8 + file] = Piece::to_enum(sym);
                 file++;
             }
         }

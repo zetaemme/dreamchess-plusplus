@@ -9,6 +9,7 @@
 #include <array>
 #include <cstdint>
 #include <iterator>
+#include <map>
 #include <string>
 #include <vector>
 

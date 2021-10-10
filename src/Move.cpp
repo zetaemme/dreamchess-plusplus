@@ -58,7 +58,7 @@ Move::Move(int64_t source, int64_t destination, Piece::Enum piece)
     std::string res{};
 
     if (Piece::type(m_piece) != Piece::PAWN) {
-        res.push_back(Piece::g_piece_repr.at(m_piece));
+        res.push_back(Piece::char_representation(m_piece));
     }
 
     res.push_back(static_cast<char>('a' + rem));

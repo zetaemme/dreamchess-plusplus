@@ -7,7 +7,6 @@
 #pragma once
 
 #include <cstdint>
-#include <map>
 #include <utility>
 
 namespace DreamChess {
@@ -44,16 +43,6 @@ struct Piece final {
         BLACK_KING = KING | BLACK
     };
 
-    /**
-     * @brief Used in Piece to char conversion, while printing the Board
-     */
-    static const std::map<Enum, uint8_t> g_piece_repr;
-
-    /**
-     * @brief Convention for the FEN to Piece mapping
-     */
-    static const std::map<uint8_t, Enum> g_fen_to_piece;
-
     friend Enum operator|(Enum, Enum);
     friend Enum operator&(Enum, Enum);
 
@@ -61,5 +50,9 @@ struct Piece final {
     static Enum color(Enum);
 
     static Enum opposite_side_color(Enum);
+
+    static char char_representation(Enum);
+
+    static Enum to_enum(char);
 };
 }    // namespace DreamChess
