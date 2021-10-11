@@ -8,7 +8,6 @@
 #include "Piece.hpp"
 
 #include <map>
-#include <string>
 
 namespace DreamChess {
 /**
@@ -61,6 +60,11 @@ Piece::Enum Piece::opposite_side_color(Piece::Enum target) {
     return color(target) == WHITE ? BLACK : WHITE;
 }
 
+/**
+ * @brief Returns th unicode representation of a given Piece
+ * @param piece The Piece which we want to represent
+ * @return The unicode representation of the Piece
+ */
 std::string Piece::char_representation(Piece::Enum piece) {
     const std::map<Enum, std::string> piece_repr{
         {NONE, " "},         {WHITE_PAWN, "♙"}, {WHITE_KNIGHT, "♘"},
@@ -69,7 +73,7 @@ std::string Piece::char_representation(Piece::Enum piece) {
         {BLACK_BISHOP, "♝"}, {BLACK_ROOK, "♜"}, {BLACK_QUEEN, "♛"},
         {BLACK_KING, "♚"}};
 
-    return piece_repr.at(piece);
+    return piece_repr.at(piece)
 }
 
 Piece::Enum Piece::to_enum(char piece) {

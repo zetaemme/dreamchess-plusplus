@@ -37,7 +37,7 @@ Board::~Board() { m_captured.clear(); }
  */
 std::ostream &operator<<(std::ostream &stream, const Board &board) {
     for (auto &square : board) {
-        stream << Piece::char_representation(square) << " ";
+        stream << Piece::unicode_representation(square) << " ";
 
         if ((&square - &board.squares()[0]) % 8 == 0) {
             stream << std::endl;

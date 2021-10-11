@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "Move.hpp"
+#include "Piece.hpp"
 
 namespace DreamChess {
 /**
@@ -36,7 +37,7 @@ std::ostream &operator<<(std::ostream &stream, const Game &game) {
  * @brief Checks if the game is still going on
  * @return true if a game is being played, false otherwise
  */
-bool Game::is_in_game() const { return m_board.is_in_game(); }
+[[nodiscard]] bool Game::is_in_game() const { return m_board.is_in_game(); }
 
 /**
  * @brief Wraps Board::make_move and updates m_history
@@ -66,7 +67,7 @@ bool Game::make_move(std::string_view input) {
 }
 
 /**
- * @brief Exports the Game's Hisotry to a file
+ * @brief Exports the Game's History to a file
  * @details Wraps History::export_to_file() method
  */
 void Game::export_to_file() const {
@@ -95,6 +96,15 @@ void Game::export_to_file() const {
 void Game::reset() {
     m_board.clear();
     m_board.init_board();
+}
+
+/**
+ * @brief Wraps Board's piece_at(uint16_t) -- TESTING ONLY --
+ * @param index The square which you want to know the value
+ * @return The Piece in the index square
+ */
+Piece::Enum Game::piece_at(uint16_t index) const {
+    return m_board.piece_at(index);
 }
 
 /**
