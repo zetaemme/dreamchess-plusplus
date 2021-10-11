@@ -35,8 +35,7 @@ int main() {
                 valid = true;
             } else {
                 // Checks if the input_move is properly formatted
-                if (std::regex_search(input_move, match, regex)) {
-                    // FIXME Non si può mangiare
+                if (std::regex_match(input_move, match, regex)) {
                     valid = game.make_move(input_move);
                 } else {
                     valid = false;

@@ -241,7 +241,7 @@ void Board::make_move(const Move &move) {
         }
 
         case Piece::BISHOP: {
-            if ((hor != ver) || !diag) {
+            if (hor != ver) {
                 return false;
             }
 
@@ -249,7 +249,7 @@ void Board::make_move(const Move &move) {
         }
 
         case Piece::ROOK: {
-            if (((hor != 0) && (ver != 0)) || !diag) {
+            if ((hor != 0) && (ver != 0)) {
                 return false;
             }
 
@@ -257,7 +257,7 @@ void Board::make_move(const Move &move) {
         }
 
         case Piece::QUEEN: {
-            if (((hor != 0) && (ver != 0) && (hor != ver)) || !diag) {
+            if ((hor != 0) && (ver != 0) && (hor != ver)) {
                 return false;
             }
 
@@ -369,7 +369,7 @@ void Board::make_move(const Move &move) {
                     return false;
                 }
             } else {
-                if ((ver > 1) || !diag) {
+                if (ver > 1) {
                     return false;
                 }
             }
