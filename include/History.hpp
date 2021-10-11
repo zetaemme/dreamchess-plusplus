@@ -44,6 +44,7 @@ public:
      * @brief Constructs a History object
      */
     History() = default;
+    ~History();
 
     void add_step(const Move &);
 

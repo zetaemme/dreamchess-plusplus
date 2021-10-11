@@ -28,6 +28,7 @@ class Board final {
 
 public:
     Board();
+    ~Board();
 
     friend std::ostream &operator<<(std::ostream &, const Board &);
 

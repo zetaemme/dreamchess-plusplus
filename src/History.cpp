@@ -11,6 +11,11 @@
 
 namespace DreamChess {
 /**
+ * @brief Clears the History
+ */
+History::~History() { m_game_history.clear(); }
+
+/**
  * @brief Adds a step to the History list
  * @param move The last move made in the referenced board
  */
