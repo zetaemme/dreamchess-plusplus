@@ -8,6 +8,7 @@
 #include "Piece.hpp"
 
 #include <map>
+#include <string>
 
 namespace DreamChess {
 /**
@@ -60,13 +61,13 @@ Piece::Enum Piece::opposite_side_color(Piece::Enum target) {
     return color(target) == WHITE ? BLACK : WHITE;
 }
 
-char Piece::char_representation(Piece::Enum piece) {
-    const std::map<Enum, char> piece_repr{
-        {NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
-        {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},
-        {WHITE_KING, 'K'},   {BLACK_PAWN, 'p'}, {BLACK_KNIGHT, 'n'},
-        {BLACK_BISHOP, 'b'}, {BLACK_ROOK, 'r'}, {BLACK_QUEEN, 'q'},
-        {BLACK_KING, 'k'}};
+std::string Piece::char_representation(Piece::Enum piece) {
+    const std::map<Enum, std::string> piece_repr{
+        {NONE, " "},         {WHITE_PAWN, "♙"}, {WHITE_KNIGHT, "♘"},
+        {WHITE_BISHOP, "♗"}, {WHITE_ROOK, "♖"}, {WHITE_QUEEN, "♕"},
+        {WHITE_KING, "♔"},   {BLACK_PAWN, "♟"}, {BLACK_KNIGHT, "♞"},
+        {BLACK_BISHOP, "♝"}, {BLACK_ROOK, "♜"}, {BLACK_QUEEN, "♛"},
+        {BLACK_KING, "♚"}};
 
     return piece_repr.at(piece);
 }
