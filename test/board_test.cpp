@@ -7,7 +7,7 @@ class BoardTest : public ::testing::Test {
 protected:
     DreamChess::Board board {};
 
-    bool pawns_check() const {
+    [[nodiscard]] bool pawns_check() const {
         for(uint64_t i = 8; i < 16; i++) {
             if(board.squares()[i] != DreamChess::Piece::WHITE_PAWN) {
                 return false;
@@ -22,7 +22,7 @@ protected:
 
         return true;
     }
-    bool rooks_check() const {
+    [[nodiscard]] bool rooks_check() const {
         if(board.squares()[0] != DreamChess::Piece::WHITE_ROOK
            || board.squares()[7] != DreamChess::Piece::WHITE_ROOK) {
                return false;
@@ -35,7 +35,7 @@ protected:
 
         return true;
     }
-    bool knights_check() const {
+    [[nodiscard]] bool knights_check() const {
         if(board.squares()[1] != DreamChess::Piece::WHITE_KNIGHT
            || board.squares()[6] != DreamChess::Piece::WHITE_KNIGHT) {
             return false;
@@ -48,7 +48,7 @@ protected:
 
         return true;
     }
-    bool bishop_check() const {
+    [[nodiscard]] bool bishop_check() const {
         if(board.squares()[2] != DreamChess::Piece::WHITE_BISHOP
            || board.squares()[5] != DreamChess::Piece::WHITE_BISHOP) {
             return false;
@@ -61,7 +61,7 @@ protected:
 
         return true;
     }
-    bool royals_check() const {
+    [[nodiscard]] bool royals_check() const {
         if(board.squares()[3] != DreamChess::Piece::WHITE_QUEEN
            || board.squares()[4] != DreamChess::Piece::WHITE_KING) {
             return false;

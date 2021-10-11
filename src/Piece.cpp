@@ -16,7 +16,7 @@ namespace DreamChess {
  * @param rhs The second piece
  * @return The result of the ORed pieces values
  */
-Piece::Enum operator|(Piece::Enum lhs, Piece::Enum rhs) {
+Piece::Enum operator|(const Piece::Enum &lhs, const Piece::Enum &rhs) {
     return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs) |
                                     static_cast<uint16_t>(rhs));
 }
@@ -27,7 +27,7 @@ Piece::Enum operator|(Piece::Enum lhs, Piece::Enum rhs) {
  * @param rhs The second piece
  * @return The result of the ANDed pieces values
  */
-Piece::Enum operator&(Piece::Enum lhs, Piece::Enum rhs) {
+Piece::Enum operator&(const Piece::Enum &lhs, const Piece::Enum &rhs) {
     return static_cast<Piece::Enum>(static_cast<uint16_t>(lhs) &
                                     static_cast<uint16_t>(rhs));
 }
@@ -60,7 +60,12 @@ Piece::Enum Piece::opposite_side_color(Piece::Enum target) {
     return color(target) == WHITE ? BLACK : WHITE;
 }
 
-char Piece::char_representation(Piece::Enum piece) {
+/**
+ * @brief Returns th unicode representation of a given Piece
+ * @param piece The Piece which we want to represent
+ * @return The unicode representation of the Piece
+ */
+char Piece::unicode_representation(Piece::Enum piece) {
     const std::map<Enum, char> piece_repr{
         {NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
         {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},
@@ -71,7 +76,12 @@ char Piece::char_representation(Piece::Enum piece) {
     return piece_repr.at(piece);
 }
 
-Piece::Enum Piece::to_enum(char piece) {
+/**
+ * @brief Returns the Piece::Enum representation of a given unicode Piece
+ * @param unicode_piece The unicode represented Piece
+ * @return The corresponding Piece::Enum
+ */
+Piece::Enum Piece::to_enum(char unicode_piece) {
     const std::map<char, Enum> fen_to_piece{
         {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
         {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
@@ -79,6 +89,6 @@ Piece::Enum Piece::to_enum(char piece) {
         {'R', WHITE_ROOK}, {'Q', WHITE_QUEEN},  {'K', WHITE_KING},
     };
 
-    return fen_to_piece.at(piece);
+    return fen_to_piece.at(unicode_piece);
 }
 }    // namespace DreamChess

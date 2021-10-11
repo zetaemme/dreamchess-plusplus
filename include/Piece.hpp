@@ -43,15 +43,15 @@ struct Piece final {
         BLACK_KING = KING | BLACK
     };
 
-    friend Enum operator|(Enum, Enum);
-    friend Enum operator&(Enum, Enum);
+    friend Enum operator|(const Enum &, const Enum &);
+    friend Enum operator&(const Enum &, const Enum &);
 
     static Enum type(Enum);
     static Enum color(Enum);
 
     static Enum opposite_side_color(Enum);
 
-    static char char_representation(Enum);
+    static char unicode_representation(Enum);
 
     static Enum to_enum(char);
 };

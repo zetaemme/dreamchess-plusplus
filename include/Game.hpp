@@ -13,6 +13,7 @@
 
 #include "Board.hpp"
 #include "History.hpp"
+#include "Piece.hpp"
 
 namespace DreamChess {
 // Move forward declaration
@@ -29,10 +30,12 @@ public:
 
     [[nodiscard]] bool is_in_game() const;
 
-    [[nodiscard]] bool make_move(std::string_view);
+    bool make_move(std::string_view);
     void export_to_file() const;
 
     void reset();
+
+    Piece::Enum piece_at(uint16_t index) const;
 
 private:
     /**
