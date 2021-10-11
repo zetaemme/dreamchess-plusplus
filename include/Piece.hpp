@@ -52,7 +52,7 @@ struct Piece final {
 
     static Enum opposite_side_color(Enum);
 
-    static std::string char_representation(Enum);
+    static std::string unicode_representation(Enum);
 
     static Enum to_enum(char);
 };
