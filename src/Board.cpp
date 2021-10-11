@@ -24,6 +24,11 @@ using internal_structure_t = std::array<piece_t, 64>;
 Board::Board() { init_board(); }
 
 /**
+ * @breif Clears the capture's list
+ */
+Board::~Board() { m_captured.clear(); }
+
+/**
  * @brief Overloads the out-stream operator for the Board
  * @details Print each piece and ends line every 8 files
  * @param stream The new output stream
