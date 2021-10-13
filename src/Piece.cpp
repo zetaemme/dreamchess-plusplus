@@ -60,18 +60,28 @@ Piece::Enum Piece::opposite_side_color(Piece::Enum target) {
     return color(target) == WHITE ? BLACK : WHITE;
 }
 
-char Piece::char_representation(Piece::Enum piece) {
-    const std::map<Enum, char> piece_repr{
-        {NONE, ' '},         {WHITE_PAWN, 'P'}, {WHITE_KNIGHT, 'N'},
-        {WHITE_BISHOP, 'B'}, {WHITE_ROOK, 'R'}, {WHITE_QUEEN, 'Q'},
-        {WHITE_KING, 'K'},   {BLACK_PAWN, 'p'}, {BLACK_KNIGHT, 'n'},
-        {BLACK_BISHOP, 'b'}, {BLACK_ROOK, 'r'}, {BLACK_QUEEN, 'q'},
-        {BLACK_KING, 'k'}};
+/**
+ * @brief Returns th unicode representation of a given Piece
+ * @param piece The Piece which we want to represent
+ * @return The unicode representation of the Piece
+ */
+std::string Piece::unicode_representation(Piece::Enum piece) {
+    const std::map<Enum, std::string> piece_repr{
+        {NONE, " "},         {WHITE_PAWN, "♙"}, {WHITE_KNIGHT, "♘"},
+        {WHITE_BISHOP, "♗"}, {WHITE_ROOK, "♖"}, {WHITE_QUEEN, "♕"},
+        {WHITE_KING, "♔"},   {BLACK_PAWN, "♟"}, {BLACK_KNIGHT, "♞"},
+        {BLACK_BISHOP, "♝"}, {BLACK_ROOK, "♜"}, {BLACK_QUEEN, "♛"},
+        {BLACK_KING, "♚"}};
 
     return piece_repr.at(piece);
 }
 
-Piece::Enum Piece::to_enum(char piece) {
+/**
+ * @brief Returns the Piece::Enum corresponding to the given Piece
+ * @param char_piece The FEN char representation of a Piece
+ * @return The FEN char of the Piece
+ */
+Piece::Enum Piece::to_enum(char char_piece) {
     const std::map<char, Enum> fen_to_piece{
         {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
         {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
@@ -79,6 +89,6 @@ Piece::Enum Piece::to_enum(char piece) {
         {'R', WHITE_ROOK}, {'Q', WHITE_QUEEN},  {'K', WHITE_KING},
     };
 
-    return fen_to_piece.at(piece);
+    return fen_to_piece.at(char_piece);
 }
 }    // namespace DreamChess

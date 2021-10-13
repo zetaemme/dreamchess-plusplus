@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <utility>
 
 namespace DreamChess {
@@ -51,7 +52,7 @@ struct Piece final {
 
     static Enum opposite_side_color(Enum);
 
-    static char char_representation(Enum);
+    static std::string unicode_representation(Enum);
 
     static Enum to_enum(char);
 };

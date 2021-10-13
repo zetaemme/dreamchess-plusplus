@@ -37,7 +37,7 @@ Board::~Board() { m_captured.clear(); }
  */
 std::ostream &operator<<(std::ostream &stream, const Board &board) {
     for (auto &square : board) {
-        stream << Piece::char_representation(square) << " ";
+        stream << Piece::unicode_representation(square) << " ";
 
         if ((&square - &board.squares()[0]) % 8 == 0) {
             stream << std::endl;
@@ -436,7 +436,7 @@ void Board::init_board() {
         splitted_fen[i] = tmp;
     }
 
-    for (auto &sym : splitted_fen[0]) {
+    for (const auto &sym : splitted_fen[0]) {
         if (sym == '/') {
             file = 0;
             rank--;

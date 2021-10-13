@@ -36,7 +36,6 @@ private:
     /**
      * @brief Game History so far
      */
-    // FIXME La history è still_reachable secondo valgrind
     internal_structure_t m_game_history{};
 
 public:
@@ -49,8 +48,5 @@ public:
     void add_step(const Move &);
 
     [[nodiscard]] std::string export_all() const;
-
-    [[nodiscard]] internal_structure_t::const_iterator begin() const;
-    [[nodiscard]] internal_structure_t::const_iterator end() const;
 };
 }    // namespace DreamChess
