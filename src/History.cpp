@@ -31,33 +31,15 @@ void History::add_step(const Move &move) {
     auto output_history = m_game_history;
     std::string move_list;
 
-    for (uint64_t i = 0; i < m_game_history.size(); i++) {
-        move_list += std::to_string(i + 1) + ". " +
-                     std::string{output_history.front().m_move};
+    for (const auto &step : m_game_history) {
+        move_list += std::to_string((&step - &m_game_history.front()) + 1) +
+                     ". " + std::string{output_history.front().m_move};
         move_list.push_back('\n');
 
         output_history.pop_front();
     }
 
     return move_list;
-}
-
-/**
- * @brief Wraps the std::list::const_iterator begin() method to use it as
- * Board ConstIterator
- * @return The pointer to the first Move of the game
- */
-[[nodiscard]] std::list<History::Step>::const_iterator History::begin() const {
-    return m_game_history.begin();
-}
-
-/**
- * @brief Wraps the std::list::const_iterator end() method to use it as
- * Board ConstIterator
- * @return The pointer to the last Move which has been made
- */
-[[nodiscard]] std::list<History::Step>::const_iterator History::end() const {
-    return m_game_history.end();
 }
 
 /**

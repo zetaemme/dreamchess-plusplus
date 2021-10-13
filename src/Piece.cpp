@@ -76,6 +76,11 @@ std::string Piece::unicode_representation(Piece::Enum piece) {
     return piece_repr.at(piece);
 }
 
+/**
+ * @brief Returns the Piece::Enum corresponding to the given Piece
+ * @param char_piece The FEN char representation of a Piece
+ * @return The FEN char of the Piece
+ */
 Piece::Enum Piece::to_enum(char char_piece) {
     const std::map<char, Enum> fen_to_piece{
         {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},

@@ -436,7 +436,7 @@ void Board::init_board() {
         splitted_fen[i] = tmp;
     }
 
-    for (auto &sym : splitted_fen[0]) {
+    for (const auto &sym : splitted_fen[0]) {
         if (sym == '/') {
             file = 0;
             rank--;

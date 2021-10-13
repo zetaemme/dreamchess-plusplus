@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <filesystem>
+
 #include "Piece.hpp"
 
 class GameTest : public ::testing::Test {
@@ -25,8 +27,23 @@ protected:
 
         return true;
     }
+
+    bool is_history_exported() {
+        game.make_move("a2-a4");
+        game.make_move("c8-d6");
+
+        game.export_to_file();
+
+        game.reset();
+
+        return std::filesystem::exists("../history/game_history.txt") &&
+               std::filesystem::remove_all("../history");
+        ;
+    }
 };
 
-TEST_F(GameTest, GameStartsCorrectly) { ASSERT_EQ(game.is_in_game(), true); }
+TEST_F(GameTest, GameStartsCorrectly) { ASSERT_TRUE(game.is_in_game()); }
 
-TEST_F(GameTest, GameResetsCorrectly) { ASSERT_EQ(test_reset(), true); }
+TEST_F(GameTest, GameResetsCorrectly) { ASSERT_TRUE(test_reset()); }
+
+TEST_F(GameTest, HisotryIsExported) { ASSERT_TRUE(is_history_exported()); }
