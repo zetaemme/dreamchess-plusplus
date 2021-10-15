@@ -124,6 +124,7 @@ void Board::make_move(const Move &move) {
     return true;
 }
 
+// FIXME Sembra che questa funzione non venga mai chiamata
 /**
  * @brief Checks if a Piece is mated in this Board
  * @return true if a Piece is mated, false otherwise
@@ -237,11 +238,6 @@ void Board::make_move(const Move &move) {
 
             if (m_squares[move.destination()] == Piece::NONE) {
                 break;
-            }
-
-            if (Piece::color(m_squares[move.destination()]) ==
-                Piece::color(m_squares[move.source()])) {
-                return false;
             }
 
             break;
