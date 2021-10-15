@@ -134,7 +134,7 @@ void Board::make_move(const Move &move) {
             for (auto &square2 : m_squares) {
                 Move move{static_cast<int64_t>(&square1 - &m_squares[0]),
                           static_cast<int64_t>(&square2 - &m_squares[0]),
-                          square1};
+                          square1, Piece::NONE};
 
                 if (move_is_valid(move)) {
                     return true;
@@ -185,7 +185,7 @@ void Board::make_move(const Move &move) {
     for (auto &square : m_squares) {
         if (Piece::color(square) == turn) {
             Move move{static_cast<int64_t>(&square - &m_squares[0]),
-                      static_cast<int64_t>(index), square};
+                      static_cast<int64_t>(index), square, Piece::NONE};
 
             if (move_is_semi_valid(move)) {
                 return true;
@@ -218,7 +218,9 @@ void Board::make_move(const Move &move) {
     if (move.source() > 63 || move.destination() > 63 ||
         move.source() == move.destination() ||
         m_squares[move.source()] == Piece::NONE ||
-        Piece::color(m_squares[move.source()]) != m_turn) {
+        Piece::color(m_squares[move.source()]) != m_turn ||
+        Piece::color(m_squares[move.source()]) ==
+            Piece::color(m_squares[move.destination()])) {
         return false;
     }
 
@@ -317,7 +319,7 @@ void Board::make_move(const Move &move) {
                         return false;
                     }
 
-                    uint16_t offset =
+                    const int16_t offset =
                         Piece::color(m_squares[move.source()]) == Piece::WHITE
                             ? -8
                             : 8;
@@ -395,8 +397,7 @@ void Board::make_move(const Move &move) {
  * destination it's in the opposite player first file
  */
 [[nodiscard]] bool Board::move_is_promotion(const Move &move) const {
-    return move.piece() == Piece::PAWN &&
-           (move.destination() < 8 || move.destination() >= 56);
+    return move.promotion_piece() != Piece::NONE;
 }
 
 /**

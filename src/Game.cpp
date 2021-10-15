@@ -54,7 +54,27 @@ bool Game::make_move(std::string_view input) {
     uint16_t source = (s_rank * 8) + s_file;
     uint16_t destination = (d_rank * 8) + d_file;
 
-    Move new_move{source, destination, m_board.piece_at(source)};
+    Piece::Enum promotion_piece{Piece::NONE};
+
+    if (((destination >= 0 && destination <= 7) ||
+         (destination >= 56 && destination <= 63)) &&
+        Piece::type(piece_at(source)) == Piece::PAWN) {
+        if (input.find('=') == std::string::npos) {
+            promotion_piece = m_board.turn() | Piece::QUEEN;
+        } else {
+            if (m_board.turn() == Piece::WHITE && std::islower(input.at(6))) {
+                return false;
+            }
+
+            if (m_board.turn() == Piece::BLACK && std::isupper(input.at(6))) {
+                return false;
+            }
+
+            promotion_piece = Piece::to_enum(input.at(6));
+        }
+    }
+
+    Move new_move{source, destination, piece_at(source), promotion_piece};
 
     if (!m_board.move_is_valid(new_move)) {
         return false;

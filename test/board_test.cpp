@@ -77,9 +77,9 @@ protected:
 };
 
 TEST_F(BoardTest, BoardCorrectCreation) {
-    ASSERT_EQ(pawns_check(), true);
-    ASSERT_EQ(rooks_check(), true);
-    ASSERT_EQ(knights_check(), true);    
-    ASSERT_EQ(bishop_check(), true);
-    ASSERT_EQ(royals_check(), true);    
+    ASSERT_TRUE(pawns_check());
+    ASSERT_TRUE(rooks_check());
+    ASSERT_TRUE(knights_check());
+    ASSERT_TRUE(bishop_check());
+    ASSERT_TRUE(royals_check());
 }

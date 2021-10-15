@@ -10,16 +10,20 @@
 #include "Board.hpp"
 
 namespace DreamChess {
+using piece_t = Piece::Enum;
+
 /**
  * @brief Constructs a move with 'hard' source and destination
  * @param board The board where to make the move
  * @param source The source square
  * @param destination The destination square
  */
-Move::Move(int64_t source, int64_t destination, Piece::Enum piece)
+Move::Move(int64_t source, int64_t destination, piece_t piece,
+           piece_t promotion_piece)
     : m_source{static_cast<int16_t>(source)},
       m_destination{static_cast<int16_t>(destination)},
-      m_piece{piece} {}
+      m_piece{piece},
+      m_promotion_piece{promotion_piece} {}
 
 /**
  * @brief Source square getter
@@ -37,13 +41,13 @@ Move::Move(int64_t source, int64_t destination, Piece::Enum piece)
  * @brief Gets the piece which is making the move
  * @return The piece which is making the move
  */
-[[nodiscard]] Piece::Enum Move::piece() const { return m_piece; }
+[[nodiscard]] piece_t Move::piece() const { return m_piece; }
 
 /**
  * @brief Returns the chosen promotion piece
  * @return The chosen promotion piece (QUEEN by default)
  */
-[[nodiscard]] Piece::Enum Move::promotion_piece() const {
+[[nodiscard]] piece_t Move::promotion_piece() const {
     return m_promotion_piece;
 }
 

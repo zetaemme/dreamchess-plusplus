@@ -103,13 +103,27 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(dc++_test 
-    test/game_test.cpp
-    test/board_test.cpp
-)
+add_executable(dc++_test
+        test/game_test.cpp
+        test/board_test.cpp
+        )
 
 target_include_directories(dc++_test PRIVATE include)
 target_link_libraries(dc++_test PRIVATE gtest_main dc++)
 
 include(GoogleTest)
 gtest_discover_tests(dc++_test)
+
+#------------------
+# COVERAGE SECTION
+#------------------
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(CodeCoverage)
+
+set(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+
+setup_target_for_coverage(
+        dc++_coverage
+        dc++_test
+        coverage
+)
