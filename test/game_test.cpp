@@ -39,6 +39,18 @@ protected:
                std::filesystem::remove_all("../history");
         ;
     }
+
+    [[nodiscard]] bool only_correct_knight_moves() {
+        game.make_move("b1-c3");
+        game.make_move("a7-a6");
+        game.make_move("b2-b4");
+        game.make_move("b7-b6");
+        game.make_move("b4-b5");
+        game.make_move("c7-c6");
+
+        return game.make_move("c3-b5");
+    }
+
     [[nodiscard]] bool en_passant_check() {
         game.make_move("a2-a4");
         game.make_move("h7-h6");
@@ -146,6 +158,25 @@ protected:
 
         return game.piece_at(6) == DreamChess::Piece::WHITE_KING;
     }
+
+    [[nodiscard]] bool terminal_output_check() const {
+        std::stringstream out;
+
+        out << game;
+
+        std::string game_str;
+
+        for (const auto &piece : game) {
+            game_str.append(DreamChess::Piece::unicode_representation(piece));
+            game_str.append(" ");
+
+            if ((&piece - &game.board().squares()[0]) % 8 == 0) {
+                game_str.push_back('\n');
+            }
+        }
+
+        return out.str() == game_str;
+    }
 };
 
 TEST_F(GameTest, GameStartsCorrectly) { ASSERT_TRUE(game.is_in_game()); }
@@ -153,6 +184,34 @@ TEST_F(GameTest, GameStartsCorrectly) { ASSERT_TRUE(game.is_in_game()); }
 TEST_F(GameTest, GameResetsCorrectly) { ASSERT_TRUE(test_reset()); }
 
 TEST_F(GameTest, HisotryIsExported) { ASSERT_TRUE(is_history_exported()); }
+
+TEST_F(GameTest, OnlyCorrectPawnMovesAreMade) {
+    ASSERT_FALSE(game.make_move("a2-a1"));
+    ASSERT_FALSE(game.make_move("a2-a2"));
+    game.reset();
+}
+
+TEST_F(GameTest, OnlyCorrectRookMovesAreMade) {
+    ASSERT_FALSE(game.make_move("a1-a2"));
+    game.reset();
+}
+
+TEST_F(GameTest, OnlyCorrectKnightMovesAreMade) {
+    ASSERT_FALSE(only_correct_knight_moves());
+    game.reset();
+}
+
+TEST_F(GameTest, OnlyCorrectBishopMovesAreMade) {
+    ASSERT_FALSE(game.make_move("c1-d2"));
+}
+
+TEST_F(GameTest, OnlyCorrectQueenMovesAreMade) {
+    ASSERT_FALSE(game.make_move("d1-d2"));
+}
+
+TEST_F(GameTest, OnlyCorrectKingMovesAreMade) {
+    ASSERT_FALSE(game.make_move("e1-e2"));
+}
 
 TEST_F(GameTest, EnPassantMoveIsCorrect) {
     ASSERT_TRUE(en_passant_check());
@@ -187,4 +246,8 @@ TEST_F(GameTest, QueensideCastleIsCorrect) {
 TEST_F(GameTest, KingsideCastleIsCorrect) {
     ASSERT_TRUE(king_side_castle_check());
     game.reset();
+}
+
+TEST_F(GameTest, BoardIsPrintedCorrectly) {
+    ASSERT_TRUE(terminal_output_check());
 }

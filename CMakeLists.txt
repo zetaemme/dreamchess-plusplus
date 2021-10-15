@@ -106,7 +106,7 @@ enable_testing()
 add_executable(dc++_test
         test/game_test.cpp
         test/board_test.cpp
-        )
+        test/piece_test.cpp)
 
 target_include_directories(dc++_test PRIVATE include)
 target_link_libraries(dc++_test PRIVATE gtest_main dc++)
