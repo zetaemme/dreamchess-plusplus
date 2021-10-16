@@ -36,7 +36,7 @@ public:
 
     [[nodiscard]] bool is_in_game() const;
     [[nodiscard]] bool is_in_check() const;
-    [[nodiscard]] bool is_mated() const;
+    [[nodiscard]] bool is_king_dead() const;
 
     [[nodiscard]] internal_structure_t squares() const;
     [[nodiscard]] piece_t turn() const;

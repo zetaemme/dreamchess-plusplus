@@ -32,9 +32,9 @@ target_include_directories(dc++ PUBLIC include)
 
 add_compile_options(-std=c++17 -Wall -Wextra -Wpedantic -Werror -g)
 
-add_executable(dc++_main main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(dc++_main PRIVATE dc++)
+target_link_libraries(${PROJECT_NAME} PRIVATE dc++)
 
 #------------------
 # CLEANING SECTION
@@ -52,7 +52,7 @@ add_custom_target(clean_all
 # INSTALL SECTION
 #-----------------
 
-install(TARGETS dc++ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 #-----------------------
 # DOCUMENTATION SECTION
@@ -82,7 +82,7 @@ find_program(VALGRIND_EXE valgrind)
 if(VALGRIND_EXE)
     add_custom_target(valgrind
         COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
-        COMMAND ${CMAKE_COMMAND} --build . --target dc++_main
+        COMMAND ${CMAKE_COMMAND} --build . --target ${PROJECT_NAME}
         COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all 
                                 --track-fds=yes --track-origins=yes ./dc++_main 
         COMMAND ${CMAKE_COMMAND} -E echo "Done!"

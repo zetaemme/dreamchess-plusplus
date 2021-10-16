@@ -102,13 +102,7 @@ void Board::make_move(const Move &move) {
  * and mated
  * @return true if the Game is in progress, false otherwise
  */
-[[nodiscard]] bool Board::is_in_game() const {
-    if (is_in_check() && is_mated()) {
-        return false;
-    }
-
-    return true;
-}
+[[nodiscard]] bool Board::is_in_game() const { return is_king_dead(); }
 
 /**
  * @brief Checks if one of the two sides is under check
@@ -124,27 +118,21 @@ void Board::make_move(const Move &move) {
     return true;
 }
 
-// FIXME Sembra che questa funzione non venga mai chiamata
 /**
- * @brief Checks if a Piece is mated in this Board
- * @return true if a Piece is mated, false otherwise
+ * @brief Checks if the current's turn KING is still alive
+ * @return true if the KING is alive, false otherwise
  */
-[[nodiscard]] bool Board::is_mated() const {
-    for (auto &square1 : m_squares) {
-        if (Piece::color(square1) == m_turn) {
-            for (auto &square2 : m_squares) {
-                Move move{static_cast<int64_t>(&square1 - &m_squares[0]),
-                          static_cast<int64_t>(&square2 - &m_squares[0]),
-                          square1, Piece::NONE};
+[[nodiscard]] bool Board::is_king_dead() const {
+    bool alive{false};
 
-                if (move_is_valid(move)) {
-                    return true;
-                }
-            }
+    for (const auto &piece : m_squares) {
+        if (Piece::type(piece) == Piece::KING &&
+            Piece::color(piece) == m_turn) {
+            alive = true;
         }
     }
 
-    return false;
+    return alive;
 }
 
 /**

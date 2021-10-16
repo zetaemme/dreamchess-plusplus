@@ -27,6 +27,15 @@ protected:
 
         return true;
     }
+    [[nodiscard]] bool test_games_end() {
+        game.make_move("e2-a4");
+        game.make_move("b7-b6");
+        game.make_move("e1-e2");
+        game.make_move("c8-a6");
+        game.make_move("a6-e2");
+
+        return game.board().is_king_dead();
+    }
     [[nodiscard]] bool is_history_exported() {
         game.make_move("a2-a4");
         game.make_move("c8-d6");
@@ -181,6 +190,11 @@ protected:
 
 TEST_F(GameTest, GameStartsCorrectly) { ASSERT_TRUE(game.is_in_game()); }
 
+TEST_F(GameTest, GameEndsCorrectly) {
+    ASSERT_TRUE(test_games_end());
+    game.reset();
+}
+
 TEST_F(GameTest, GameResetsCorrectly) { ASSERT_TRUE(test_reset()); }
 
 TEST_F(GameTest, HisotryIsExported) { ASSERT_TRUE(is_history_exported()); }
@@ -188,11 +202,17 @@ TEST_F(GameTest, HisotryIsExported) { ASSERT_TRUE(is_history_exported()); }
 TEST_F(GameTest, OnlyCorrectPawnMovesAreMade) {
     ASSERT_FALSE(game.make_move("a2-a1"));
     ASSERT_FALSE(game.make_move("a2-a2"));
+    ASSERT_FALSE(game.make_move("a2-a6"));
+    ASSERT_FALSE(game.make_move("a2-b3"));
+    ASSERT_FALSE(game.make_move("a2-a4") && game.make_move("b7-b6") &&
+                 game.make_move("a4-a3"));
     game.reset();
 }
 
 TEST_F(GameTest, OnlyCorrectRookMovesAreMade) {
     ASSERT_FALSE(game.make_move("a1-a2"));
+    ASSERT_FALSE(game.make_move("b2-b4") && game.make_move("b7-b6") &&
+                 game.make_move("a1-c3"));
     game.reset();
 }
 
@@ -203,14 +223,25 @@ TEST_F(GameTest, OnlyCorrectKnightMovesAreMade) {
 
 TEST_F(GameTest, OnlyCorrectBishopMovesAreMade) {
     ASSERT_FALSE(game.make_move("c1-d2"));
+    ASSERT_FALSE(game.make_move("b2-b4") && game.make_move("h7-h6") &&
+                 game.make_move("c1-a3") && game.make_move("g7-g6") &&
+                 game.make_move("a3-a4"));
+    game.reset();
 }
 
 TEST_F(GameTest, OnlyCorrectQueenMovesAreMade) {
     ASSERT_FALSE(game.make_move("d1-d2"));
+    ASSERT_FALSE(game.make_move("d2-d4") && game.make_move("h7-h6") &&
+                 game.make_move("d1-d3") && game.make_move("g7-g6") &&
+                 game.make_move("d2-b3"));
+    game.reset();
 }
 
 TEST_F(GameTest, OnlyCorrectKingMovesAreMade) {
     ASSERT_FALSE(game.make_move("e1-e2"));
+    ASSERT_FALSE(game.make_move("e2-e4") && game.make_move("h7-h6") &&
+                 game.make_move("e1-e3"));
+    game.reset();
 }
 
 TEST_F(GameTest, EnPassantMoveIsCorrect) {
