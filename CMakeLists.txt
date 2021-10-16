@@ -9,23 +9,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #--------------
 # MAIN SECTION
 #--------------
-
 set(SRC
-    main.cpp
-    src/Board.cpp
-    src/Game.cpp
-    src/History.cpp
-    src/Move.cpp
-    src/Piece.cpp
-)
+        main.cpp
+        src/Board.cpp
+        src/Game.cpp
+        src/History.cpp
+        src/Move.cpp
+        src/Piece.cpp
+        )
 
 set(INC
-    include/Board.hpp
-    include/Game.hpp
-    include/History.hpp
-    include/Move.hpp
-    include/Piece.hpp
-)
+        include/Board.hpp
+        include/Game.hpp
+        include/History.hpp
+        include/Move.hpp
+        include/Piece.hpp
+        )
 
 add_library(dc++ ${INC} ${SRC})
 target_include_directories(dc++ PUBLIC include)
@@ -36,67 +35,14 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dc++)
 
-#------------------
-# CLEANING SECTION
-#------------------
-
-add_custom_target(clean_all
-    COMMAND ${CMAKE_COMMAND} -E echo "Cleaning doc..."
-    COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECT_SOURCE_DIR}/doc
-    COMMAND ${CMAKE_COMMAND} -E echo "Cleaning bin..."
-    COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECT_SOURCE_DIR}/bin
-    COMMAND ${CMAKE_COMMAND} -E echo "Done!"
-)
-
-#-----------------
-# INSTALL SECTION
-#-----------------
-
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
-#-----------------------
-# DOCUMENTATION SECTION
-#-----------------------
-find_package(Doxygen QUIET REQUIRED)
-
-if(DOXYGEN_FOUND)
-    set(DOXYGEN_PROJECT_NAME "Dreamchess++")
-    set(DOXYGEN_PROJECT_BRIEF "A porting of dreamchess in modern C++")
-    set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_GENERATE_MAN NO)
-    set(DOXYGEN_GENERATE_LATEX NO)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc)
-
-    doxygen_add_docs(
-        doc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
-        COMMENT "Generating documentation..."
-    )
-endif(DOXYGEN_FOUND)
-
-#------------------
-# VALGRIND SECTION
-#------------------
-find_program(VALGRIND_EXE valgrind)
-
-if(VALGRIND_EXE)
-    add_custom_target(valgrind
-        COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
-        COMMAND ${CMAKE_COMMAND} --build . --target ${PROJECT_NAME}
-        COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all 
-                                --track-fds=yes --track-origins=yes ./dc++_main 
-        COMMAND ${CMAKE_COMMAND} -E echo "Done!"
-    )
-endif()
-
 #-----------------
 # TESTING SECTION
 #-----------------
 include(FetchContent)
 
 FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
+        googletest
+        URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
 )
 
 FetchContent_MakeAvailable(googletest)
@@ -114,16 +60,69 @@ target_link_libraries(dc++_test PRIVATE gtest_main dc++)
 include(GoogleTest)
 gtest_discover_tests(dc++_test)
 
-#------------------
-# COVERAGE SECTION
-#------------------
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-include(CodeCoverage)
+#-----------------
+# INSTALL SECTION
+#-----------------
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-set(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+#-----------------------
+# DOCUMENTATION SECTION
+#-----------------------
+find_package(Doxygen QUIET REQUIRED)
 
-setup_target_for_coverage(
-        dc++_coverage
-        dc++_test
-        coverage
-)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_PROJECT_NAME "Dreamchess++")
+    set(DOXYGEN_PROJECT_BRIEF "A porting of dreamchess in modern C++")
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_GENERATE_MAN NO)
+    set(DOXYGEN_GENERATE_LATEX NO)
+    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc)
+
+    doxygen_add_docs(
+            doc
+            ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
+            COMMENT "Generating documentation..."
+    )
+endif (DOXYGEN_FOUND)
+
+if (CMAKE_BUILD_TYPE EQUAL "Debug")
+    #------------------
+    # COVERAGE SECTION
+    #------------------
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+    include(CodeCoverage)
+
+    set(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+
+    setup_target_for_coverage(
+            coverage
+            dc++_test
+            coverage
+    )
+
+    #------------------
+    # VALGRIND SECTION
+    #------------------
+    find_program(VALGRIND_EXE valgrind)
+
+    if (VALGRIND_EXE)
+        add_custom_target(valgrind
+                COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
+                COMMAND ${CMAKE_COMMAND} --build . --target ${PROJECT_NAME}
+                COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all
+                --track-fds=yes --track-origins=yes ./dc++_main
+                COMMAND ${CMAKE_COMMAND} -E echo "Done!"
+                )
+    endif ()
+endif ()
+
+#------------------
+# CLEANING SECTION
+#------------------
+add_custom_target(clean_all
+        COMMAND ${CMAKE_COMMAND} -E echo "Cleaning doc..."
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECT_SOURCE_DIR}/doc
+        COMMAND ${CMAKE_COMMAND} -E echo "Cleaning bin..."
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECT_SOURCE_DIR}/bin
+        COMMAND ${CMAKE_COMMAND} -E echo "Done!"
+        )

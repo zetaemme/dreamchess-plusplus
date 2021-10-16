@@ -11,13 +11,11 @@
 #include <filesystem>
 #include <iostream>
 
+#include "Board.hpp"
 #include "Move.hpp"
 #include "Piece.hpp"
 
 namespace DreamChess {
-using piece_t = Piece::Enum;
-using board_internal_structure_t = std::array<piece_t, 64>;
-
 /**
  * @brief Creates a Game object
  */
@@ -132,13 +130,15 @@ void Game::reset() {
  * @param index The square which you want to know the value
  * @return The Piece in the index square
  */
-piece_t Game::piece_at(uint16_t index) const { return m_board.piece_at(index); }
+Board::piece_t Game::piece_at(uint16_t index) const {
+    return m_board.piece_at(index);
+}
 
 /**
  * @brief Wraps Board's begin() method
  * @return A pointer to the first element of the Board
  */
-[[nodiscard]] board_internal_structure_t::const_iterator Game::begin() const {
+[[nodiscard]] Board::internal_structure_t::const_iterator Game::begin() const {
     return m_board.begin();
 }
 
@@ -146,7 +146,7 @@ piece_t Game::piece_at(uint16_t index) const { return m_board.piece_at(index); }
  * @brief Wraps Board's end() method
  * @return A pointer to the last element of the Board
  */
-[[nodiscard]] board_internal_structure_t::const_iterator Game::end() const {
+[[nodiscard]] Board::internal_structure_t::const_iterator Game::end() const {
     return m_board.end();
 }
 
