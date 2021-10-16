@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <iostream>
 
+#include "Board.hpp"
 #include "Move.hpp"
 #include "Piece.hpp"
 
@@ -34,6 +35,12 @@ std::ostream &operator<<(std::ostream &stream, const Game &game) {
 }
 
 /**
+ * @breif The Board getter
+ * @return The Board member of Game
+ */
+Board Game::board() const { return m_board; }
+
+/**
  * @brief Checks if the game is still going on
  * @return true if a game is being played, false otherwise
  */
@@ -54,7 +61,27 @@ bool Game::make_move(std::string_view input) {
     uint16_t source = (s_rank * 8) + s_file;
     uint16_t destination = (d_rank * 8) + d_file;
 
-    Move new_move{source, destination, m_board.piece_at(source)};
+    Piece::Enum promotion_piece{Piece::NONE};
+
+    if (((destination >= 0 && destination <= 7) ||
+         (destination >= 56 && destination <= 63)) &&
+        Piece::type(piece_at(source)) == Piece::PAWN) {
+        if (input.find('=') == std::string::npos) {
+            promotion_piece = m_board.turn() | Piece::QUEEN;
+        } else {
+            if (m_board.turn() == Piece::WHITE && std::islower(input.at(6))) {
+                return false;
+            }
+
+            if (m_board.turn() == Piece::BLACK && std::isupper(input.at(6))) {
+                return false;
+            }
+
+            promotion_piece = Piece::to_enum(input.at(6));
+        }
+    }
+
+    Move new_move{source, destination, piece_at(source), promotion_piece};
 
     if (!m_board.move_is_valid(new_move)) {
         return false;
@@ -99,12 +126,28 @@ void Game::reset() {
 }
 
 /**
- * @brief Wraps Board's piece_at(uint16_t) -- TESTING ONLY --
+ * @brief Wraps Board's piece_at(uint16_t)
  * @param index The square which you want to know the value
  * @return The Piece in the index square
  */
-Piece::Enum Game::piece_at(uint16_t index) const {
+Board::piece_t Game::piece_at(uint16_t index) const {
     return m_board.piece_at(index);
+}
+
+/**
+ * @brief Wraps Board's begin() method
+ * @return A pointer to the first element of the Board
+ */
+[[nodiscard]] Board::internal_structure_t::const_iterator Game::begin() const {
+    return m_board.begin();
+}
+
+/**
+ * @brief Wraps Board's end() method
+ * @return A pointer to the last element of the Board
+ */
+[[nodiscard]] Board::internal_structure_t::const_iterator Game::end() const {
+    return m_board.end();
 }
 
 /**

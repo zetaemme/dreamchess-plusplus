@@ -23,10 +23,15 @@ struct Move;
  * @brief Describes a chess Game, with a Board and a History
  */
 class Game final {
+    using piece_t = Piece::Enum;
+    using board_internal_structure_t = std::array<piece_t, 64>;
+
 public:
     Game();
 
     friend std::ostream &operator<<(std::ostream &, const Game &);
+
+    Board board() const;
 
     [[nodiscard]] bool is_in_game() const;
 
@@ -35,7 +40,10 @@ public:
 
     void reset();
 
-    Piece::Enum piece_at(uint16_t index) const;
+    piece_t piece_at(uint16_t index) const;
+
+    [[nodiscard]] board_internal_structure_t::const_iterator begin() const;
+    [[nodiscard]] board_internal_structure_t::const_iterator end() const;
 
 private:
     /**

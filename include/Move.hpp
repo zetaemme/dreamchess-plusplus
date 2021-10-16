@@ -19,7 +19,7 @@ struct Move final {
     using piece_t = Piece::Enum;
 
 public:
-    Move(int64_t, int64_t, piece_t);
+    Move(int64_t, int64_t, piece_t, piece_t);
 
     [[nodiscard]] int16_t source() const;
     [[nodiscard]] int16_t destination() const;
@@ -47,6 +47,6 @@ private:
     /**
      * @brief The declared promotion present, if promotion
      */
-    piece_t m_promotion_piece{Piece::NONE};
+    piece_t m_promotion_piece;
 };
 }    // namespace DreamChess

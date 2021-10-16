@@ -14,7 +14,8 @@ cd build
 at this point you should have created 2 `make` targets:
 * `install`: Creates a `bin` directory in the `dc++_main` root with the executable
 * `doc`: Creates a `doc` directory containing the HTML documentation
-run them by
+
+Run them with
 ```bash
 make install
 make doc

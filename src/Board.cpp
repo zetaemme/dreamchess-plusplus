@@ -102,13 +102,7 @@ void Board::make_move(const Move &move) {
  * and mated
  * @return true if the Game is in progress, false otherwise
  */
-[[nodiscard]] bool Board::is_in_game() const {
-    if (is_in_check() && is_mated()) {
-        return false;
-    }
-
-    return true;
-}
+[[nodiscard]] bool Board::is_in_game() const { return is_king_dead(); }
 
 /**
  * @brief Checks if one of the two sides is under check
@@ -125,25 +119,20 @@ void Board::make_move(const Move &move) {
 }
 
 /**
- * @brief Checks if a Piece is mated in this Board
- * @return true if a Piece is mated, false otherwise
+ * @brief Checks if the current's turn KING is still alive
+ * @return true if the KING is alive, false otherwise
  */
-[[nodiscard]] bool Board::is_mated() const {
-    for (auto &square1 : m_squares) {
-        if (Piece::color(square1) == m_turn) {
-            for (auto &square2 : m_squares) {
-                Move move{static_cast<int64_t>(&square1 - &m_squares[0]),
-                          static_cast<int64_t>(&square2 - &m_squares[0]),
-                          square1};
+[[nodiscard]] bool Board::is_king_dead() const {
+    bool alive{false};
 
-                if (move_is_valid(move)) {
-                    return true;
-                }
-            }
+    for (const auto &piece : m_squares) {
+        if (Piece::type(piece) == Piece::KING &&
+            Piece::color(piece) == m_turn) {
+            alive = true;
         }
     }
 
-    return false;
+    return alive;
 }
 
 /**
@@ -185,7 +174,7 @@ void Board::make_move(const Move &move) {
     for (auto &square : m_squares) {
         if (Piece::color(square) == turn) {
             Move move{static_cast<int64_t>(&square - &m_squares[0]),
-                      static_cast<int64_t>(index), square};
+                      static_cast<int64_t>(index), square, Piece::NONE};
 
             if (move_is_semi_valid(move)) {
                 return true;
@@ -218,7 +207,9 @@ void Board::make_move(const Move &move) {
     if (move.source() > 63 || move.destination() > 63 ||
         move.source() == move.destination() ||
         m_squares[move.source()] == Piece::NONE ||
-        Piece::color(m_squares[move.source()]) != m_turn) {
+        Piece::color(m_squares[move.source()]) != m_turn ||
+        Piece::color(m_squares[move.source()]) ==
+            Piece::color(m_squares[move.destination()])) {
         return false;
     }
 
@@ -235,11 +226,6 @@ void Board::make_move(const Move &move) {
 
             if (m_squares[move.destination()] == Piece::NONE) {
                 break;
-            }
-
-            if (Piece::color(m_squares[move.destination()]) ==
-                Piece::color(m_squares[move.source()])) {
-                return false;
             }
 
             break;
@@ -317,7 +303,7 @@ void Board::make_move(const Move &move) {
                         return false;
                     }
 
-                    uint16_t offset =
+                    const int16_t offset =
                         Piece::color(m_squares[move.source()]) == Piece::WHITE
                             ? -8
                             : 8;
@@ -395,8 +381,7 @@ void Board::make_move(const Move &move) {
  * destination it's in the opposite player first file
  */
 [[nodiscard]] bool Board::move_is_promotion(const Move &move) const {
-    return move.piece() == Piece::PAWN &&
-           (move.destination() < 8 || move.destination() >= 56);
+    return move.promotion_piece() != Piece::NONE;
 }
 
 /**

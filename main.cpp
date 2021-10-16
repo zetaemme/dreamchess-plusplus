@@ -15,7 +15,8 @@ int main() {
 
     std::string input_move;
 
-    std::regex regex{"[a-h][1-8]-[a-h][1-8]"};
+    std::regex move_regex{"[a-h][1-8]-[a-h][1-8]"};
+    std::regex promotion_regex{"[a-h][1-8]-[a-h][1-8]=[r|R|n|N|b|B|q|Q]"};
 
     while (game.is_in_game()) {
         std::cout << "---------------------" << std::endl;
@@ -35,7 +36,8 @@ int main() {
                 valid = true;
             } else {
                 // Checks if the input_move is properly formatted
-                if (std::regex_match(input_move, match, regex)) {
+                if (std::regex_match(input_move, match, move_regex) ||
+                    std::regex_match(input_move, match, promotion_regex)) {
                     valid = game.make_move(input_move);
                 } else {
                     valid = false;
