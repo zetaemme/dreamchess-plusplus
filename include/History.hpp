@@ -31,12 +31,12 @@ private:
         explicit Step(const Move &);
     };
 
-    using internal_structure_t = std::list<Step>;
+    using step_list_t = std::list<Step>;
 
     /**
      * @brief Game History so far
      */
-    internal_structure_t m_game_history{};
+    step_list_t m_game_history{};
 
 public:
     /**

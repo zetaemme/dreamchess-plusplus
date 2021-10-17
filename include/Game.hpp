@@ -28,7 +28,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &, const Game &);
 
-    Board board() const;
+    [[nodiscard]] Board board() const;
 
     [[nodiscard]] bool is_in_game() const;
     [[nodiscard]] static bool is_move_syntax_correct(const std::string &);
@@ -40,8 +40,8 @@ public:
 
     [[nodiscard]] Board::piece_t piece_at(uint16_t index) const;
 
-    [[nodiscard]] Board::internal_structure_t::const_iterator begin() const;
-    [[nodiscard]] Board::internal_structure_t::const_iterator end() const;
+    [[nodiscard]] Board::piece_array_t::const_iterator begin() const;
+    [[nodiscard]] Board::piece_array_t::const_iterator end() const;
 
 private:
     /**

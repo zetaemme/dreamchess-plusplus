@@ -17,15 +17,13 @@ namespace DreamChess {
  * @brief A single move in the Game
  */
 struct Move final {
-    using piece_t = Piece::Enum;
-
 public:
-    Move(int64_t, int64_t, piece_t, piece_t);
+    Move(int64_t, int64_t, Board::piece_t, Board::piece_t);
 
     [[nodiscard]] int16_t source() const;
     [[nodiscard]] int16_t destination() const;
-    [[nodiscard]] piece_t piece() const;
-    [[nodiscard]] piece_t promotion_piece() const;
+    [[nodiscard]] Board::piece_t piece() const;
+    [[nodiscard]] Board::piece_t promotion_piece() const;
     [[nodiscard]] static std::regex move_regex();
     [[nodiscard]] static std::regex promotion_regex();
 
@@ -45,12 +43,12 @@ private:
     /**
      * @brief The Piece which is making the move
      */
-    piece_t m_piece;
+    Board::piece_t m_piece;
 
     /**
      * @brief The declared promotion present, if promotion
      */
-    piece_t m_promotion_piece;
+    Board::piece_t m_promotion_piece;
 
     /**
      * @brief Pointer to the standard move regex pattern

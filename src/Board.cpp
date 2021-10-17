@@ -14,9 +14,6 @@
 #include "Move.hpp"
 
 namespace DreamChess {
-using piece_t = Piece::Enum;
-using internal_structure_t = std::array<piece_t, 64>;
-
 /**
  * @brief Constructs a Board
  * @details Starts with the neutral FEN string, using init_board()
@@ -139,19 +136,19 @@ void Board::make_move(const Move &move) {
  * @brief Returns the squares array of Board
  * @return The m_squares array
  */
-[[nodiscard]] internal_structure_t Board::squares() const { return m_squares; }
+[[nodiscard]] Board::piece_array_t Board::squares() const { return m_squares; }
 
 /**
  * @brief Returns who plays in current turn
  * @return True if it's WHITE, false otherwise
  */
-[[nodiscard]] piece_t Board::turn() const { return m_turn; }
+[[nodiscard]] Board::piece_t Board::turn() const { return m_turn; }
 
 /**
  * @brief Gets the next turn moving color
  * @return The opposite of m_turn
  */
-[[nodiscard]] piece_t Board::opponent_turn() const {
+[[nodiscard]] Board::piece_t Board::opponent_turn() const {
     return m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
 }
 
@@ -160,7 +157,7 @@ void Board::make_move(const Move &move) {
  * @param index The index of the returned piece
  * @return The corresponding piece
  */
-[[nodiscard]] piece_t Board::piece_at(uint16_t index) const {
+[[nodiscard]] Board::piece_t Board::piece_at(uint16_t index) const {
     return m_squares[index];
 }
 
@@ -170,7 +167,8 @@ void Board::make_move(const Move &move) {
  * @param turn The playing turn
  * @return The color of the piece which is attacked
  */
-[[nodiscard]] bool Board::square_attacked(uint64_t index, piece_t turn) const {
+[[nodiscard]] bool Board::square_attacked(uint64_t index,
+                                          Board::piece_t turn) const {
     for (auto &square : m_squares) {
         if (Piece::color(square) == turn) {
             Move move{static_cast<int64_t>(&square - &m_squares[0]),
@@ -215,7 +213,6 @@ void Board::make_move(const Move &move) {
 
     int64_t hor = horizontal_check(move);
     int64_t ver = vertical_check(move);
-    bool diag = diagonal_check(ver, move);
 
     switch (Piece::type(m_squares[move.source()])) {
         case Piece::KNIGHT: {
@@ -389,7 +386,7 @@ void Board::make_move(const Move &move) {
  * ConstIterator
  * @return The pointer to the first square's address
  */
-[[nodiscard]] internal_structure_t::const_iterator Board::begin() const {
+[[nodiscard]] Board::piece_array_t::const_iterator Board::begin() const {
     return m_squares.begin();
 }
 
@@ -398,7 +395,7 @@ void Board::make_move(const Move &move) {
  * ConstIterator
  * @return The pointer to the last square's address
  */
-[[nodiscard]] internal_structure_t::const_iterator Board::end() const {
+[[nodiscard]] Board::piece_array_t::const_iterator Board::end() const {
     return m_squares.end();
 }
 
@@ -459,45 +456,5 @@ void Board::clear() {
  */
 [[nodiscard]] int64_t Board::vertical_check(const Move &move) const {
     return std::abs(move.source() / 8 - move.destination() / 8);
-}
-
-/**
- * @brief Checks if a Move is diagonal
- * @param ver The possible vertical values from the move source square
- * @return true if is moving diagonally, false otherwise
- */
-[[nodiscard]] bool Board::diagonal_check(int64_t ver, const Move &move) const {
-    int16_t step{0};
-
-    if (ver != 0) {
-        // Handles negative numbers while using uint_16 for everything
-        if (move.destination() > move.source()) {
-            step = (move.destination() - move.source()) / ver;
-        } else {
-            step = (move.destination() - move.source()) / ver;
-        }
-    } else {
-        step = move.destination() > move.source() ? 1 : -1;
-    }
-
-    int16_t i = move.source() + step;
-
-    while (i != move.destination()) {
-        if (m_squares[i] != Piece::NONE) {
-            return false;
-        }
-
-        i += step;
-    }
-
-    if (m_squares[i] != Piece::NONE) {
-        return false;
-    }
-
-    if (Piece::color(m_squares[i]) == Piece::color(m_squares[move.source()])) {
-        return false;
-    }
-
-    return true;
 }
 }    // namespace DreamChess

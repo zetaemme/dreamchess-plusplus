@@ -24,8 +24,8 @@ const std::shared_ptr<std::regex> Move::m_promotion_regex{
  * @param source The source square
  * @param destination The destination square
  */
-Move::Move(int64_t source, int64_t destination, piece_t piece,
-           piece_t promotion_piece)
+Move::Move(int64_t source, int64_t destination, Board::piece_t piece,
+           Board::piece_t promotion_piece)
     : m_source{static_cast<int16_t>(source)},
       m_destination{static_cast<int16_t>(destination)},
       m_piece{piece},
@@ -57,8 +57,16 @@ Move::Move(int64_t source, int64_t destination, piece_t piece,
     return m_promotion_piece;
 }
 
+/**
+ * @brief Getter for the move regex
+ * @return The object pointed by the m_move_regex shared pointer
+ */
 [[nodiscard]] std::regex Move::move_regex() { return *m_move_regex; }
 
+/**
+ * @brief Getter for the promotion regex
+ * @return The object pointed by the m_promotion_regex shared pointer
+ */
 [[nodiscard]] std::regex Move::promotion_regex() { return *m_promotion_regex; }
 
 /**
