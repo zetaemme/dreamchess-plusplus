@@ -12,6 +12,12 @@
 namespace DreamChess {
 using piece_t = Piece::Enum;
 
+const std::shared_ptr<std::regex> Move::m_move_regex{
+    std::make_shared<std::regex>("[a-h][1-8]-[a-h][1-8]")};
+
+const std::shared_ptr<std::regex> Move::m_promotion_regex{
+    std::make_shared<std::regex>("[a-h][1-8]-[a-h][1-8]=[r|R|n|N|b|B|q|Q]")};
+
 /**
  * @brief Constructs a move with 'hard' source and destination
  * @param board The board where to make the move
@@ -50,6 +56,10 @@ Move::Move(int64_t source, int64_t destination, piece_t piece,
 [[nodiscard]] piece_t Move::promotion_piece() const {
     return m_promotion_piece;
 }
+
+[[nodiscard]] std::regex Move::move_regex() { return *m_move_regex; }
+
+[[nodiscard]] std::regex Move::promotion_regex() { return *m_promotion_regex; }
 
 /**
  * @brief Converts a Move to his its algebraic notation

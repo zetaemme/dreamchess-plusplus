@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include <regex>
 #include <string_view>
 
 #include "Board.hpp"
@@ -25,6 +26,8 @@ public:
     [[nodiscard]] int16_t destination() const;
     [[nodiscard]] piece_t piece() const;
     [[nodiscard]] piece_t promotion_piece() const;
+    [[nodiscard]] static std::regex move_regex();
+    [[nodiscard]] static std::regex promotion_regex();
 
     [[nodiscard]] std::string to_alg() const;
 
@@ -48,5 +51,15 @@ private:
      * @brief The declared promotion present, if promotion
      */
     piece_t m_promotion_piece;
+
+    /**
+     * @brief Pointer to the standard move regex pattern
+     */
+    static const std::shared_ptr<std::regex> m_move_regex;
+
+    /**
+     * @brief Pointer to the promotion move regex pattern
+     */
+    static const std::shared_ptr<std::regex> m_promotion_regex;
 };
 }    // namespace DreamChess

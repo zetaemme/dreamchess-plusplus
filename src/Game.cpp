@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
+#include <regex>
 
 #include "Board.hpp"
 #include "Move.hpp"
@@ -45,6 +46,13 @@ Board Game::board() const { return m_board; }
  * @return true if a game is being played, false otherwise
  */
 [[nodiscard]] bool Game::is_in_game() const { return m_board.is_in_game(); }
+
+[[nodiscard]] bool Game::is_move_syntax_correct(const std::string &input_move) {
+    std::smatch string_match;
+
+    return std::regex_match(input_move, string_match, Move::move_regex()) ||
+           std::regex_match(input_move, string_match, Move::promotion_regex());
+}
 
 /**
  * @brief Wraps Board::make_move and updates m_history
