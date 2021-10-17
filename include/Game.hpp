@@ -23,9 +23,6 @@ struct Move;
  * @brief Describes a chess Game, with a Board and a History
  */
 class Game final {
-    using piece_t = Piece::Enum;
-    using board_internal_structure_t = std::array<piece_t, 64>;
-
 public:
     Game();
 
@@ -34,16 +31,17 @@ public:
     Board board() const;
 
     [[nodiscard]] bool is_in_game() const;
+    [[nodiscard]] static bool is_move_syntax_correct(const std::string &);
 
     bool make_move(std::string_view);
     void export_to_file() const;
 
     void reset();
 
-    piece_t piece_at(uint16_t index) const;
+    [[nodiscard]] Board::piece_t piece_at(uint16_t index) const;
 
-    [[nodiscard]] board_internal_structure_t::const_iterator begin() const;
-    [[nodiscard]] board_internal_structure_t::const_iterator end() const;
+    [[nodiscard]] Board::internal_structure_t::const_iterator begin() const;
+    [[nodiscard]] Board::internal_structure_t::const_iterator end() const;
 
 private:
     /**
