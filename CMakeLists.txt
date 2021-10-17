@@ -85,7 +85,7 @@ if (DOXYGEN_FOUND)
     )
 endif (DOXYGEN_FOUND)
 
-if (CMAKE_BUILD_TYPE EQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     #------------------
     # COVERAGE SECTION
     #------------------
@@ -107,14 +107,12 @@ if (CMAKE_BUILD_TYPE EQUAL "Debug")
 
     if (VALGRIND_EXE)
         add_custom_target(valgrind
-                COMMAND ${CMAKE_COMMAND} -E echo "Running valgrind test..."
                 COMMAND ${CMAKE_COMMAND} --build . --target ${PROJECT_NAME}
                 COMMAND ${VALGRIND_EXE} --leak-check=full --show-leak-kinds=all
-                --track-fds=yes --track-origins=yes ./dc++_main
-                COMMAND ${CMAKE_COMMAND} -E echo "Done!"
+                --track-fds=yes --track-origins=yes ./${PROJECT_NAME}
                 )
     endif ()
-endif ()
+endif()
 
 #------------------
 # CLEANING SECTION
