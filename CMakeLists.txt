@@ -10,7 +10,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # MAIN SECTION
 #--------------
 set(SRC
-        main.cpp
         src/Board.cpp
         src/Game.cpp
         src/History.cpp
@@ -58,6 +57,7 @@ target_include_directories(dc++_test PRIVATE include)
 target_link_libraries(dc++_test PRIVATE gtest_main dc++)
 
 include(GoogleTest)
+
 gtest_discover_tests(dc++_test)
 
 #-----------------

@@ -34,11 +34,11 @@
     \thispagestyle{empty}
     \newpage
     \section{Project design}\label{sec:design}
-        Affrontare il porting di un progetto come \href{https://github.com/dreamchess/dreamchess}{dreamchess} ha sicuramente richiesto delle scelte abbastanza radicali nel design, soprattutto a causa delle possibilità offerte da \textit{C++17}.
+        Affrontare il porting di un progetto come \href{https://github.com/dreamchess/dreamchess}{dreamchess} ha sicuramente richiesto delle scelte abbastanza radicali nel design, soprattutto a causa (o meglio, per merito) delle possibilità offerte da \textit{C++17}.
         \subsection{Macros}\label{subsec:macros}
             È stato in primis deciso di accantonare completamente l'utilizzo delle \textit{Macro}, largamente utilizzate nel progetto originale per cose come la specifica dei pezzi della scacchiera e di alcune funzioni riguardanti essi, trasformate e riportate nell'omonima classe.
             Altre invece sono state completamente rimosse in quanto riguardanti la GUI oppure lo stato della schacchiera, controllabile tramite semplici funzioni e membri booleani delle classi.\\
-            Unica eccezione fatta per \texttt{\#pragma}, utilizzato come \texttt{\#pragma once} in sostituzione delle \textit{include guards}.
+            Unica eccezione fatta per \texttt{\#pragma}, utilizzato come \textit{include guard} nella forma \texttt{\#pragma once}.
         \subsection{Computazione}\label{subsec:computation}
             Da sottlineare la quasi totalità di computazione a runtime per il progetto, rendendo praticamente impossibile l'utilizzo sensato ed efficace di \textit{templates} o \texttt{constexpr}.
         \subsection{Enumerazioni}\label{subsec:enum}
@@ -52,16 +52,20 @@
         Nel continuo evolvere delle scelte implementative da adottare, 3 sono state fondamentali nel produrre il risultato finale
         \paragraph{Rappresentazione dei pezzi}
             Come discusso nella sezione precedente, l'unità fondamentale del gioco ha richeisto, come ci si poteva immaginare, il maggior tempo di sviluppo prima di arrivare alla sua forma definitiva.\\
-            Parte infatti come semplice \texttt{enum}, contente una codifica numerica dei vari pezzi e colori messi in OR tra loro, quanto di più semplice si possa pensare. La promozione a classe avviene con la necessità di conoscere il \textit{tipo} o il \textit{colore} del pezzo di un determinato quadrato della schacchiera, vengono quindi overloadati gli operatori per poter usare i metodi statici \texttt{Piece::color} e \texttt{Piece::type}.
+            Parte infatti come semplice \texttt{enum}, contenente una codifica numerica dei vari pezzi e colori messi in OR tra loro, quanto di più semplice si possa pensare. La promozione a classe avviene con la necessità di conoscere il \textit{tipo} o il \textit{colore} del pezzo di un determinato quadrato della schacchiera, vengono quindi overloadati gli operatori per poter usare i metodi statici \texttt{Piece::color} e \texttt{Piece::type}.
         \paragraph{Validità delle mosse}
             Forse la funzionalità che ha richiesto più debug.
             Sicuramente migliorabile alla fine si è riportata quasi interamente l'implementazione originale, alleggerita dal punto di vista dei parametri, sfruttando convenientemente la visibilità dei membri delle varie classi e qualche miglioramento logico.
-            Alleggerita inoltre dalla "forzatura" nello scegliere il pezzo per la promozione del pedone, impostato di default ad una regina (mossa più furba anche in partite di medio livello).\\
-            La conversione a C++ inoltre ha permesso di spezzare i check sulla mossa da quelli sullo stato della scacchiera, precedentemente parte della scacchiera come unico file.
+            Il porting a C++ inoltre ha permesso di spezzare l'originale \texttt{board.c/h} nei sucuramente più espressivi \texttt{Move.cpp/hpp} e \texttt{Board.cpp/hpp}, potendo quindi dividere la logica delle mosse dai vari check sullo stato della scacchiera. 
         \paragraph{Notazione}
             Il progetto originale supportava ogni tipologia di notazione, ho preferito utilizzare la notazione FEN in quanto riportava l'intero stato della scacchiera e non solo la mossa eseguita.
             La \textbf{History} è infatti composta da una serie di \textit{Step}, composti dall'ultima mossa eseguita e dalla FEN dello stato attuale della scacchiera, in modo che sia facilmente ricostruibile.\\
             Altra variazione dal progetto iniziale è quello di eseguire l'inizializzazione della schacchiera tramite parsing di una stringa FEN, invece dell'hard-coding dei vari pezzi nell'array \texttt{squares} di \textbf{Board}, utilizzata nell'originale dreamchess.
+        \paragraph{Input delle mosse}
+            Così come c'è stata una scelta personale nel cambiare la notazione per rappresentare la scacchiera, esiste una scelta obbligata nel cambio di notazione per l'input delle mosse.\\
+            Il progetto originale si avvaleva di un'interfaccia grafica mentre il proting si basa solamente sul terminale, è stato quindi necessario scegliere una formattazione per le stringhe di input, ovvero \texttt{rankfile-rankfile}, anche visibile come \textit{source-destination}.\\
+            Stesso principio si applica sulla fromattazione delle \textit{promotion moves}, la stringa di input dovrà essere formattata come segue \texttt{rankfile-rankfile=piece}. Se in una \textit{promotion move} non viene specificato alcun pezzo esso verrà trattato come una promozione a Regina.\\
+            Entrambe le tipologie di mosse sono controllate sintatticamente tramite espressioni regolari.
     \newpage
     \section{Prestazioni}
         TODO
