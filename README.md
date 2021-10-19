@@ -9,9 +9,10 @@ Mattia Zorzan - VR464472
 Use `cmake` >= 3.16 to build the project, simply launch
 ```bash
 mkdir build
+cmake -S . -B build
 cd build
-cmake .. -B .
 ```
+
 at this point you should have created 3 `make` targets:
 * `install`: Creates a `bin` directory in the `dreamchess++` root with the executable
 * `doc`: Creates a `doc` directory containing the HTML documentation
@@ -28,4 +29,4 @@ When the executable is launched a chaess board will be printed asking for an inp
 If the move is a *promotion move* you can use the following syntax to specify the the promotion piece <*rank*><*file*>-<*rank*><*file*>=<*piece_fen*>. If no piece is specified it will be promoted to a Queen.
 
 ## DISCLAIMER
-This project is born as my final for the **Modern C++** class I attended at University of Verona - CS Dep.
+This project is born as my final for the **Modern C++ Programming** class that I attended at University of Verona - CS Dep.
