@@ -23,10 +23,10 @@ struct Move;
  * @brief Defines a chess Game board
  */
 class Board final {
-    using piece_t = Piece::Enum;
-    using internal_structure_t = std::array<piece_t, 64>;
-
 public:
+    using piece_t = Piece::Enum;
+    using piece_array_t = std::array<piece_t, 64>;
+
     Board();
     ~Board();
 
@@ -38,7 +38,7 @@ public:
     [[nodiscard]] bool is_in_check() const;
     [[nodiscard]] bool is_king_dead() const;
 
-    [[nodiscard]] internal_structure_t squares() const;
+    [[nodiscard]] piece_array_t squares() const;
     [[nodiscard]] piece_t turn() const;
     [[nodiscard]] piece_t opponent_turn() const;
 
@@ -49,8 +49,8 @@ public:
     [[nodiscard]] bool move_is_semi_valid(const Move &) const;
     [[nodiscard]] bool move_is_promotion(const Move &) const;
 
-    [[nodiscard]] internal_structure_t::const_iterator begin() const;
-    [[nodiscard]] internal_structure_t::const_iterator end() const;
+    [[nodiscard]] piece_array_t::const_iterator begin() const;
+    [[nodiscard]] piece_array_t::const_iterator end() const;
 
 private:
     /**
@@ -61,7 +61,7 @@ private:
     /**
      * @brief Array describing the board's state
      */
-    internal_structure_t m_squares{};
+    piece_array_t m_squares{};
 
     /**
      * @brief Keeps track of captured pieces
@@ -73,7 +73,6 @@ private:
 
     [[nodiscard]] int64_t horizontal_check(const Move &) const;
     [[nodiscard]] int64_t vertical_check(const Move &) const;
-    [[nodiscard]] bool diagonal_check(int64_t, const Move &) const;
 
     friend class Game;
 };

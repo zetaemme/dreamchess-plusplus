@@ -7,9 +7,20 @@
 
 #include "Piece.hpp"
 
-#include <map>
-
 namespace DreamChess {
+const Piece::char_to_enum_map_t Piece::m_fen_to_piece{
+    {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
+    {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
+    {'P', WHITE_PAWN}, {'N', WHITE_KNIGHT}, {'B', WHITE_BISHOP},
+    {'R', WHITE_ROOK}, {'Q', WHITE_QUEEN},  {'K', WHITE_KING}};
+
+const Piece::enum_to_char_map_t Piece::m_piece_repr{
+    {NONE, " "},         {WHITE_PAWN, "♙"}, {WHITE_KNIGHT, "♘"},
+    {WHITE_BISHOP, "♗"}, {WHITE_ROOK, "♖"}, {WHITE_QUEEN, "♕"},
+    {WHITE_KING, "♔"},   {BLACK_PAWN, "♟"}, {BLACK_KNIGHT, "♞"},
+    {BLACK_BISHOP, "♝"}, {BLACK_ROOK, "♜"}, {BLACK_QUEEN, "♛"},
+    {BLACK_KING, "♚"}};
+
 /**
  * @brief Overloads the bitwise OR operator
  * @param lhs The first piece
@@ -66,14 +77,7 @@ Piece::Enum Piece::opposite_side_color(Piece::Enum target) {
  * @return The unicode representation of the Piece
  */
 std::string Piece::unicode_representation(Piece::Enum piece) {
-    const std::map<Enum, std::string> piece_repr{
-        {NONE, " "},         {WHITE_PAWN, "♙"}, {WHITE_KNIGHT, "♘"},
-        {WHITE_BISHOP, "♗"}, {WHITE_ROOK, "♖"}, {WHITE_QUEEN, "♕"},
-        {WHITE_KING, "♔"},   {BLACK_PAWN, "♟"}, {BLACK_KNIGHT, "♞"},
-        {BLACK_BISHOP, "♝"}, {BLACK_ROOK, "♜"}, {BLACK_QUEEN, "♛"},
-        {BLACK_KING, "♚"}};
-
-    return piece_repr.at(piece);
+    return m_piece_repr.at(piece);
 }
 
 /**
@@ -82,13 +86,6 @@ std::string Piece::unicode_representation(Piece::Enum piece) {
  * @return The FEN char of the Piece
  */
 Piece::Enum Piece::to_enum(char char_piece) {
-    const std::map<char, Enum> fen_to_piece{
-        {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
-        {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
-        {'P', WHITE_PAWN}, {'N', WHITE_KNIGHT}, {'B', WHITE_BISHOP},
-        {'R', WHITE_ROOK}, {'Q', WHITE_QUEEN},  {'K', WHITE_KING},
-    };
-
-    return fen_to_piece.at(char_piece);
+    return m_fen_to_piece.at(char_piece);
 }
 }    // namespace DreamChess

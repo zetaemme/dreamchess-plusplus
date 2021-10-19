@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -43,6 +44,21 @@ struct Piece final {
         WHITE_KING = KING | WHITE,
         BLACK_KING = KING | BLACK
     };
+
+    using enum_to_char_map_t = std::map<Enum, std::string>;
+    using char_to_enum_map_t = std::map<char, Enum>;
+
+    /**
+     * @brief Maps a Piece::Enum representation of a Piece into the
+     * corresponding unicode character
+     */
+    static const enum_to_char_map_t m_piece_repr;
+
+    /**
+     * @brief Maps a FEN notation Piece char representation into the
+     * corresponding Piece::Enum value
+     */
+    static const char_to_enum_map_t m_fen_to_piece;
 
     friend Enum operator|(Enum, Enum);
     friend Enum operator&(Enum, Enum);

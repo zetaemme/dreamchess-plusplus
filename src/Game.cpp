@@ -47,6 +47,11 @@ Board Game::board() const { return m_board; }
  */
 [[nodiscard]] bool Game::is_in_game() const { return m_board.is_in_game(); }
 
+/**
+ * @brief Checks the input move syntactic correctness via regex
+ * @param input_move The std::string to be checked
+ * @return true if input_move respects the syntax, false otherwise
+ */
 [[nodiscard]] bool Game::is_move_syntax_correct(const std::string &input_move) {
     std::smatch string_match;
 
@@ -146,7 +151,7 @@ Board::piece_t Game::piece_at(uint16_t index) const {
  * @brief Wraps Board's begin() method
  * @return A pointer to the first element of the Board
  */
-[[nodiscard]] Board::internal_structure_t::const_iterator Game::begin() const {
+[[nodiscard]] Board::piece_array_t::const_iterator Game::begin() const {
     return m_board.begin();
 }
 
@@ -154,7 +159,7 @@ Board::piece_t Game::piece_at(uint16_t index) const {
  * @brief Wraps Board's end() method
  * @return A pointer to the last element of the Board
  */
-[[nodiscard]] Board::internal_structure_t::const_iterator Game::end() const {
+[[nodiscard]] Board::piece_array_t::const_iterator Game::end() const {
     return m_board.end();
 }
 
