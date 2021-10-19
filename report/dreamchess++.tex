@@ -33,8 +33,14 @@
     \tableofcontents
     \thispagestyle{empty}
     \newpage
+    \section{Project description}\label{sec:description}
+        Su suggerimento del docente è stato scelto di non eseguire il porting dell'intero codice.\\
+        Mi sono concentrato prevalentemente sul contenuto della cartella \href{https://github.com/dreamchess/dreamchess/tree/master/dreamchess/src}{\texttt{src}} di \href{https://github.com/dreamchess/dreamchess}{dreamchess} riuscendo a portare interamente tutte le funzionalità non grafiche.\\
+        Dato il lavoro individuale ho puntato a ridurre e semplificare quanto più possibile la logica, implementando tutte le possibilità di mosse corrette, unica pecca la necessità di semplificare la condizione di termine della partita. Nel progetto originale questa era legata alla GUI, ho quindi ammorbidito i vincoli chiudendo la partita quando uno dei due Re viene catturato.\\
+        Il risultato di tutto questo è dunque un eseguibile che mostra a terminale una scacchiera e permette di inserire una mossa sotto forma di stringa. I vari pezzi sono stampati tramite i corrispondenti caratteri unicode.  
+    \newpage
     \section{Project design}\label{sec:design}
-        Affrontare il porting di un progetto come \href{https://github.com/dreamchess/dreamchess}{dreamchess} ha sicuramente richiesto delle scelte abbastanza radicali nel design, soprattutto a causa (o meglio, per merito) delle possibilità offerte da \textit{C++17}.
+        Affrontare il porting di un progetto come dreamchess ha sicuramente richiesto delle scelte abbastanza radicali nel design, soprattutto a causa (o meglio, per merito) delle possibilità offerte da \textit{C++17}.
         \subsection{Macros}\label{subsec:macros}
             È stato in primis deciso di accantonare completamente l'utilizzo delle \textit{Macro}, largamente utilizzate nel progetto originale per cose come la specifica dei pezzi della scacchiera e di alcune funzioni riguardanti essi, trasformate e riportate nell'omonima classe.
             Altre invece sono state completamente rimosse in quanto riguardanti la GUI oppure lo stato della schacchiera, controllabile tramite semplici funzioni e membri booleani delle classi.\\
@@ -66,7 +72,4 @@
             Il progetto originale si avvaleva di un'interfaccia grafica mentre il proting si basa solamente sul terminale, è stato quindi necessario scegliere una formattazione per le stringhe di input, ovvero \texttt{rankfile-rankfile}, anche visibile come \textit{source-destination}.\\
             Stesso principio si applica sulla fromattazione delle \textit{promotion moves}, la stringa di input dovrà essere formattata come segue \texttt{rankfile-rankfile=piece}. Se in una \textit{promotion move} non viene specificato alcun pezzo esso verrà trattato come una promozione a Regina.\\
             Entrambe le tipologie di mosse sono controllate sintatticamente tramite espressioni regolari.
-    \newpage
-    \section{Prestazioni}
-        TODO
 \end{document}
