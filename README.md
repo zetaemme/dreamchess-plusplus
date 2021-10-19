@@ -15,13 +15,13 @@ cmake .. -B .
 at this point you should have created 3 `make` targets:
 * `install`: Creates a `bin` directory in the `dreamchess++` root with the executable
 * `doc`: Creates a `doc` directory containing the HTML documentation
-* `test`: Runs the tests for the project
+* `build_and_test`: Builds the `dc++_test` and run all the tests for the project
 
 Run them with
 ```bash
 make install
 make doc
-make test
+make build_and_test
 ```
 ### Controls
 When the executable is launched a chaess board will be printed asking for an input. You can do a move inputing a string with the following format: <*rank*><*file*>-<*rank*><*file*><br>

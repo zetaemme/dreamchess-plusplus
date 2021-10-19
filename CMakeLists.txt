@@ -60,6 +60,10 @@ include(GoogleTest)
 
 gtest_discover_tests(dc++_test)
 
+add_custom_target(build_and_test
+	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target dc++_test
+	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target test
+	)
 #-----------------
 # INSTALL SECTION
 #-----------------
