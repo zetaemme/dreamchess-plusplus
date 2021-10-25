@@ -15,7 +15,7 @@
 #include "History.hpp"
 #include "Piece.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 // Move forward declaration
 struct Move;
 
@@ -24,7 +24,10 @@ struct Move;
  */
 class Game final {
 public:
-    Game();
+    /**
+     * @brief Creates a Game object
+     */
+    Game() = default;
 
     friend std::ostream &operator<<(std::ostream &, const Game &);
 
@@ -47,13 +50,13 @@ private:
     /**
      * @brief The current game's Board
      */
-    Board m_board;
+    Board m_board = Board{};
 
     /**
      * @brief The current game's History
      */
-    History m_history;
+    History m_history = History{};
 
     void update_history(const Move &);
 };
-}    // namespace DreamChess
+}    // namespace dreamchess

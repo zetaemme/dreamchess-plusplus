@@ -7,13 +7,14 @@
 
 #include "Board.hpp"
 
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <sstream>
 
 #include "Move.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 /**
  * @brief Constructs a Board
  * @details Starts with the neutral FEN string, using init_board()
@@ -106,9 +107,9 @@ void Board::make_move(const Move &move) {
  * @return The side who's in check
  */
 [[nodiscard]] bool Board::is_in_check() const {
-    for (auto &square : m_squares) {
-        if (square == (Piece::KING | m_turn)) {
-            return square_attacked(&square - &m_squares[0], opponent_turn());
+    for (uint64_t i = 0; i < 64; i++) {
+        if (m_squares[i] == (Piece::KING | m_turn)) {
+            return square_attacked(i, opponent_turn());
         }
     }
 
@@ -120,16 +121,10 @@ void Board::make_move(const Move &move) {
  * @return true if the KING is alive, false otherwise
  */
 [[nodiscard]] bool Board::is_king_dead() const {
-    bool alive{false};
-
-    for (const auto &piece : m_squares) {
-        if (Piece::type(piece) == Piece::KING &&
-            Piece::color(piece) == m_turn) {
-            alive = true;
-        }
-    }
-
-    return alive;
+    return std::any_of(begin(), end(), [this](const Piece::Enum &piece) {
+        return Piece::type(piece) == Piece::KING &&
+               Piece::color(piece) == m_turn;
+    });
 }
 
 /**
@@ -169,10 +164,10 @@ void Board::make_move(const Move &move) {
  */
 [[nodiscard]] bool Board::square_attacked(uint64_t index,
                                           Board::piece_t turn) const {
-    for (auto &square : m_squares) {
-        if (Piece::color(square) == turn) {
-            Move move{static_cast<int64_t>(&square - &m_squares[0]),
-                      static_cast<int64_t>(index), square, Piece::NONE};
+    for (uint64_t i = 0; i < 64; i++) {
+        if (Piece::color(m_squares[i]) == turn) {
+            Move move{static_cast<int64_t>(i), static_cast<int64_t>(index),
+                      m_squares[i], Piece::NONE};
 
             if (move_is_semi_valid(move)) {
                 return true;
@@ -272,11 +267,10 @@ void Board::make_move(const Move &move) {
                     return false;
                 }
 
-                if (ver == 2) {
-                    if (!(((move.source() >= 8) && (move.source() <= 15)) ||
-                          ((move.source() >= 48) && (move.source() <= 55)))) {
-                        return false;
-                    }
+                if ((ver == 2) &&
+                    !(((move.source() >= 8) && (move.source() <= 15)) ||
+                      ((move.source() >= 48) && (move.source() <= 55)))) {
+                    return false;
                 }
 
                 if (m_squares[move.destination()] != Piece::NONE) {
@@ -325,7 +319,13 @@ void Board::make_move(const Move &move) {
 
                 uint16_t step = move.destination() > move.source() ? 1 : -1;
 
-                uint16_t rook = step == 1 ? (white ? 7 : 63) : (white ? 0 : 56);
+                uint16_t rook;
+
+                if (step == 1) {
+                    rook = white ? 7 : 63;
+                } else {
+                    rook = white ? 0 : 56;
+                }
 
                 if (ver != 0) {
                     return false;
@@ -339,7 +339,7 @@ void Board::make_move(const Move &move) {
                     return false;
                 }
 
-                uint16_t i = move.source() + step;
+                int32_t i = move.source() + step;
 
                 while (i != rook) {
                     if (m_squares[i] != Piece::NONE) {
@@ -437,9 +437,7 @@ void Board::init_board() {
  * @brief Clears all Board's squares
  */
 void Board::clear() {
-    for (auto &square : m_squares) {
-        square = Piece::NONE;
-    }
+    std::fill(m_squares.begin(), m_squares.end(), Piece::NONE);
 }
 
 /**
@@ -457,4 +455,4 @@ void Board::clear() {
 [[nodiscard]] int64_t Board::vertical_check(const Move &move) const {
     return std::abs(move.source() / 8 - move.destination() / 8);
 }
-}    // namespace DreamChess
+}    // namespace dreamchess

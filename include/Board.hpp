@@ -15,7 +15,7 @@
 
 #include "Piece.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 // Move forward declaration
 struct Move;
 

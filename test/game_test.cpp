@@ -8,7 +8,7 @@
 
 class GameTest : public ::testing::Test {
 protected:
-    DreamChess::Game game{};
+    dreamchess::Game game{};
 
     [[nodiscard]] bool test_reset() {
         game.make_move("a2-a4");
@@ -18,10 +18,10 @@ protected:
 
         game.reset();
 
-        if (game.piece_at(8) != DreamChess::Piece::WHITE_PAWN ||
-            game.piece_at(62) != DreamChess::Piece::BLACK_KNIGHT ||
-            game.piece_at(0) != DreamChess::Piece::WHITE_ROOK ||
-            game.piece_at(55) != DreamChess::Piece::BLACK_PAWN) {
+        if (game.piece_at(8) != dreamchess::Piece::WHITE_PAWN ||
+            game.piece_at(62) != dreamchess::Piece::BLACK_KNIGHT ||
+            game.piece_at(0) != dreamchess::Piece::WHITE_ROOK ||
+            game.piece_at(55) != dreamchess::Piece::BLACK_PAWN) {
             return false;
         }
 
@@ -46,7 +46,6 @@ protected:
 
         return std::filesystem::exists("../history/game_history.txt") &&
                std::filesystem::remove_all("../history");
-        ;
     }
 
     [[nodiscard]] bool only_correct_knight_moves() {
@@ -69,7 +68,7 @@ protected:
         game.make_move("a7-a5");
         game.make_move("b5-a6");
 
-        return game.piece_at(32) == DreamChess::Piece::NONE;
+        return game.piece_at(32) == dreamchess::Piece::NONE;
     }
     [[nodiscard]] bool queen_promotion_check() {
         game.make_move("d2-d4");
@@ -87,7 +86,7 @@ protected:
         game.make_move("d2-d4");
         game.make_move("d2-d1");
 
-        return game.piece_at(3) == DreamChess::Piece::BLACK_QUEEN;
+        return game.piece_at(3) == dreamchess::Piece::BLACK_QUEEN;
     }
     [[nodiscard]] bool rook_promotion_check() {
         game.make_move("d2-d4");
@@ -105,7 +104,7 @@ protected:
         game.make_move("d2-d4");
         game.make_move("d2-d1=r");
 
-        return game.piece_at(3) == DreamChess::Piece::BLACK_ROOK;
+        return game.piece_at(3) == dreamchess::Piece::BLACK_ROOK;
     }
     [[nodiscard]] bool knight_promotion_check() {
         game.make_move("d2-d4");
@@ -123,7 +122,7 @@ protected:
         game.make_move("d2-d4");
         game.make_move("d2-d1=n");
 
-        return game.piece_at(3) == DreamChess::Piece::BLACK_KNIGHT;
+        return game.piece_at(3) == dreamchess::Piece::BLACK_KNIGHT;
     }
     [[nodiscard]] bool bishop_promotion_check() {
         game.make_move("d2-d4");
@@ -141,7 +140,7 @@ protected:
         game.make_move("d2-d4");
         game.make_move("d2-d1=b");
 
-        return game.piece_at(3) == DreamChess::Piece::BLACK_BISHOP;
+        return game.piece_at(3) == dreamchess::Piece::BLACK_BISHOP;
     }
     [[nodiscard]] bool queen_side_castle_check() {
         game.make_move("b1-a3");
@@ -154,7 +153,7 @@ protected:
         game.make_move("d7-d6");
         game.make_move("e1-c1");
 
-        return game.piece_at(2) == DreamChess::Piece::WHITE_KING;
+        return game.piece_at(2) == dreamchess::Piece::WHITE_KING;
     }
     [[nodiscard]] bool king_side_castle_check() {
         game.make_move("g1-h3");
@@ -165,7 +164,7 @@ protected:
         game.make_move("c7-c6");
         game.make_move("e1-g1");
 
-        return game.piece_at(6) == DreamChess::Piece::WHITE_KING;
+        return game.piece_at(6) == dreamchess::Piece::WHITE_KING;
     }
 
     [[nodiscard]] bool terminal_output_check() const {
@@ -176,7 +175,7 @@ protected:
         std::string game_str;
 
         for (const auto &piece : game) {
-            game_str.append(DreamChess::Piece::unicode_representation(piece));
+            game_str.append(dreamchess::Piece::unicode_representation(piece));
             game_str.append(" ");
 
             if ((&piece - &game.board().squares()[0]) % 8 == 0) {

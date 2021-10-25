@@ -12,7 +12,7 @@
 #include "Board.hpp"
 #include "Piece.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 /**
  * @brief A single move in the Game
  */
