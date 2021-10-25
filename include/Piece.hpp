@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 
-namespace DreamChess {
+namespace dreamchess {
 /**
  * @brief A single Piece in the Board
  */

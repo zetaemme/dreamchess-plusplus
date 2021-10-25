@@ -4,42 +4,42 @@
 
 TEST(PieceTest, PiecesAreConvertedCorrectly) {
     ASSERT_EQ(
-        DreamChess::Piece::unicode_representation(DreamChess::Piece::NONE),
+        dreamchess::Piece::unicode_representation(dreamchess::Piece::NONE),
         " ");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_PAWN),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_PAWN),
               "♙");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_KNIGHT),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_KNIGHT),
               "♘");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_BISHOP),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_BISHOP),
               "♗");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_ROOK),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_ROOK),
               "♖");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_QUEEN),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_QUEEN),
               "♕");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::WHITE_KING),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::WHITE_KING),
               "♔");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_PAWN),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_PAWN),
               "♟");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_KNIGHT),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_KNIGHT),
               "♞");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_BISHOP),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_BISHOP),
               "♝");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_ROOK),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_ROOK),
               "♜");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_QUEEN),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_QUEEN),
               "♛");
-    ASSERT_EQ(DreamChess::Piece::unicode_representation(
-                  DreamChess::Piece::BLACK_KING),
+    ASSERT_EQ(dreamchess::Piece::unicode_representation(
+                  dreamchess::Piece::BLACK_KING),
               "♚");
 }

@@ -13,7 +13,7 @@
 #include "Board.hpp"
 #include "Move.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 /**
  * @brief The current game History
  */

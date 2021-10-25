@@ -10,7 +10,7 @@
 #include "Game.hpp"
 
 int main() {
-    DreamChess::Game game{};
+    dreamchess::Game game{};
 
     std::string input_move;
 
@@ -29,7 +29,7 @@ int main() {
                 game.export_to_file();
                 valid = true;
             } else {
-                if (DreamChess::Game::is_move_syntax_correct(input_move)) {
+                if (dreamchess::Game::is_move_syntax_correct(input_move)) {
                     valid = game.make_move(input_move);
                 }
             }

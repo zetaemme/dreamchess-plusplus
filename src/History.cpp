@@ -9,7 +9,7 @@
 
 #include <utility>
 
-namespace DreamChess {
+namespace dreamchess {
 /**
  * @brief Clears the History
  */
@@ -20,7 +20,7 @@ History::~History() { m_game_history.clear(); }
  * @param move The last move made in the referenced board
  */
 void History::add_step(const Move &move) {
-    m_game_history.push_back(Step{move});
+    m_game_history.emplace_back(move);
 }
 
 /**

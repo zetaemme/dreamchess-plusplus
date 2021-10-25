@@ -7,7 +7,7 @@
 
 #include "Piece.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 const Piece::char_to_enum_map_t Piece::m_fen_to_piece{
     {'p', BLACK_PAWN}, {'n', BLACK_KNIGHT}, {'b', BLACK_BISHOP},
     {'r', BLACK_ROOK}, {'q', BLACK_QUEEN},  {'k', BLACK_KING},
@@ -49,8 +49,7 @@ Piece::Enum operator&(Piece::Enum lhs, Piece::Enum rhs) {
  * @return The piece's type
  */
 Piece::Enum Piece::type(Piece::Enum target) {
-    return static_cast<Enum>(target &
-                             (PAWN | KNIGHT | BISHOP | ROOK | QUEEN | KING));
+    return (target & (PAWN | KNIGHT | BISHOP | ROOK | QUEEN | KING));
 }
 
 /**
@@ -59,7 +58,7 @@ Piece::Enum Piece::type(Piece::Enum target) {
  * @return The piece's color
  */
 Piece::Enum Piece::color(Piece::Enum target) {
-    return static_cast<Enum>(target & (WHITE | BLACK));
+    return (target & (WHITE | BLACK));
 }
 
 /**
@@ -88,4 +87,4 @@ std::string Piece::unicode_representation(Piece::Enum piece) {
 Piece::Enum Piece::to_enum(char char_piece) {
     return m_fen_to_piece.at(char_piece);
 }
-}    // namespace DreamChess
+}    // namespace dreamchess

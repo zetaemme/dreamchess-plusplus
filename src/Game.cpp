@@ -16,12 +16,7 @@
 #include "Move.hpp"
 #include "Piece.hpp"
 
-namespace DreamChess {
-/**
- * @brief Creates a Game object
- */
-Game::Game() : m_board(Board{}), m_history(History{}) {}
-
+namespace dreamchess {
 /**
  * @brief Overloads the out-stream operator for Game
  * @details Wraps the Board::operator<< to print the Board
@@ -65,19 +60,18 @@ Board Game::board() const { return m_board; }
  * @return True if the move is valid, False otherwise
  */
 bool Game::make_move(std::string_view input) {
-    uint16_t s_file = input.at(0) - 'a';
-    uint16_t s_rank = input.at(1) - '1';
+    const uint16_t s_file = input.at(0) - 'a';
+    const uint16_t s_rank = input.at(1) - '1';
 
-    uint16_t d_file = input.at(3) - 'a';
-    uint16_t d_rank = input.at(4) - '1';
+    const uint16_t d_file = input.at(3) - 'a';
+    const uint16_t d_rank = input.at(4) - '1';
 
-    uint16_t source = (s_rank * 8) + s_file;
-    uint16_t destination = (d_rank * 8) + d_file;
+    const uint16_t source = (s_rank * 8) + s_file;
+    const uint16_t destination = (d_rank * 8) + d_file;
 
     Piece::Enum promotion_piece{Piece::NONE};
 
-    if (((destination >= 0 && destination <= 7) ||
-         (destination >= 56 && destination <= 63)) &&
+    if (((destination <= 7) || (destination >= 56 && destination <= 63)) &&
         Piece::type(piece_at(source)) == Piece::PAWN) {
         if (input.find('=') == std::string::npos) {
             promotion_piece = m_board.turn() | Piece::QUEEN;
@@ -111,10 +105,6 @@ bool Game::make_move(std::string_view input) {
  * @details Wraps History::export_to_file() method
  */
 void Game::export_to_file() const {
-    if (!std::filesystem::create_directory("../history")) {
-        std::cerr << "Failed to create the \'history\' dir!";
-    }
-
     std::ofstream history_file{"../history/game_history.txt"};
 
     std::filesystem::permissions("../history/game_history.txt",

@@ -9,7 +9,7 @@
 
 #include "Board.hpp"
 
-namespace DreamChess {
+namespace dreamchess {
 using piece_t = Piece::Enum;
 
 const std::shared_ptr<std::regex> Move::m_move_regex{

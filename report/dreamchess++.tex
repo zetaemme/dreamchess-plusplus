@@ -72,4 +72,6 @@
             Il progetto originale si avvaleva di un'interfaccia grafica mentre il proting si basa solamente sul terminale, è stato quindi necessario scegliere una formattazione per le stringhe di input, ovvero \texttt{rankfile-rankfile}, anche visibile come \textit{source-destination}.\\
             Stesso principio si applica sulla fromattazione delle \textit{promotion moves}, la stringa di input dovrà essere formattata come segue \texttt{rankfile-rankfile=piece}. Se in una \textit{promotion move} non viene specificato alcun pezzo esso verrà trattato come una promozione a Regina.\\
             Entrambe le tipologie di mosse sono controllate sintatticamente tramite espressioni regolari.
+    \section{Static Analysis}\label{sec:staticanalysis}
+        Sono stati utilizzati 3 analizzatori statici nel corso dello sviluppo, in primis i 2 disponibili con \texttt{clang} e \texttt{gcc}, oltre a questi è stato utilizzato anche \texttt{SonarLint}. Tutte le analisi sono terminate senza alcun problema per la parte di codice da me scritta, alcuni problemi sono stati trovati con la struttura del codice utilizzata nella repo originale, questa è stata però mantenuta e adattata dove serviva.
 \end{document}

@@ -6,17 +6,17 @@
 
 class BoardTest : public ::testing::Test {
 protected:
-    DreamChess::Board board{};
+    dreamchess::Board board{};
 
     [[nodiscard]] bool pawns_check() const {
         for (uint64_t i = 8; i < 16; i++) {
-            if (board.squares()[i] != DreamChess::Piece::WHITE_PAWN) {
+            if (board.squares()[i] != dreamchess::Piece::WHITE_PAWN) {
                 return false;
             }
         }
 
         for (uint64_t i = 48; i < 56; i++) {
-            if (board.squares()[i] != DreamChess::Piece::BLACK_PAWN) {
+            if (board.squares()[i] != dreamchess::Piece::BLACK_PAWN) {
                 return false;
             }
         }
@@ -24,52 +24,52 @@ protected:
         return true;
     }
     [[nodiscard]] bool rooks_check() const {
-        if (board.squares()[0] != DreamChess::Piece::WHITE_ROOK ||
-            board.squares()[7] != DreamChess::Piece::WHITE_ROOK) {
+        if (board.squares()[0] != dreamchess::Piece::WHITE_ROOK ||
+            board.squares()[7] != dreamchess::Piece::WHITE_ROOK) {
             return false;
         }
 
-        if (board.squares()[63] != DreamChess::Piece::BLACK_ROOK ||
-            board.squares()[56] != DreamChess::Piece::BLACK_ROOK) {
+        if (board.squares()[63] != dreamchess::Piece::BLACK_ROOK ||
+            board.squares()[56] != dreamchess::Piece::BLACK_ROOK) {
             return false;
         }
 
         return true;
     }
     [[nodiscard]] bool knights_check() const {
-        if (board.squares()[1] != DreamChess::Piece::WHITE_KNIGHT ||
-            board.squares()[6] != DreamChess::Piece::WHITE_KNIGHT) {
+        if (board.squares()[1] != dreamchess::Piece::WHITE_KNIGHT ||
+            board.squares()[6] != dreamchess::Piece::WHITE_KNIGHT) {
             return false;
         }
 
-        if (board.squares()[62] != DreamChess::Piece::BLACK_KNIGHT ||
-            board.squares()[57] != DreamChess::Piece::BLACK_KNIGHT) {
+        if (board.squares()[62] != dreamchess::Piece::BLACK_KNIGHT ||
+            board.squares()[57] != dreamchess::Piece::BLACK_KNIGHT) {
             return false;
         }
 
         return true;
     }
     [[nodiscard]] bool bishop_check() const {
-        if (board.squares()[2] != DreamChess::Piece::WHITE_BISHOP ||
-            board.squares()[5] != DreamChess::Piece::WHITE_BISHOP) {
+        if (board.squares()[2] != dreamchess::Piece::WHITE_BISHOP ||
+            board.squares()[5] != dreamchess::Piece::WHITE_BISHOP) {
             return false;
         }
 
-        if (board.squares()[61] != DreamChess::Piece::BLACK_BISHOP ||
-            board.squares()[58] != DreamChess::Piece::BLACK_BISHOP) {
+        if (board.squares()[61] != dreamchess::Piece::BLACK_BISHOP ||
+            board.squares()[58] != dreamchess::Piece::BLACK_BISHOP) {
             return false;
         }
 
         return true;
     }
     [[nodiscard]] bool royals_check() const {
-        if (board.squares()[3] != DreamChess::Piece::WHITE_QUEEN ||
-            board.squares()[4] != DreamChess::Piece::WHITE_KING) {
+        if (board.squares()[3] != dreamchess::Piece::WHITE_QUEEN ||
+            board.squares()[4] != dreamchess::Piece::WHITE_KING) {
             return false;
         }
 
-        if (board.squares()[59] != DreamChess::Piece::BLACK_QUEEN ||
-            board.squares()[60] != DreamChess::Piece::BLACK_KING) {
+        if (board.squares()[59] != dreamchess::Piece::BLACK_QUEEN ||
+            board.squares()[60] != dreamchess::Piece::BLACK_KING) {
             return false;
         }
 
