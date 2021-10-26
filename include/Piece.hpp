@@ -72,4 +72,4 @@ struct Piece final {
 
     static Enum to_enum(char);
 };
-}    // namespace DreamChess
+}    // namespace dreamchess

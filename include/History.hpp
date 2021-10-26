@@ -49,4 +49,4 @@ public:
 
     [[nodiscard]] std::string export_all() const;
 };
-}    // namespace DreamChess
+}    // namespace dreamchess

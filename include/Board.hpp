@@ -76,4 +76,4 @@ private:
 
     friend class Game;
 };
-}    // namespace DreamChess
+}    // namespace dreamchess

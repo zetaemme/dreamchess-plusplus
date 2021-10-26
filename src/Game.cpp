@@ -105,6 +105,7 @@ bool Game::make_move(std::string_view input) {
  * @details Wraps History::export_to_file() method
  */
 void Game::export_to_file() const {
+    std::filesystem::create_directory("../history");
     std::ofstream history_file{"../history/game_history.txt"};
 
     std::filesystem::permissions("../history/game_history.txt",
@@ -157,4 +158,4 @@ Board::piece_t Game::piece_at(uint16_t index) const {
  * @brief Updates the Game's history
  */
 void Game::update_history(const Move &move) { m_history.add_step(move); }
-}    // namespace DreamChess
+}    // namespace dreamchess

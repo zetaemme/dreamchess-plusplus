@@ -19,9 +19,7 @@ History::~History() { m_game_history.clear(); }
  * @brief Adds a step to the History list
  * @param move The last move made in the referenced board
  */
-void History::add_step(const Move &move) {
-    m_game_history.emplace_back(move);
-}
+void History::add_step(const Move &move) { m_game_history.emplace_back(move); }
 
 /**
  * @brief Exports the History as a string
@@ -47,4 +45,4 @@ void History::add_step(const Move &move) {
  * @details Each Step is the algebraic notation representation of the Move
  */
 History::Step::Step(const Move &move) : m_move{move.to_alg()} {}
-}    // namespace DreamChess
+}    // namespace dreamchess

@@ -174,11 +174,12 @@ protected:
 
         std::string game_str;
 
-        for (const auto &piece : game) {
-            game_str.append(dreamchess::Piece::unicode_representation(piece));
+        for (uint64_t i = 0; i < 64; i++) {
+            game_str.append(
+                dreamchess::Piece::unicode_representation(game.piece_at(i)));
             game_str.append(" ");
 
-            if ((&piece - &game.board().squares()[0]) % 8 == 0) {
+            if ((i + 1) % 8 == 0) {
                 game_str.push_back('\n');
             }
         }
@@ -196,7 +197,7 @@ TEST_F(GameTest, GameEndsCorrectly) {
 
 TEST_F(GameTest, GameResetsCorrectly) { ASSERT_TRUE(test_reset()); }
 
-TEST_F(GameTest, HisotryIsExported) { ASSERT_TRUE(is_history_exported()); }
+TEST_F(GameTest, HistoryIsExported) { ASSERT_TRUE(is_history_exported()); }
 
 TEST_F(GameTest, OnlyCorrectPawnMovesAreMade) {
     ASSERT_FALSE(game.make_move("a2-a1"));

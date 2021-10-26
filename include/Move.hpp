@@ -60,4 +60,4 @@ private:
      */
     static const std::shared_ptr<std::regex> m_promotion_regex;
 };
-}    // namespace DreamChess
+}    // namespace dreamchess

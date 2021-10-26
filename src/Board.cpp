@@ -34,10 +34,10 @@ Board::~Board() { m_captured.clear(); }
  * @return The output stream
  */
 std::ostream &operator<<(std::ostream &stream, const Board &board) {
-    for (auto &square : board) {
-        stream << Piece::unicode_representation(square) << " ";
+    for (uint64_t i = 0; i < 64; i++) {
+        stream << Piece::unicode_representation(board.m_squares[i]) << " ";
 
-        if ((&square - &board.squares()[0]) % 8 == 0) {
+        if ((i + 1) % 8 == 0) {
             stream << std::endl;
         }
     }
@@ -266,10 +266,10 @@ void Board::make_move(const Move &move) {
                 if (ver > 2) {
                     return false;
                 }
-
-                if ((ver == 2) &&
-                    !(((move.source() >= 8) && (move.source() <= 15)) ||
-                      ((move.source() >= 48) && (move.source() <= 55)))) {
+                if ((ver == 2) && !(static_cast<unsigned>(move.source() - 8) <=
+                                        static_cast<unsigned>(15 - 8) ||
+                                    static_cast<unsigned>(move.source() - 48) <=
+                                        static_cast<unsigned>(55 - 48))) {
                     return false;
                 }
 
@@ -284,13 +284,15 @@ void Board::make_move(const Move &move) {
                 if (m_squares[move.destination()] == Piece::NONE) {
                     if ((Piece::color(m_squares[move.source()]) ==
                          Piece::WHITE) &&
-                        !((move.source() >= 32) && (move.source() < 40))) {
+                        static_cast<unsigned>(move.source() - 32) >
+                            static_cast<unsigned>(40 - 32)) {
                         return false;
                     }
 
                     if ((Piece::color(m_squares[move.source()]) ==
                          Piece::BLACK) &&
-                        !((move.source() >= 24) && (move.source() < 32))) {
+                        static_cast<unsigned>(move.source() - 24) >
+                            static_cast<unsigned>(32 - 24)) {
                         return false;
                     }
 
@@ -436,9 +438,7 @@ void Board::init_board() {
 /**
  * @brief Clears all Board's squares
  */
-void Board::clear() {
-    std::fill(m_squares.begin(), m_squares.end(), Piece::NONE);
-}
+void Board::clear() { m_squares.fill(Piece::NONE); }
 
 /**
  * @brief Checks the number of horizontal squares a Move is making

@@ -88,4 +88,4 @@ Move::Move(int64_t source, int64_t destination, Board::piece_t piece,
 
     return res;
 }
-}    // namespace DreamChess
+}    // namespace dreamchess
