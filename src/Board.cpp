@@ -3,6 +3,7 @@
  * @author Mattia Zorzan
  * @version v1.0
  * @date July-October, 2021
+ * @file
  */
 
 #include "Board.hpp"
@@ -14,25 +15,17 @@
 
 #include "Move.hpp"
 
-namespace dreamchess {
 /**
- * @brief Constructs a Board
- * @details Starts with the neutral FEN string, using init_board()
+ * @namespace dreamchess
+ * @brief The only namespace used to contain the DreamChess++ logic
+ * @details Used to avoid the std namespace pollution
  */
+namespace dreamchess {
+
 Board::Board() { init_board(); }
 
-/**
- * @breif Clears the capture's list
- */
 Board::~Board() { m_captured.clear(); }
 
-/**
- * @brief Overloads the out-stream operator for the Board
- * @details Print each piece and ends line every 8 files
- * @param stream The new output stream
- * @param board The printed board
- * @return The output stream
- */
 std::ostream &operator<<(std::ostream &stream, const Board &board) {
     for (uint64_t i = 0; i < 64; i++) {
         stream << Piece::unicode_representation(board.m_squares[i]) << " ";
@@ -45,12 +38,6 @@ std::ostream &operator<<(std::ostream &stream, const Board &board) {
     return stream;
 }
 
-/**
- * @brief Makes a move in the current Board
- * @details Checks if the `Move` is a "special move", makes a "normal move
- * otherwise
- * @param move The Move to make
- */
 void Board::make_move(const Move &move) {
     // En-passant
     if (Piece::type(move.piece()) == Piece::PAWN &&
@@ -94,18 +81,8 @@ void Board::make_move(const Move &move) {
     m_turn = opponent_turn();
 }
 
-/**
- * @brief Checks if the Game is still in progress
- * @details A Game is in progress if neither one of the players is in check
- * and mated
- * @return true if the Game is in progress, false otherwise
- */
 [[nodiscard]] bool Board::is_in_game() const { return is_king_dead(); }
 
-/**
- * @brief Checks if one of the two sides is under check
- * @return The side who's in check
- */
 [[nodiscard]] bool Board::is_in_check() const {
     for (uint64_t i = 0; i < 64; i++) {
         if (m_squares[i] == (Piece::KING | m_turn)) {
@@ -116,10 +93,6 @@ void Board::make_move(const Move &move) {
     return true;
 }
 
-/**
- * @brief Checks if the current's turn KING is still alive
- * @return true if the KING is alive, false otherwise
- */
 [[nodiscard]] bool Board::is_king_dead() const {
     return std::any_of(begin(), end(), [this](const Piece::Enum &piece) {
         return Piece::type(piece) == Piece::KING &&
@@ -127,41 +100,18 @@ void Board::make_move(const Move &move) {
     });
 }
 
-/**
- * @brief Returns the squares array of Board
- * @return The m_squares array
- */
 [[nodiscard]] Board::piece_array_t Board::squares() const { return m_squares; }
 
-/**
- * @brief Returns who plays in current turn
- * @return True if it's WHITE, false otherwise
- */
 [[nodiscard]] Board::piece_t Board::turn() const { return m_turn; }
 
-/**
- * @brief Gets the next turn moving color
- * @return The opposite of m_turn
- */
 [[nodiscard]] Board::piece_t Board::opponent_turn() const {
     return m_turn == Piece::WHITE ? Piece::BLACK : Piece::WHITE;
 }
 
-/**
- * @brief Returns the piece corresponding to index
- * @param index The index of the returned piece
- * @return The corresponding piece
- */
 [[nodiscard]] Board::piece_t Board::piece_at(uint16_t index) const {
     return m_squares[index];
 }
 
-/**
- * @brief Checks if a given square is attached by another piece
- * @param index The index of the square
- * @param turn The playing turn
- * @return The color of the piece which is attacked
- */
 [[nodiscard]] bool Board::square_attacked(uint64_t index,
                                           Board::piece_t turn) const {
     for (uint64_t i = 0; i < 64; i++) {
@@ -178,11 +128,6 @@ void Board::make_move(const Move &move) {
     return false;
 }
 
-/**
- * @brief Checks if the move is valid
- * @details "A Move is valid if it's in the Board and actually moves the
- * Piece
- */
 [[nodiscard]] bool Board::move_is_valid(const Move &move) const {
     if (!move_is_semi_valid(move)) {
         return false;
@@ -191,11 +136,6 @@ void Board::make_move(const Move &move) {
     return !is_in_check();
 }
 
-/**
- * @brief Checks if a move is semi_valid
- * @param move The move to check
- * @return True if the move is semi_valid, False otherwise
- */
 [[nodiscard]] bool Board::move_is_semi_valid(const Move &move) const {
     if (move.source() > 63 || move.destination() > 63 ||
         move.source() == move.destination() ||
@@ -375,37 +315,18 @@ void Board::make_move(const Move &move) {
     return true;
 }
 
-/**
- * @brief Checks if the given Move is a promotion move
- * @details A Move is promotion if it's made by a pawn and the
- * destination it's in the opposite player first file
- */
 [[nodiscard]] bool Board::move_is_promotion(const Move &move) const {
     return move.promotion_piece() != Piece::NONE;
 }
 
-/**
- * @brief Wraps the std::array::iterator begin() method to use it as Board
- * ConstIterator
- * @return The pointer to the first square's address
- */
 [[nodiscard]] Board::piece_array_t::const_iterator Board::begin() const {
     return m_squares.begin();
 }
 
-/**
- * @brief Wraps the std::array::iterator end() method to use it as Board
- * ConstIterator
- * @return The pointer to the last square's address
- */
 [[nodiscard]] Board::piece_array_t::const_iterator Board::end() const {
     return m_squares.end();
 }
 
-/**
- * @brief Used to init the board with the neutral FEN configuration
- * @details Parses the FEN string and inits the Board
- */
 void Board::init_board() {
     uint16_t file = 0;
     uint16_t rank = 7;
@@ -436,23 +357,12 @@ void Board::init_board() {
     }
 }
 
-/**
- * @brief Clears all Board's squares
- */
 void Board::clear() { m_squares.fill(Piece::NONE); }
 
-/**
- * @brief Checks the number of horizontal squares a Move is making
- * @return The number of horizontal squares
- */
 [[nodiscard]] int64_t Board::horizontal_check(const Move &move) const {
     return std::abs(move.source() % 8 - move.destination() % 8);
 }
 
-/**
- * @brief Checks the number of vertical squares a Move is making
- * @return The number of vertical squares
- */
 [[nodiscard]] int64_t Board::vertical_check(const Move &move) const {
     return std::abs(move.source() / 8 - move.destination() / 8);
 }

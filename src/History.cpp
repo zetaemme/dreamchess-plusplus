@@ -3,30 +3,26 @@
  * @author Mattia Zorzan
  * @version v1.0
  * @date July-October, 2021
+ * @file
  */
 
 #include "History.hpp"
 
 #include <utility>
 
-namespace dreamchess {
 /**
- * @brief Clears the History
+ * @namespace dreamchess
+ * @brief The only namespace used to contain the DreamChess++ logic
+ * @details Used to avoid the std namespace pollution
  */
+namespace dreamchess {
+
 History::~History() { m_game_history.clear(); }
 
-/**
- * @brief Adds a step to the History list
- * @param move The last move made in the referenced board
- */
 void History::add_step(const Move &move) { m_game_history.emplace_back(move); }
 
-/**
- * @brief Exports the History as a string
- * @details Every Step is exported as <Move number>. <Move in algebraic>
- */
 [[nodiscard]] std::string History::export_all() const {
-    auto output_history = m_game_history;
+    step_list_t output_history = m_game_history;
     std::string move_list;
 
     for (const auto &step : m_game_history) {
@@ -40,9 +36,5 @@ void History::add_step(const Move &move) { m_game_history.emplace_back(move); }
     return move_list;
 }
 
-/**
- * @brief Constructs the Step
- * @details Each Step is the algebraic notation representation of the Move
- */
 History::Step::Step(const Move &move) : m_move{move.to_alg()} {}
 }    // namespace dreamchess
