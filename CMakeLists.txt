@@ -34,11 +34,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dc++)
 
-#-----------------
-# INSTALL SECTION
-#-----------------
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
 #-----------------------
 # DOCUMENTATION SECTION
 #-----------------------
@@ -76,9 +71,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     enable_testing()
 
     add_executable(dc++_test
-	test/game_test.cpp
-	test/board_test.cpp
-	test/piece_test.cpp)
+            test/game_test.cpp
+            test/board_test.cpp
+            test/piece_test.cpp)
 
     target_include_directories(dc++_test PRIVATE include)
     target_link_libraries(dc++_test PRIVATE gtest_main dc++)
@@ -87,10 +82,12 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
     gtest_discover_tests(dc++_test)
 
+    set_target_properties(gmock gmock_main PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+
     add_custom_target(build_and_test
-	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target dc++_test
-	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target test
-    )
+            COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target dc++_test
+            COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target test
+            )
 
     #------------------
     # COVERAGE SECTION
@@ -118,7 +115,12 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
                 --track-fds=yes --track-origins=yes ./${PROJECT_NAME}
                 )
     endif ()
-endif()
+endif ()
+
+#-----------------
+# INSTALL SECTION
+#-----------------
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 #------------------
 # CLEANING SECTION
