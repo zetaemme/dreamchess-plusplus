@@ -319,7 +319,8 @@ void Board::make_move(const Move &move) {
                 bool white =
                     Piece::color(m_squares[move.source()]) == Piece::WHITE;
 
-                uint16_t step = move.destination() > move.source() ? 1 : -1;
+                const int16_t step = move.destination() > move.source() ? 1
+                                                                        : -1;
 
                 uint16_t rook;
 
