@@ -35,36 +35,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE dc++)
 
 #-----------------
-# TESTING SECTION
-#-----------------
-include(FetchContent)
-
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
-)
-
-FetchContent_MakeAvailable(googletest)
-
-enable_testing()
-
-add_executable(dc++_test
-        test/game_test.cpp
-        test/board_test.cpp
-        test/piece_test.cpp)
-
-target_include_directories(dc++_test PRIVATE include)
-target_link_libraries(dc++_test PRIVATE gtest_main dc++)
-
-include(GoogleTest)
-
-gtest_discover_tests(dc++_test)
-
-add_custom_target(build_and_test
-	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target dc++_test
-	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target test
-	)
-#-----------------
 # INSTALL SECTION
 #-----------------
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -90,6 +60,38 @@ if (DOXYGEN_FOUND)
 endif (DOXYGEN_FOUND)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    #-----------------
+    # TESTING SECTION
+    #-----------------
+
+    include(FetchContent)
+
+    FetchContent_Declare(
+	googletest
+	URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
+    )
+
+    FetchContent_MakeAvailable(googletest)
+
+    enable_testing()
+
+    add_executable(dc++_test
+	test/game_test.cpp
+	test/board_test.cpp
+	test/piece_test.cpp)
+
+    target_include_directories(dc++_test PRIVATE include)
+    target_link_libraries(dc++_test PRIVATE gtest_main dc++)
+
+    include(GoogleTest)
+
+    gtest_discover_tests(dc++_test)
+
+    add_custom_target(build_and_test
+	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target dc++_test
+	COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target test
+    )
+
     #------------------
     # COVERAGE SECTION
     #------------------
